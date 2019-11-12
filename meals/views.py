@@ -24,6 +24,7 @@ def home(request):
 
 class MealListView(ListView):
     model = Meal
+    ordering = ["name"]
     template_name = "meals/home.html"
     context_object_name = "meals"
 
