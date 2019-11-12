@@ -1,0 +1,44 @@
+{% extends "meals/base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<form method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <article class="media content-section">
+    <img class="rounded-circle article-img" src="{{ object.image.url }}">
+    <div class="media-body">
+      <div class="article-metadata">
+        <a class="mr-2" href="#">{{ object.name }}</a>
+        <div>
+          <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'meal-update' object.id %}">Update</a>
+          <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'meal-delete' object.id %}">Delete</a>
+        </div>
+      </div>
+      <p class="article-content">{{ object.notes }}</p>
+
+      Ingredients:
+      <div>
+        <select style='width:100%;' class="js-example-basic-multiple" name="dd_ing_list" multiple="multiple">
+          {% for ingredient in ingredients %}
+          <option value={{ ingredient.id }} {% if ingredient.id in curr_ing_ids %}selected{% endif %}>
+            {{ ingredient.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <button class="btn btn-outline-info btn-sm mt-1 mb-1" type="submit">Save</button>
+      </div>
+    </div>
+  </article>
+
+</form>
+
+{% endblock content %}
+{% block extra_js %}
+<script type="text/javascript">
+  $(document).ready(function () {
+    $('.js-example-basic-multiple').select2();
+  });
+</script>
+{% endblock extra_js %}

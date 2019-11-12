@@ -1,0 +1,15 @@
+{% extends "meals/base.html" %}
+{% block content %}
+{% for meal in meals %}
+<article class="media content-section">
+  <img class="rounded-circle article-img" src="{{ meal.image.url }}">
+  <div class="media-body">
+    <div class="article-metadata">
+      <a class="mr-2" href="{% url 'meal-detail' meal.id %}">{{ meal.name }}</a>
+      <td><a class="float-right" href="{% url 'update-meal-cart' meal.id %}">Add to Cart</a></td>
+    </div>
+    <p class="article-content">{{ meal.notes }}</p>
+  </div>
+</article>
+{% endfor %}
+{% endblock content %}

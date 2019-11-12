@@ -1,0 +1,25 @@
+{% extends "meals/base.html" %}
+{% block content %}
+
+<table class="table">
+    <thead>
+        <th>Ingredient</th>
+        <th>Aisle</th>
+        <th>Auto Add Item</th>
+        <th></th>
+    </thead>
+
+    {% for ingredient in object_list %}
+
+    <tr>
+        <td><a class="mr-2" href="{% url 'ingredients-detail' ingredient.id %}">{{ ingredient.name }}</a></td>
+        <td>{{ ingredient.aisle|floatformat }}</td>
+        <td>{{ ingredient.auto_add }}</td>
+        <td><a href="{% url 'update-ing-cart' ingredient.id %}">Add to Cart</a></td>
+    </tr>
+
+    {% endfor %}
+
+</table>
+
+{% endblock content %}
