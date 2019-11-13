@@ -1,6 +1,10 @@
 {% extends "meals/base.html" %}
 {% block content %}
 
+<input type="text" id="myInput" placeholder="Search for Ingredients.." title="Type in a Ingredient" maxlength="50"
+    class="textinput textInput form-control">
+</br>
+
 <table class="table">
     <thead>
         <th>Ingredient</th>
@@ -9,17 +13,46 @@
         <th></th>
     </thead>
 
-    {% for ingredient in object_list %}
+    <tbody id="myTable">
+        {% for ingredient in object_list %}
 
-    <tr>
-        <td><a class="mr-2" href="{% url 'ingredients-detail' ingredient.id %}">{{ ingredient.name }}</a></td>
-        <td>{{ ingredient.aisle|floatformat }}</td>
-        <td>{{ ingredient.auto_add }}</td>
-        <td><a href="{% url 'update-ing-cart' ingredient.id %}">Add to Cart</a></td>
-    </tr>
+        <tr>
+            <td><a class="mr-2" href="{% url 'ingredients-detail' ingredient.id %}">{{ ingredient.name }}</a></td>
+            <td>{{ ingredient.aisle|floatformat }}</td>
+            <td>{{ ingredient.auto_add }}</td>
+            <td><a href="{% url 'update-ing-cart' ingredient.id %}">Add to Cart</a></td>
+        </tr>
 
-    {% endfor %}
-
+        {% endfor %}
+    </tbody>
 </table>
 
 {% endblock content %}
+
+{% block extra_js %}
+
+<script>
+    $(function () {
+        $("#myInput").focus();
+    });
+
+    $(document).ready(function () {
+        $("#myInput").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#myTable tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+
+        });
+
+        $("#myInput").on("keyup", function (e) {
+            if (e.keyCode === 13) {
+                // Do something
+                $(this).select();
+            }
+        });
+    });
+
+</script>
+
+{% endblock extra_js %}
