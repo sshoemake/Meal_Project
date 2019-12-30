@@ -23,8 +23,6 @@
   <!-- <link rel="stylesheet" href="{% static 'aui/css/aui.min.css' %}" media="all">
   <link rel="stylesheet" href="{% static 'aui/css/aui-experimental.min.css' %}" media="all"> -->
 
-  {% block extra_head_js %}{% endblock extra_head_js %}
-
   {% if title %}
   <title>Django Meals - {{ title }}</title>
   {% else %}
@@ -93,9 +91,8 @@
 
   <!-- Optional JavaScript -->
   <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-    crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+    integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
     integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
     crossorigin="anonymous"></script>
@@ -107,7 +104,8 @@
   <!-- <script src="{% static 'aui/js/aui.min.js' %}"></script>
   <script src="{% static 'aui/js/aui-experimental.min.js' %}"></script>
   <script src="{% static 'aui/js/aui-soy.min.js' %}"></script> -->
-  {% block extra_js %}{% endblock extra_js %}
+  {% block javascript %}
+  {% endblock %}
 </body>
 
 </html>

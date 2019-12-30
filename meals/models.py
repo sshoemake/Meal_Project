@@ -18,7 +18,6 @@ class Ingredient(models.Model):
 class Meal(models.Model):
     name = models.CharField(max_length=50, unique=True)
     notes = models.TextField()
-    details = models.ManyToManyField(Ingredient, through="Meal_Details")
     image = models.ImageField(default="default.jpg", upload_to="meal_pics")
 
     def __str__(self):
@@ -30,12 +29,12 @@ class Meal(models.Model):
     def save(self):
         super().save()
 
-        img = Image.open(self.image.path)
+        img = Image.open(self.image)
 
         if img.height > 300 or img.width > 300:
             output_size = (300, 300)
             img.thumbnail(output_size)
-            img.save(self.image.path)
+            img.save(self.image)
 
 
 class Meal_Details(models.Model):

@@ -28,8 +28,8 @@ def CartListView(request):
                 cart_list.append(ingredient)
 
             for meal in tmp_cart.meals.all():
-                for ingredient in meal.details.all():
-                    cart_list.append(ingredient)
+                for myMD in meal.meal_details_set.all():
+                    cart_list.append(myMD.ingredient)
 
             # sort by aisle
             cart_list = sorted(cart_list, key=lambda x: x.aisle)
@@ -37,6 +37,7 @@ def CartListView(request):
             context = {"final_list": final_list, "cart_list": cart_list}
         else:
             cart = Cart.objects.get(id=the_id)
+            # cart = cart.objects.order_by("ingredients__aisle")
             context = {"cart": cart, "final_list": final_list}
 
     else:
@@ -103,3 +104,33 @@ def update_meal_cart(request, **kwargs):
     request.session["items_total"] = cart.ingredients.count() + cart.meals.count()
 
     return redirect("meals-home")
+
+
+def add_ings_cart(request, **kwargs):
+    try:
+        the_id = request.session["cart_id"]
+    except:
+        new_cart = Cart()
+        new_cart.save()
+        request.session["cart_id"] = new_cart.id
+        the_id = new_cart.id
+
+    cart = Cart.objects.get(id=the_id)
+
+    try:
+        ing_ids = request.POST.getlist("ingtoadd")
+    # except Ingredient.DoesNotExist:
+    #    pass
+    except:
+        pass
+
+    for ing_id in ing_ids:
+        ingredient = Ingredient.objects.get(id=ing_id)
+        if not ingredient in cart.ingredients.all():
+            cart.ingredients.add(ingredient)
+        # else:
+        #    cart.ingredients.remove(ingredient)
+
+    request.session["items_total"] = cart.ingredients.count() + cart.meals.count()
+
+    return redirect("ingredients-home")
