@@ -1,4 +1,11 @@
 {% extends "meals/base.html" %}
+
+{% load static %}
+
+{% block javascript %}
+<script src="{% static 'meals/js/meals.js' %}"></script>
+{% endblock %}
+
 {% block content %}
 {% for meal in meals %}
 <article class="media content-section">
@@ -6,10 +13,19 @@
   <div class="media-body">
     <div class="article-metadata">
       <a class="mr-2" href="{% url 'meal-detail' meal.id %}">{{ meal.name }}</a>
-      <td><a class="float-right" href="{% url 'update-meal-cart' meal.id %}">Add to Cart</a></td>
+      <!-- <td><a class="float-right" href="{% url 'update-meal-cart' meal.id %}">Add to Cart</a></td> -->
+      <td><a class="float-right" href="{% url 'meal-addtocart' meal.id %}">Add to Cart</a></td>
     </div>
     <p class="article-content">{{ meal.notes }}</p>
   </div>
 </article>
 {% endfor %}
+
+<!-- THE MODAL WE WILL BE USING -->
+<div class="modal fade" id="modal-book">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    </div>
+  </div>
+</div>
 {% endblock content %}

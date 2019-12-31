@@ -1,0 +1,64 @@
+<form method="post" action="{% url 'book_update' form.instance.pk %}" class="js-book-update-form">
+
+    {% csrf_token %}
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">Update meal</h4>
+    </div>
+
+
+    <div class="modal-body">
+        {{ form.name.value }}
+        <p class="article-content">{{ form.notes.value }}</p>
+
+        Ingredients:
+
+        {% for ingredient in form.meal.ingredients.all %}
+        {{ ingredient.name.value }}
+        {% endfor %}
+
+
+
+        {% for field in form.fields %}
+        {{ field.label }}
+        {{ field }} - {{ field.value }}</br>
+        {% endfor %}
+
+        <table>
+            <thead>
+                {{ ingredients_formset.management_form }}
+                <tr>
+                    <th>Ingredient</th>
+                    <th>Quantity</th>
+                    <th>Units</th>
+                    <th>Delete?</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i_form in ingredients_formset.forms %}
+                <tr id="{{ i_form.prefix }}">
+                    {{ i_form.id }}
+                    <td>{{ i_form.ingredient }}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- {% include 'meals/includes/partial_meal_form.html' %} -->
+    </div>
+
+
+
+
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Add to Cart</button>
+    </div>
+
+</form>
