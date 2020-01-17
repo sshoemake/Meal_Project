@@ -11,6 +11,9 @@ class Ingredient(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ["aisle"]
+
     def get_absolute_url(self):
         return reverse("ingredients-detail", kwargs={"pk": self.pk})
 

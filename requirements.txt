@@ -3,7 +3,7 @@ astroid==2.3.3
 attrs==19.1.0
 black==19.3b0
 Click==7.0
-Django==2.2.7
+Django==2.2.9
 django-crispy-forms==1.7.2
 django-widget-tweaks==1.4.5
 isort==4.3.21
