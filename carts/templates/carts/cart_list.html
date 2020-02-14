@@ -4,34 +4,10 @@
 {% if empty %}
 <h2 style="text-align:center;">{{ empty_message }}</h2>
 
-{% elif final_list %}
-
-<h1>Shopping Cart:</h1>
-<form action="" method="post">
-    {% csrf_token %}
-    <input type="checkbox" name="final_list" onChange="this.form.submit()" {% if final_list %}checked="checked"
-        {% endif %}> Show as
-    Final shopping list<br>
-</form>
-</br>
-<ul>
-    <li>Ingredient - Aisle</li>
-    {% for ingredient in cart_list %}
-    <li>{{ ingredient.name }} - {{ ingredient.aisle|floatformat }} <a class="float-right"
-            href="{% url 'update-ing-cart' ingredient.id %}">Remove</a></li>
-    {% endfor %}
-</ul>
-</br>
-
 {% else %}
 
 <h1>Shopping Cart:</h1>
-<form action="" method="post">
-    {% csrf_token %}
-    <input type="checkbox" name="final_list" onChange="this.form.submit()" {% if final_list %}checked="checked"
-        {% endif %}> Show as
-    Final shopping list<br>
-</form>
+
 {% if cart.meals.count > 0 %}
 <table class="table">
     <thead>
@@ -50,18 +26,18 @@
 </table>
 {% endif %}
 
-{% if cart.ingredients.count > 0 %}
+{% if cart_items.count > 0 %}
 <table class="table">
     <thead>
         <th>Ingredient</th>
         <th>Aisle</th>
         <th></th>
     </thead>
-    {% for ingredient in cart.ingredients.all %}
+    {% for item in cart_items.all %}
     <tr>
-        <td>{{ ingredient.name }}</td>
-        <td>{{ ingredient.aisle|floatformat }}</td>
-        <td><a class="float-right" href="{% url 'update-ing-cart' ingredient.id %}">Remove</a></td>
+        <td>{{ item.ingredient.name }} {% if item.quantity > 1 %} (Qty: {{ item.quantity }}) {% endif %}</td>
+        <td>{{ item.ingredient.aisle|floatformat }}</td>
+        <td><a class="float-right" href="{% url 'remove-ing-cart' item.ingredient.id %}">Remove</a></td>
     </tr>
     {% endfor %}
 

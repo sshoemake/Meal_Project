@@ -47,4 +47,3 @@ class Meal_Details(models.Model):
 
     class Meta:
         ordering = ["ingredient__aisle"]
-
