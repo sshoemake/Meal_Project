@@ -1,7 +1,7 @@
 # Meal_Project
 
 1. Checkout the project:
-  https://github.com/sshoemake/Meal_Project.git
+  git clone https://github.com/sshoemake/Meal_Project.git
 
 2. Cd to project directory:
 
