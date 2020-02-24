@@ -1,6 +1,7 @@
 # Meal_Project
 
-1. Checkout the project
+1. Checkout the project:
+  https://github.com/sshoemake/Meal_Project.git
 
 2. Cd to project directory:
 
