@@ -5,8 +5,8 @@ from meals.models import Ingredient, Meal
 class Cart(models.Model):
     meals = models.ManyToManyField(Meal, null=True, blank=True)
 
-    class Meta:
-        ordering = ["ingredients__aisle"]
+    # class Meta:
+    #    ordering = ["ingredients__aisle"]
 
 
 class Cart_Details(models.Model):
