@@ -1,25 +1,33 @@
 {% extends "meals/base.html" %}
-
 {% load static %}
 
-{% block javascript %}
-<script src="{% static 'meals/js/meals.js' %}"></script>
-{% endblock %}
-
 {% block content %}
-{% for meal in meals %}
-<article class="media content-section">
-  <img class="rounded-circle article-img" src="{{ meal.image.url }}">
-  <div class="media-body">
-    <div class="article-metadata">
-      <a class="mr-2" href="{% url 'meal-detail' meal.id %}">{{ meal.name }}</a>
-      <!-- <td><a class="float-right" href="{% url 'update-meal-cart' meal.id %}">Add to Cart</a></td> -->
+
+<input type="text" id="myInput" placeholder="Search for Meals.." title="Type in a Meal" maxlength="50"
+  class="textinput textInput form-control">
+</br>
+
+<table class="table">
+  <thead>
+    <th></th>
+    <th>Meal</th>
+    <th></th>
+  </thead>
+
+  <tbody id="myTable">
+
+    {% for meal in meals %}
+
+    <tr>
+      <td><img class="rounded-circle article-img" src="{{ meal.image.url }}"></td>
+      <td><a class="mr-2" href="{% url 'meal-detail' meal.id %}">{{ meal.name }}</a></td>
       <td><a class="float-right" href="{% url 'meal-addtocart' meal.id %}">Add to Cart</a></td>
-    </div>
-    <p class="article-content">{{ meal.notes }}</p>
-  </div>
-</article>
-{% endfor %}
+    </tr>
+
+    {% endfor %}
+
+  </tbody>
+</table>
 
 <!-- THE MODAL WE WILL BE USING -->
 <div class="modal fade" id="modal-book">
@@ -29,3 +37,33 @@
   </div>
 </div>
 {% endblock content %}
+
+{% block javascript %}
+
+<script src="{% static 'meals/js/meals.js' %}"></script>
+
+<script>
+  $(function () {
+    $("#myInput").focus();
+  });
+
+  $(document).ready(function () {
+    $("#myInput").on("keyup", function () {
+      var value = $(this).val().toLowerCase();
+      $("#myTable tr").filter(function () {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+      });
+
+    });
+
+    $("#myInput").on("keyup", function (e) {
+      if (e.keyCode === 13) {
+        // Do something
+        $(this).select();
+      }
+    });
+  });
+
+</script>
+
+{% endblock javascript %}

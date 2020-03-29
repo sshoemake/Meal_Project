@@ -13,11 +13,6 @@ def deploy(ctx):
     sudo_pass = getpass.getpass("What's your sudo password?")
     config = Config(overrides={"sudo": {"password": sudo_pass}})
     c = Connection("odroid@odroidn2.local", config=config)
-    result = c.run("uname -s")
-    # print(result)
-
-    # whoami = c.sudo("whoami", hide="stderr")
-    # print(whoami)
 
     c.run(
         "mysqldump -u root -p'"
