@@ -10,6 +10,7 @@
     <div class="media-body">
       <div class="article-metadata">
         <a class="mr-2" href="#">{{ object.name }}</a>
+        <a class="float-right" href="{% url 'meal-addtocart' object.id %}">Add to Cart</a>
         <div>
           <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'meal-update' object.id %}">Update</a>
           <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'meal-delete' object.id %}">Delete</a>

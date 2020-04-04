@@ -27,6 +27,36 @@
 {% endif %}
 
 {% if cart_items.count > 0 %}
+<table class="table table-hover">
+    <thead>
+        <th>Ingredient</th>
+        <th>Aisle</th>
+        <th></th>
+    </thead>
+
+    {% for item in cart_items.all %}
+    <tbody>
+        <tr data-toggle="collapse" data-target="#accordion{{ item.ingredient.id }}" class="clickable">
+            <td>{{ item.ingredient.name }} {% if item.quantity > 1 %} (Qty: {{ item.quantity }})
+                {% endif %}</td>
+            <td>{{ item.ingredient.aisle|floatformat }}</td>
+            <td><a class="float-right" href="{% url 'remove-ing-cart' item.ingredient.id %}">Remove</a></td>
+        </tr>
+        <tr class="hiddenRow">
+            <td colspan="3" class="hiddenRow">
+                <div id="accordion{{ item.ingredient.id }}" class="collapse"><span class="tab-1">Hidden by
+                        default<br>Hidden by default</span>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+    {% endfor %}
+
+</table>
+{% endif %}
+
+
+<!-- {% if cart_items.count > 0 %}
 <table class="table">
     <thead>
         <th>Ingredient</th>
@@ -42,7 +72,7 @@
     {% endfor %}
 
 </table>
-{% endif %}
+{% endif %} -->
 
 {% endif %}
 

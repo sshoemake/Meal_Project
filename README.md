@@ -29,5 +29,6 @@
    b. Git deploy (PROD Deploy - git pull origin master --force) - DONE
    c. Load virtual environment
    d. install pip items
+   e. reload static files (i.e. main.css)
    e. restart Apache2 - DONE
 

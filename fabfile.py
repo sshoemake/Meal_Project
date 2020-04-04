@@ -17,7 +17,7 @@ def deploy(ctx):
     c.run(
         "mysqldump -u root -p'"
         + sudo_pass
-        + "' meal_project > meal_project_"
+        + "' meal_project > ~/mysql_backups/meal_project_"
         + timestr
         + ".sql"
     )
@@ -34,4 +34,14 @@ def deploy(ctx):
             c.run("git fetch")
         c.run("git reset --hard origin/master")
 
+        # PIP load from requirements.txt
+        venv_command = "source venv/bin/activate"
+        pip_command = "venv/bin/pip3 install -r requirements.txt"
+        c.run(venv_command + " && " + pip_command)
+
+        # Reload static files
+        static_cmd = "python manage.py collectstatic --noinput"
+        c.run(venv_command + " && " + static_cmd)
+
+    # Restart Apache
     c.sudo("service apache2 restart")
