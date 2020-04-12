@@ -43,5 +43,13 @@ def deploy(ctx):
         static_cmd = "python manage.py collectstatic --noinput"
         c.run(venv_command + " && " + static_cmd)
 
+        # Database Make Migration
+        makem_cmd = "python manage.py makemigration"
+        c.run(venv_command + " && " + makem_cmd)
+
+        # Database Migrate
+        migrate_cmd = "python manage.py migrate"
+        c.run(venv_command + " && " + migrate_cmd)
+
     # Restart Apache
     c.sudo("service apache2 restart")

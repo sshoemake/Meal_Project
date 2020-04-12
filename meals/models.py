@@ -20,7 +20,7 @@ class Ingredient(models.Model):
 
 class Meal(models.Model):
     name = models.CharField(max_length=50, unique=True)
-    notes = models.TextField()
+    notes = models.TextField(null=True, blank=True)
     image = models.ImageField(default="default.jpg", upload_to="meal_pics")
 
     def __str__(self):
