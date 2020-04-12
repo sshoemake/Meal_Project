@@ -44,7 +44,7 @@ def deploy(ctx):
         c.run(venv_command + " && " + static_cmd)
 
         # Database Make Migration
-        makem_cmd = "python manage.py makemigration"
+        makem_cmd = "python manage.py makemigrations"
         c.run(venv_command + " && " + makem_cmd)
 
         # Database Migrate
