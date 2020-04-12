@@ -21,7 +21,7 @@
             <td>{{ ingredient.aisle|floatformat }}</td>
             <td>{{ ingredient.auto_add }}</td>
             <td class="text-center"><a href="{% url 'update-ing-cart' ingredient.id %}">
-                    {% if ingredient.added %}Add++{% else %}Add to Cart{% endif %}
+                    {% if ingredient in cart_item_list %}Add++{% else %}Add to Cart{% endif %}
                 </a></td>
         </tr>
 

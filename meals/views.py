@@ -298,8 +298,8 @@ class IngListView(ListView):
     model = Ingredient
     ordering = ["name"]
 
-    def get_queryset(self):
-        queryset = Ingredient.objects.all().order_by("name")
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
         try:
             the_id = self.request.session["cart_id"]
@@ -312,14 +312,13 @@ class IngListView(ListView):
         else:
             cart_details = Cart_Details.objects.none()
 
-        for ing in queryset:
-            # ing.added = ing.cart_details_set.exists()
-            ing.added = cart_details.all().filter(ingredient=ing).exists()
+        cart_item_list = []
+        for cd in cart_details.all():
+            cart_item_list.append(cd.ingredient)
 
-        return queryset
+        context["cart_item_list"] = cart_item_list
 
-
-# cart_details.all().filter(ingredient=ing3).exists()
+        return context
 
 
 class IngDetailView(DetailView):
