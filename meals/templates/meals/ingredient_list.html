@@ -20,7 +20,9 @@
             <td><a class="mr-2" href="{% url 'ingredients-detail' ingredient.id %}">{{ ingredient.name }}</a></td>
             <td>{{ ingredient.aisle|floatformat }}</td>
             <td>{{ ingredient.auto_add }}</td>
-            <td><a href="{% url 'update-ing-cart' ingredient.id %}">Add to Cart</a></td>
+            <td class="text-center"><a href="{% url 'update-ing-cart' ingredient.id %}">
+                    {% if ingredient.added %}Add++{% else %}Add to Cart{% endif %}
+                </a></td>
         </tr>
 
         {% endfor %}

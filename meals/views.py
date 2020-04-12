@@ -20,6 +20,7 @@ from django.views.generic.detail import SingleObjectMixin
 from .models import Meal, Ingredient, Meal_Details
 from .forms import BookForm
 from carts.views import update_meal_cart, add_ings_cart
+from carts.models import Cart, Cart_Details
 
 
 class JSONResponseMixin:
@@ -297,6 +298,29 @@ class IngListView(ListView):
     model = Ingredient
     ordering = ["name"]
 
+    def get_queryset(self):
+        queryset = Ingredient.objects.all().order_by("name")
+
+        try:
+            the_id = self.request.session["cart_id"]
+        except:
+            the_id = None
+
+        if the_id:
+            cart = Cart.objects.get(id=the_id)
+            cart_details = Cart_Details.objects.filter(cart=cart)
+        else:
+            cart_details = Cart_Details.objects.none()
+
+        for ing in queryset:
+            # ing.added = ing.cart_details_set.exists()
+            ing.added = cart_details.all().filter(ingredient=ing).exists()
+
+        return queryset
+
+
+# cart_details.all().filter(ingredient=ing3).exists()
+
 
 class IngDetailView(DetailView):
     model = Ingredient
@@ -338,4 +362,3 @@ class IngDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         #    return True
         # return False
         return True
-
