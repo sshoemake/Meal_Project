@@ -1,0 +1,37 @@
+<div class="container border">
+    <br>
+
+    <div class="container text-center">
+        <div class="btn-group" role="group">
+            {% for date_item in date_list %}
+            <label class="btn-group">
+                <a href="{% url 'select-cart' forloop.counter0 %}"
+                    class="btn {% if forloop.counter0 == request.session.selected_week %}btn-primary{% else %}btn-outline-primary{% endif %}"
+                    role="button">{{ date_item|safe|escape }}</a>
+            </label>
+            {% endfor %}
+        </div>
+    </div>
+    <br>
+    <!-- Temporarily hide the week day table -->
+    <!--
+    <hr>
+    <!-- Tab panes
+    <div class="tab-content">
+        <div id="menu_detail" class="container tab-pane active">
+            <div class="container">
+                <div class="row">
+
+                    {% for meal_item in meal_list %}
+                    <div class="col-sm text-center border">
+                        <br>{{ meal_item }}<br><br>
+                    </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+            <br>
+        </div>
+    </div>
+    -->
+</div>

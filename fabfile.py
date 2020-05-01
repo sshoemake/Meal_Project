@@ -53,3 +53,23 @@ def deploy(ctx):
 
     # Restart Apache
     c.sudo("service apache2 restart")
+
+
+@task
+def backup_db(ctx):
+    ## must call with fab backup-db
+    ##
+    timestr = time.strftime("%Y%m%d-%H%M%S")
+    # print("Hello world!")
+
+    sudo_pass = getpass.getpass("What's your sudo password?")
+    config = Config(overrides={"sudo": {"password": sudo_pass}})
+    c = Connection("odroid@odroidn2.local", config=config)
+
+    c.run(
+        "mysqldump -u root -p'"
+        + sudo_pass
+        + "' meal_project > ~/mysql_backups/meal_project_"
+        + timestr
+        + ".sql"
+    )

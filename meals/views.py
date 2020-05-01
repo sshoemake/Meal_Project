@@ -19,8 +19,9 @@ from django.views.generic import (
 from django.views.generic.detail import SingleObjectMixin
 from .models import Meal, Ingredient, Meal_Details
 from .forms import BookForm
-from carts.views import update_meal_cart, add_ings_cart
+from carts.views import update_meal_cart, add_ings_cart, get_cart
 from carts.models import Cart, Cart_Details
+import datetime
 
 
 class JSONResponseMixin:
@@ -46,6 +47,12 @@ class JSONResponseMixin:
 
 
 def home(request):
+    # date_list = []
+
+    # for num in range(-3, 4):
+    #    date_list.append(get_date_label(num))
+
+    # context = {"meals": Meal.objects.all(), "date_list": date_list}
     context = {"meals": Meal.objects.all()}
     return render(request, "meals/home.html", context)
 
@@ -55,6 +62,37 @@ class MealListView(ListView):
     ordering = ["name"]
     template_name = "meals/home.html"
     context_object_name = "meals"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # calc date_list: current week +-3 weeks
+        date_list = []
+        for num in range(-3, 4):
+            date_list.append(get_date_label(num))
+
+        # Populate the meal list:
+        meal_list = ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"]
+
+        self.request.session.setdefault("selected_week", 3)
+
+        context["meal_list"] = meal_list
+        context["date_list"] = date_list
+        return context
+
+
+def get_date_label(int_wk):
+    my_date = datetime.date.today()
+    year, week_num, day_of_week = my_date.isocalendar()
+    week_num = week_num + int(int_wk)
+    firstdayofweek = datetime.datetime.strptime(
+        f"{year}-W{int(week_num )- 1}-1", "%Y-W%W-%w"
+    ).date()
+
+    # return firstdayofweek.strftime("%-m/%-d%<br>%a")
+    # return firstdayofweek.strftime("%b %-d%<br>%a")
+
+    return firstdayofweek.strftime("%b %-d")
 
 
 class MealDetailView(View):
@@ -301,13 +339,9 @@ class IngListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        try:
-            the_id = self.request.session["cart_id"]
-        except:
-            the_id = None
+        cart = get_cart(self.request)
 
-        if the_id:
-            cart = Cart.objects.get(id=the_id)
+        if cart:
             cart_details = Cart_Details.objects.filter(cart=cart)
         else:
             cart_details = Cart_Details.objects.none()

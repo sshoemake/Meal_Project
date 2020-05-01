@@ -1,12 +1,21 @@
 from django.db import models
+from django.db.models import Sum
 from meals.models import Ingredient, Meal
 
 
 class Cart(models.Model):
-    meals = models.ManyToManyField(Meal, null=True, blank=True)
+    meals = models.ManyToManyField(Meal, blank=True)
+    yearweek = models.IntegerField(unique=True)
 
-    # class Meta:
-    #    ordering = ["ingredients__aisle"]
+    @property
+    def items_total(self):
+        ing_cnt = Cart_Details.objects.filter(cart=self).aggregate(Sum("quantity"))[
+            "quantity__sum"
+        ]
+
+        return int(ing_cnt or 0) + self.meals.count()
+
+    # Add item_cnt property
 
 
 class Cart_Details(models.Model):

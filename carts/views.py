@@ -2,41 +2,56 @@ from django.shortcuts import render, redirect
 from .models import Cart, Cart_Details
 from django.views.generic import DetailView
 from meals.models import Ingredient, Meal
-from django.db.models import F
+from django.db.models import F, Sum
+import datetime
 
 
 def CartListView(request):
-    try:
-        the_id = request.session["cart_id"]
-    except:
-        the_id = None
+    cart = get_cart(request)
 
-    if the_id:
-        cart = Cart.objects.get(id=the_id)
+    if cart:
         cart_items = Cart_Details.objects.filter(cart=cart)
-        # cart = cart.objects.order_by("ingredients__aisle")
-        context = {"cart": cart, "cart_items": cart_items}
 
+        # calc date_list: current week +-3 weeks
+        date_list = []
+        for num in range(-3, 4):
+            date_list.append(get_date_label(num))
+
+        # Populate the meal list:
+        meal_list = ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"]
+
+        request.session.setdefault("selected_week", 3)
+
+        context = {
+            "cart": cart,
+            "cart_items": cart_items,
+            "meal_list": meal_list,
+            "date_list": date_list,
+        }
     else:
         empty_message = "Your Cart is Empty, please keep shopping."
         context = {"empty": True, "empty_message": empty_message}
 
-    # cart = Cart.objects.all()[0]
-    # context = {"cart": cart}
     template = "carts/cart_list.html"
     return render(request, template, context)
 
 
-def update_ing_cart(request, **kwargs):
-    try:
-        the_id = request.session["cart_id"]
-    except:
-        new_cart = Cart()
-        new_cart.save()
-        request.session["cart_id"] = new_cart.id
-        the_id = new_cart.id
+def get_date_label(int_wk):
+    my_date = datetime.date.today()
+    year, week_num, day_of_week = my_date.isocalendar()
+    week_num = week_num + int(int_wk)
+    firstdayofweek = datetime.datetime.strptime(
+        f"{year}-W{int(week_num )- 1}-1", "%Y-W%W-%w"
+    ).date()
 
-    cart = Cart.objects.get(id=the_id)
+    # return firstdayofweek.strftime("%-m/%-d%<br>%a")
+    # return firstdayofweek.strftime("%b %-d%<br>%a")
+
+    return firstdayofweek.strftime("%b %-d")
+
+
+def update_ing_cart(request, **kwargs):
+    cart = get_cart_or_create(request)
 
     try:
         ingredient = Ingredient.objects.filter(id=kwargs.get("pk", "")).first()
@@ -56,24 +71,13 @@ def update_ing_cart(request, **kwargs):
         update_CD.quantity = F("quantity") + 1
         update_CD.save()
 
-    ## TODO fix the cart count, missing ingredient count
-    request.session["items_total"] = (
-        Cart_Details.objects.filter(cart=cart).count() + cart.meals.count()
-    )
+    request.session["items_total"] = cart.items_total
 
     return redirect("ingredients-home")
 
 
 def update_meal_cart(request, **kwargs):
-    try:
-        the_id = request.session["cart_id"]
-    except:
-        new_cart = Cart()
-        new_cart.save()
-        request.session["cart_id"] = new_cart.id
-        the_id = new_cart.id
-
-    cart = Cart.objects.get(id=the_id)
+    cart = get_cart_or_create(request)
 
     try:
         meal = Meal.objects.filter(id=kwargs.get("pk", "")).first()
@@ -87,25 +91,26 @@ def update_meal_cart(request, **kwargs):
     else:
         cart.meals.remove(meal)
 
-    ## TODO ##
-    ## add back the ingredient count cart.ingredients.count() +
-    request.session["items_total"] = (
-        Cart_Details.objects.filter(cart=cart).count() + cart.meals.count()
-    )
+    request.session["items_total"] = cart.items_total
 
     return redirect("meals-home")
 
 
-def remove_ing_cart(request, **kwargs):
-    try:
-        the_id = request.session["cart_id"]
-    except:
-        new_cart = Cart()
-        new_cart.save()
-        request.session["cart_id"] = new_cart.id
-        the_id = new_cart.id
+def select_cart(request, **kwargs):
+    request.session["selected_week"] = kwargs.get("pk", "")
 
-    cart = Cart.objects.get(id=the_id)
+    # Update the Cart_id
+    request.session["cart_id"] = chg_cart_or_create(request)
+    cart = get_cart(request)
+    request.session["items_total"] = cart.items_total
+
+    # return redirect("meals-home")
+    # return to source/original url!
+    return redirect(request.META.get("HTTP_REFERER", "/"))
+
+
+def remove_ing_cart(request, **kwargs):
+    cart = get_cart_or_create(request)
 
     try:
         ingredient = Ingredient.objects.filter(id=kwargs.get("pk", "")).first()
@@ -125,24 +130,14 @@ def remove_ing_cart(request, **kwargs):
         else:
             update_CD.delete()
 
-    ## TODO fix the cart count, missing ingredient count
-    request.session["items_total"] = (
-        Cart_Details.objects.filter(cart=cart).count() + cart.meals.count()
-    )
+    request.session["items_total"] = cart.items_total
 
     return redirect("ingredients-home")
 
 
 def add_ings_cart(request, **kwargs):
-    try:
-        the_id = request.session["cart_id"]
-    except:
-        new_cart = Cart()
-        new_cart.save()
-        request.session["cart_id"] = new_cart.id
-        the_id = new_cart.id
+    cart = get_cart_or_create(request)
 
-    cart = Cart.objects.get(id=the_id)
     cart_items = Cart_Details.objects.filter(cart=cart)
     my_ing_ids = cart_items.values_list("ingredient_id", flat=True)
 
@@ -163,10 +158,59 @@ def add_ings_cart(request, **kwargs):
             update_CD.quantity = F("quantity") + 1
             update_CD.save()
 
-    ## TODO ##
-    ## cart.ingredients.count() +
-    request.session["items_total"] = (
-        Cart_Details.objects.filter(cart=cart).count() + cart.meals.count()
-    )
+    request.session["items_total"] = cart.items_total
 
     return redirect("ingredients-home")
+
+
+def get_cart(request):
+    try:
+        the_id = request.session["cart_id"]
+    except:
+        the_id = None
+
+    if the_id:
+        return Cart.objects.get(id=the_id)
+    else:
+        return None
+
+
+def get_cart_or_create(request):
+    try:
+        the_id = request.session["cart_id"]
+    except:
+        new_cart = Cart()
+        new_cart.save()
+        request.session["cart_id"] = new_cart.id
+        the_id = new_cart.id
+
+    return Cart.objects.get(id=the_id)
+
+
+def chg_cart_or_create(request):
+    selected_week = request.session["selected_week"]
+    yearweek = convert_sw_yw(selected_week)
+
+    try:
+        existing_cart = Cart.objects.get(yearweek=yearweek)
+        the_id = existing_cart.id
+    except:
+        new_cart = Cart()
+        new_cart.yearweek = yearweek
+        new_cart.save()
+        the_id = new_cart.id
+
+    return the_id
+
+
+def convert_sw_yw(selected_week):
+    # -3|-2|-1|0|1|2|3|4 <-- relative week
+    # 0| 1| 2|3|4|5|6|7 <-- selected_week index
+
+    rel_week = ["-3", "-2", "-1", "0", "1", "2", "3", "4"]
+
+    my_date = datetime.date.today()
+    year, week_num, day_of_week = my_date.isocalendar()
+    week_num = week_num + int(rel_week[selected_week])
+
+    return int(str(year) + str(week_num))
