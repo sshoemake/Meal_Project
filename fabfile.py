@@ -44,11 +44,13 @@ def deploy(ctx):
         c.run(venv_command + " && " + static_cmd)
 
         # Database Make Migration
-        makem_cmd = "python manage.py makemigrations"
+        makem_cmd = "python manage.py makemigrations --settings=meal_project.settings.production"
         c.run(venv_command + " && " + makem_cmd)
 
         # Database Migrate
-        migrate_cmd = "python manage.py migrate"
+        migrate_cmd = (
+            "python manage.py migrate --settings=meal_project.settings.production"
+        )
         c.run(venv_command + " && " + migrate_cmd)
 
     # Restart Apache
