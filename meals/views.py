@@ -358,6 +358,19 @@ class IngListView(ListView):
 class IngDetailView(DetailView):
     model = Ingredient
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        meal_details = Meal_Details.objects.filter(ingredient=self.object)
+
+        meals = []
+        for meal_detail in meal_details.all():
+            meals.append(meal_detail.meal)
+
+        context["meals"] = meals
+
+        return context
+
 
 class IngCreateView(LoginRequiredMixin, CreateView):
     model = Ingredient

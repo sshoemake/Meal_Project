@@ -1,14 +1,15 @@
 {% extends "meals/base.html" %}
 {% block content %}
 
+{% include "meals/includes/partial_cart_selector.html" %}
+<br>
+
 {% if empty %}
 <h2 style="text-align:center;">{{ empty_message }}</h2>
 
 {% else %}
 
 <h1>Shopping Cart:</h1>
-
-{% include "meals/includes/partial_cart_selector.html" %}
 
 {% if cart.meals.count > 0 %}
 <table class="table">

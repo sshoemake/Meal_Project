@@ -1,9 +1,13 @@
 # Meal_Project
 
+pre-requisite:
+sudo apt-get install git python3-venv libffi-dev python3-dev libssl-dev python3-setuptools libjpeg8-dev zlib1g-dev libmysqlclient-dev
+pip3 install wheel
+
 1. Checkout the project:
   git clone https://github.com/sshoemake/Meal_Project.git
 
-2. Cd to project directory:
+2. Cd to project directory: s/b meal_project
 
 3. Create a Virtual Environment:
   python3 -m venv venv
@@ -14,11 +18,27 @@
 5. Install Packages
   pip3 install -r requirements.txt
 
+
+python manage.py collectstatic
+
+IF Local:
 6. Run the Project:
   python manage.py runserver
 
+IF Server:
 # Deploy to linux server:
 # run under apache & mysql
+
+sudo apt-get update
+sudo apt-get install mysql-server
+sudo systemctl status mysql
+sudo mysql_secure_installation
+#load data
+  sudo mysql
+  create database meal_project;
+  exit;
+  sudo mysql meal_project < meal_project_20200501-132836.sql
+
 
 sudo apt-get install apache2
 sudo apt-get install libapache2-mod-wsgi-py3
@@ -71,8 +91,27 @@ sudo touch /etc/config.json
 
 sudo service apache2 restart
 
-TEST site using sqlite3 database
-#need to add steps to install and configure mysql db
+
+#TEST site using sqlite3 database
+python manage.py runserver 0.0.0.0:8000 --settings=meal_project.settings.production
+Had to install mysqlclient on linux
+#Had an access issue to the database
+sudo mysql
+grant all privileges on meal_project.* to root@localhost;
+exit;
+
+sudo mysql
+mysql> USE mysql;
+mysql> UPDATE user SET plugin='mysql_native_password' WHERE User='root';
+mysql> FLUSH PRIVILEGES;
+mysql> exit;
+
+$ sudo service mysql restart
+
+mysql -u root
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'PASSWORD';
+exit;
+$ sudo service mysql restart
 
 
 ## TODO
@@ -83,3 +122,10 @@ TEST site using sqlite3 database
     a. date_list (-3, curr week, +3) - DONE
     b. selected_week - session variable that drives cart display and meal list
     c. meal_list - list of meals by day for the selected week
+
+
+
+
+installed on server | requirements.txt:
+mysqlclient==1.4.6					      |	#mysqlclient==1.4.6
+pkg-resources==0.0.0					      |	#pkg-resources==0.0.0

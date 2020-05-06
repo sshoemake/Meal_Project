@@ -12,25 +12,23 @@ def CartListView(request):
     if cart:
         cart_items = Cart_Details.objects.filter(cart=cart)
 
-        # calc date_list: current week +-3 weeks
-        date_list = []
-        for num in range(-3, 4):
-            date_list.append(get_date_label(num))
-
-        # Populate the meal list:
-        meal_list = ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"]
-
-        request.session.setdefault("selected_week", 3)
-
-        context = {
-            "cart": cart,
-            "cart_items": cart_items,
-            "meal_list": meal_list,
-            "date_list": date_list,
-        }
+        context = {"cart": cart, "cart_items": cart_items}
     else:
         empty_message = "Your Cart is Empty, please keep shopping."
         context = {"empty": True, "empty_message": empty_message}
+
+    # calc date_list: current week +-3 weeks
+    date_list = []
+    for num in range(-3, 4):
+        date_list.append(get_date_label(num))
+
+    # Populate the meal list:
+    meal_list = ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"]
+
+    request.session.setdefault("selected_week", 3)
+
+    context["date_list"] = date_list
+    context["meal_list"] = meal_list
 
     template = "carts/cart_list.html"
     return render(request, template, context)
