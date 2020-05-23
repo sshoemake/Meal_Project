@@ -1,6 +1,9 @@
 {% extends "meals/base.html" %}
 {% block content %}
 
+{% include "meals/includes/partial_cart_selector.html" %}
+
+<br>
 <input type="text" id="myInput" placeholder="Search for Ingredients.." title="Type in a Ingredient" maxlength="50"
     class="textinput textInput form-control">
 </br>

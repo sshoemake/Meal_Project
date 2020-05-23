@@ -352,6 +352,19 @@ class IngListView(ListView):
 
         context["cart_item_list"] = cart_item_list
 
+        # calc date_list: current week +-3 weeks
+        date_list = []
+        for num in range(-3, 4):
+            date_list.append(get_date_label(num))
+
+        # Populate the meal list:
+        meal_list = ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"]
+
+        self.request.session.setdefault("selected_week", 3)
+
+        context["meal_list"] = meal_list
+        context["date_list"] = date_list
+
         return context
 
 

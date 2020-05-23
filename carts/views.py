@@ -71,7 +71,8 @@ def update_ing_cart(request, **kwargs):
 
     request.session["items_total"] = cart.items_total
 
-    return redirect("ingredients-home")
+    # return redirect("ingredients-home")
+    return redirect(request.META.get("HTTP_REFERER", "/"))
 
 
 def update_meal_cart(request, **kwargs):
@@ -130,7 +131,8 @@ def remove_ing_cart(request, **kwargs):
 
     request.session["items_total"] = cart.items_total
 
-    return redirect("ingredients-home")
+    # return redirect("ingredients-home")
+    return redirect(request.META.get("HTTP_REFERER", "/"))
 
 
 def add_ings_cart(request, **kwargs):
