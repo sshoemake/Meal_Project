@@ -17,6 +17,14 @@ def CartListView(request):
         empty_message = "Your Cart is Empty, please keep shopping."
         context = {"empty": True, "empty_message": empty_message}
 
+    # add cart header partial details to context
+    context.update(cart_header_lists(request))
+
+    template = "carts/cart_list.html"
+    return render(request, template, context)
+
+
+def cart_header_lists(request):
     # calc date_list: current week +-3 weeks
     date_list = []
     for num in range(-3, 4):
@@ -27,11 +35,10 @@ def CartListView(request):
 
     request.session.setdefault("selected_week", 3)
 
-    context["date_list"] = date_list
-    context["meal_list"] = meal_list
-
-    template = "carts/cart_list.html"
-    return render(request, template, context)
+    local_ctx = {}
+    local_ctx["date_list"] = date_list
+    local_ctx["meal_list"] = meal_list
+    return local_ctx
 
 
 def get_date_label(int_wk):
@@ -39,9 +46,9 @@ def get_date_label(int_wk):
     year, week_num, day_of_week = my_date.isocalendar()
     week_num = week_num + int(int_wk)
     firstdayofweek = datetime.datetime.strptime(
-        f"{year}-W{int(week_num )- 1}-1", "%Y-W%W-%w"
+        f"{year}-W{int(week_num )- 1}-4", "%Y-W%W-%w"
     ).date()
-
+    # }-4" <- 4 = Thursday, 1 = Monday, etc.
     # return firstdayofweek.strftime("%-m/%-d%<br>%a")
     # return firstdayofweek.strftime("%b %-d%<br>%a")
 

@@ -19,7 +19,7 @@ from django.views.generic import (
 from django.views.generic.detail import SingleObjectMixin
 from .models import Meal, Ingredient, Meal_Details
 from .forms import BookForm
-from carts.views import update_meal_cart, add_ings_cart, get_cart
+from carts.views import update_meal_cart, add_ings_cart, get_cart, cart_header_lists
 from carts.models import Cart, Cart_Details
 import datetime
 
@@ -47,12 +47,6 @@ class JSONResponseMixin:
 
 
 def home(request):
-    # date_list = []
-
-    # for num in range(-3, 4):
-    #    date_list.append(get_date_label(num))
-
-    # context = {"meals": Meal.objects.all(), "date_list": date_list}
     context = {"meals": Meal.objects.all()}
     return render(request, "meals/home.html", context)
 
@@ -65,19 +59,8 @@ class MealListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context.update(cart_header_lists(self.request))
 
-        # calc date_list: current week +-3 weeks
-        date_list = []
-        for num in range(-3, 4):
-            date_list.append(get_date_label(num))
-
-        # Populate the meal list:
-        meal_list = ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"]
-
-        self.request.session.setdefault("selected_week", 3)
-
-        context["meal_list"] = meal_list
-        context["date_list"] = date_list
         return context
 
 
@@ -351,19 +334,7 @@ class IngListView(ListView):
             cart_item_list.append(cd.ingredient)
 
         context["cart_item_list"] = cart_item_list
-
-        # calc date_list: current week +-3 weeks
-        date_list = []
-        for num in range(-3, 4):
-            date_list.append(get_date_label(num))
-
-        # Populate the meal list:
-        meal_list = ["Mon", "Tues", "Wed", "Thurs", "Fri", "Sat", "Sun"]
-
-        self.request.session.setdefault("selected_week", 3)
-
-        context["meal_list"] = meal_list
-        context["date_list"] = date_list
+        context.update(cart_header_lists(self.request))
 
         return context
 
