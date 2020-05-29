@@ -15,7 +15,7 @@ SECRET_KEY = config["SECRET_KEY"]
 DEBUG = False
 
 
-ALLOWED_HOSTS = ["192.168.0.33", "odroidn2.local"]
+ALLOWED_HOSTS = ["192.168.0.33", "odroidn2.local", "sshoemake.com"]
 
 
 # Database
