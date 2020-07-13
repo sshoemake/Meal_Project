@@ -14,8 +14,16 @@ def deploy(ctx):
     config = Config(overrides={"sudo": {"password": sudo_pass}})
     c = Connection("odroid@odroidn2.local", config=config)
 
-    c.run(
-        "mysqldump -u root -p'"
+    # c.run(
+    #     "mysqldump -u root -p'"
+    #     + sudo_pass
+    #     + "' meal_project > ~/mysql_backups/meal_project_"
+    #     + timestr
+    #     + ".sql"
+    # )
+
+    c.sudo(
+        "docker exec mysql mysqldump -u root -p'"
         + sudo_pass
         + "' meal_project > ~/mysql_backups/meal_project_"
         + timestr
@@ -68,8 +76,16 @@ def backup_db(ctx):
     config = Config(overrides={"sudo": {"password": sudo_pass}})
     c = Connection("odroid@odroidn2.local", config=config)
 
-    c.run(
-        "mysqldump -u root -p'"
+    # c.run(
+    #     "mysqldump -u root -p'"
+    #     + sudo_pass
+    #     + "' meal_project > ~/mysql_backups/meal_project_"
+    #     + timestr
+    #     + ".sql"
+    # )
+
+    c.sudo(
+        "docker exec mysql mysqldump -u root -p'"
         + sudo_pass
         + "' meal_project > ~/mysql_backups/meal_project_"
         + timestr

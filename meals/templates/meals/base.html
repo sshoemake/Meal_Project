@@ -77,12 +77,11 @@
         <div class="content-section">
           <h3>Our Sidebar</h3>
           <p class='text-muted'>You can put any information here you'd like.
-            <div class="list-group">
-              <a href="#" class="list-group-item list-group-item-light">Latest Posts</a>
-              <a href="#" class="list-group-item list-group-item-light">Announcements</a>
-              <a href="{% url 'meal-create' %}" class="list-group-item list-group-item-light">New Meal</a>
-              <a href="{% url 'ingredients-create' %}" class="list-group-item list-group-item-light">New Ingredient</a>
-            </div>
+          <div class="list-group">
+            <a href="{% url 'meal-create' %}" class="list-group-item list-group-item-light">New Meal</a>
+            <a href="{% url 'ingredients-create' %}" class="list-group-item list-group-item-light">New Ingredient</a>
+            <a href="#" class="list-group-item list-group-item-light">New Store</a>
+          </div>
           </p>
         </div>
       </div>

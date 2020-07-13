@@ -122,8 +122,14 @@ $ sudo service mysql restart
     a. date_list (-3, curr week, +3) - DONE
     b. selected_week - session variable that drives cart display and meal list
     c. meal_list - list of meals by day for the selected week
-
-
+5. Create a Store project
+    Item will be able to be linked to stores for aisle reference
+6. Fix issue where default week is selected but cart qty and detail are out of sync
+7. Add Shopping option on cart screen that will hide items as you put them in your real cart
+8. Deploy enhancements:
+    Backup database from docker instance
+    recycle mysql docker instance
+9. create a docker to host the apache/wsgi instance
 
 
 installed on server | requirements.txt:
