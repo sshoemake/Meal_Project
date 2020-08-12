@@ -43,7 +43,7 @@
           <div class="navbar-nav mr-auto">
             <a class="nav-item nav-link" href="{% url 'meals-home' %}">Home</a>
             <a class="nav-item nav-link" href="{% url 'ingredients-home' %}">Ingredients</a>
-            {# <a class="nav-item nav-link" href="{% url 'meals-about' %}">About</a> #}
+            <a class="nav-item nav-link" href="{% url 'store-list' %}">Stores</a>
           </div>
           <!-- Navbar Right Side -->
           <div class="navbar-nav">
@@ -80,7 +80,7 @@
           <div class="list-group">
             <a href="{% url 'meal-create' %}" class="list-group-item list-group-item-light">New Meal</a>
             <a href="{% url 'ingredients-create' %}" class="list-group-item list-group-item-light">New Ingredient</a>
-            <a href="#" class="list-group-item list-group-item-light">New Store</a>
+            <a href="{% url 'store-create' %}"" class=" list-group-item list-group-item-light">New Store</a>
           </div>
           </p>
         </div>
@@ -101,8 +101,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.10/js/select2.full.js"></script>
 
   <!-- <script src="{% static 'aui/js/aui.min.js' %}"></script>
-  <script src="{% static 'aui/js/aui-experimental.min.js' %}"></script>
-  <script src="{% static 'aui/js/aui-soy.min.js' %}"></script> -->
+              <script src="{% static 'aui/js/aui-experimental.min.js' %}"></script>
+              <script src="{% static 'aui/js/aui-soy.min.js' %}"></script> -->
   {% block javascript %}
   {% endblock %}
 </body>

@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     "carts.apps.CartsConfig",
     "meals.apps.MealsConfig",
     "users.apps.UsersConfig",
+    "stores.apps.StoresConfig",
     "crispy_forms",
     "django.contrib.admin",
     "django.contrib.auth",

@@ -1,0 +1,27 @@
+{% extends "meals/base.html" %}
+{% block content %}
+
+<br>
+
+<h1>Store List:</h1>
+
+<table class="table table-hover">
+    <thead>
+        <th>Store</th>
+        <th>Address</th>
+    </thead>
+
+    <tbody>
+        {% for store in stores %}
+        <tr>
+            <td><a class="mr-2" href="{% url 'store-detail' store.id %}">{{ store.name }}</a></td>
+            <td><a class="mr-2" href="{% url 'store-detail' store.id %}">{{ store.address }} {{ store.city }},
+                    {{ store.state }}
+                    {{ store.zip_code }}</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+
+</table>
+
+{% endblock content %}

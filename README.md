@@ -123,6 +123,7 @@ $ sudo service mysql restart
     b. selected_week - session variable that drives cart display and meal list
     c. meal_list - list of meals by day for the selected week
 5. Create a Store project
+    python manage.py startapp stores
     Item will be able to be linked to stores for aisle reference
 6. Fix issue where default week is selected but cart qty and detail are out of sync
 7. Add Shopping option on cart screen that will hide items as you put them in your real cart
