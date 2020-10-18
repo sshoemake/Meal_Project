@@ -1,0 +1,39 @@
+version: '3.7'
+
+services: 
+  db:
+    image: mysql/mysql-server:latest
+    volumes:
+        - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: somewordpress
+      #MYSQL_DATABASE: wordpress
+      #MYSQL_USER: wordpress
+      #MYSQL_PASSWORD: wordpress
+
+  app:
+    depends_on: 
+      - db
+    build: 
+      context: .
+    volumes: 
+      - static_data:/vol/web
+    environment: 
+      - DEBUG=1
+      - SECRET_KEY=samplessecretkey123
+      - ALLOWED_HOSTS=127.0.0.1,localhost
+    
+  proxy:
+    build: 
+      context: ./proxy
+    volumes: 
+      - static_data:/vol/static
+    ports: 
+      - "8080:8080"
+    depends_on: 
+      - app
+
+volumes: 
+  static_data:
+  db_data:
