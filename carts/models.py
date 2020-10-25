@@ -22,6 +22,7 @@ class Cart_Details(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     quantity = models.PositiveSmallIntegerField(default=1)
+    found = models.BooleanField(default=False)
 
     class Meta:
         ordering = ["ingredient__aisle"]
