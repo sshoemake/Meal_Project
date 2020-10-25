@@ -7,6 +7,14 @@ import datetime
 
 
 def CartListView(request):
+    #request.session["hide_found"] = False
+
+    if request.method == "POST":
+        if "hide_found" in request.POST:
+            request.session["hide_found"] = True
+        else:
+            request.session["hide_found"] = False
+
     cart = get_cart(request)
 
     if cart:
@@ -142,6 +150,36 @@ def remove_ing_cart(request, **kwargs):
     return redirect(request.META.get("HTTP_REFERER", "/"))
 
 
+def found_ing_cart(request, **kwargs):
+    #hide_found = False
+
+    # if "hide_found" in request.GET:
+    # print("final_list")
+    # current_final_value = request.POST.get("final_list")
+    # print(current_final_value)
+    #    hide_found = True
+
+    cart = get_cart_or_create(request)
+
+    try:
+        ingredient = Ingredient.objects.filter(id=kwargs.get("pk", "")).first()
+    except Ingredient.DoesNotExist:
+        pass
+    except:
+        pass
+
+    cart_items = Cart_Details.objects.filter(cart=cart)
+    my_ing_ids = cart_items.values_list("ingredient_id", flat=True)
+
+    if ingredient.id in my_ing_ids:
+        update_CD = Cart_Details.objects.get(cart=cart, ingredient=ingredient)
+        update_CD.found = True
+        update_CD.save()
+
+    # return redirect("ingredients-home")
+    return redirect(request.META.get("HTTP_REFERER", "/"))
+
+
 def add_ings_cart(request, **kwargs):
     cart = get_cart_or_create(request)
 
@@ -158,10 +196,12 @@ def add_ings_cart(request, **kwargs):
     for ing_id in ing_ids:
         ingredient = Ingredient.objects.get(id=ing_id)
         if not ingredient.id in my_ing_ids:
-            add_CD = Cart_Details(cart=cart, ingredient=ingredient, quantity="1")
+            add_CD = Cart_Details(
+                cart=cart, ingredient=ingredient, quantity="1")
             add_CD.save()
         else:
-            update_CD = Cart_Details.objects.get(cart=cart, ingredient=ingredient)
+            update_CD = Cart_Details.objects.get(
+                cart=cart, ingredient=ingredient)
             update_CD.quantity = F("quantity") + 1
             update_CD.save()
 
