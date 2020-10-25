@@ -11,6 +11,12 @@
 
 <h1>Shopping Cart:</h1>
 
+<form action="" method="post">
+    {% csrf_token %}
+    <input type="checkbox" name="hide_found" onChange="this.form.submit()"
+        {% if request.session.hide_found %}checked="checked" {% endif %}> Hide found items?<br>
+</form>
+
 {% if cart.meals.count > 0 %}
 <table class="table">
     <thead>
@@ -38,12 +44,15 @@
     </thead>
 
     {% for item in cart_items.all %}
+    {% if not request.session.hide_found or request.session.hide_found and not item.found %}
     <tbody>
         <tr data-toggle="collapse" data-target="#accordion{{ item.ingredient.id }}" class="clickable">
             <td>{{ item.ingredient.name }} {% if item.quantity > 1 %} (Qty: {{ item.quantity }})
                 {% endif %}</td>
             <td>{{ item.ingredient.aisle|floatformat }}</td>
-            <td><a class="float-right" href="{% url 'remove-ing-cart' item.ingredient.id %}">Remove</a></td>
+            <td>{% if request.session.hide_found and not item.found %}<a class="float-right"
+                    href="{% url 'found-ing-cart' item.ingredient.id %}">Hide</a>{% else %}<a class="float-right"
+                    href="{% url 'remove-ing-cart' item.ingredient.id %}">Remove</a>{% endif %}</td>
         </tr>
         <tr class="hiddenRow">
             <td colspan="3" class="hiddenRow">
@@ -53,6 +62,7 @@
             </td>
         </tr>
     </tbody>
+    {% endif %}
     {% endfor %}
 
 </table>
