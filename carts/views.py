@@ -3,6 +3,7 @@ from .models import Cart, Cart_Details
 from django.views.generic import DetailView
 from meals.models import Ingredient, Meal
 from django.db.models import F, Sum
+from django.http import HttpResponse
 import datetime
 
 
@@ -176,8 +177,9 @@ def found_ing_cart(request, **kwargs):
         update_CD.found = True
         update_CD.save()
 
+    return HttpResponse("OK")
     # return redirect("ingredients-home")
-    return redirect(request.META.get("HTTP_REFERER", "/"))
+    # return redirect(request.META.get("HTTP_REFERER", "/"))
 
 
 def add_ings_cart(request, **kwargs):

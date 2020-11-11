@@ -113,6 +113,8 @@ ALTER USER 'root'@'localhost' IDENTIFIED BY 'PASSWORD';
 exit;
 $ sudo service mysql restart
 
+## DEPLOYMENT ##
+from command line type: "fab deploy"
 
 ## TODO
 1. Refactor Meals project (split out ingredients)
