@@ -1,8 +1,8 @@
 # Meal_Project
 
 pre-requisite:
-sudo apt-get install git python3-venv libffi-dev python3-dev libssl-dev python3-setuptools libjpeg8-dev zlib1g-dev libmysqlclient-dev
-pip3 install wheel
+sudo apt-get install git python3-venv libffi-dev python3-dev libssl-dev python3-setuptools libjpeg8-dev zlib1g-dev libmysqlclient-dev build-essential
+pip3 install wheel (failed, worked as step 4.5)
 
 1. Checkout the project:
   git clone https://github.com/sshoemake/Meal_Project.git
