@@ -24,6 +24,7 @@ python manage.py collectstatic
 IF Local:
 6. Run the Project:
   python manage.py runserver
+  python manage.py runserver 0.0.0.0:8000 (server to test initial deployment, uses dev settings)
 
 IF Server:
 # Deploy to linux server:
@@ -71,14 +72,14 @@ Add this before the closing </VirtualHost>:
 sudo a2ensite meal_project
 sudo a2dissite 000-default.conf
 
-sudo chown :www-data meal_project/db.sqlite3
-sudo chmod 664 meal_project/db.sqlite3
+sudo chown :www-data Meal_Project/db.sqlite3
+sudo chmod 664 Meal_Project/db.sqlite3
 
-sudo chown :www-data meal_project/
-sudo chmod 775 meal_project/
+sudo chown :www-data Meal_Project/
+sudo chmod 775 Meal_Project/
 
-sudo chown -R :www-data meal_project/media/
-sudo chmod -R 775 meal_project/media
+sudo chown -R :www-data Meal_Project/media/
+sudo chmod -R 775 Meal_Project/media
 
 sudo touch /etc/config.json
 
@@ -91,9 +92,10 @@ sudo touch /etc/config.json
 
 sudo service apache2 restart
 
-
 #TEST site using sqlite3 database
 python manage.py runserver 0.0.0.0:8000 --settings=meal_project.settings.production
+  pull sqlite3 details from dev.py for this to work
+  
 Had to install mysqlclient on linux
 #Had an access issue to the database
 sudo mysql

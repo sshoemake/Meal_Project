@@ -13,8 +13,8 @@
 <table class="table">
   <thead>
     <th></th>
-    <th>Meal</th>
-    <th></th>
+    <th>Meal ({{ meals.count }})</th>
+    <th><a class="float-right btn btn-outline-primary btn-sm" href="{% url 'meal-create' %}">New Meal</a></th>
   </thead>
 
   <tbody id="myTable">
