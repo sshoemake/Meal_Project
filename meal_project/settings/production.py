@@ -27,7 +27,7 @@ DATABASES = {
         "NAME": "meal_project",
         "USER": "root",
         "PASSWORD": config.get("ROOT_PASS"),
-        "HOST": "172.20.0.2",
+        "HOST": "172.18.0.2",
         "PORT": "3306",
     }
 }
