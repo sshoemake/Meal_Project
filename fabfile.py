@@ -22,6 +22,9 @@ def deploy(ctx):
     #     + ".sql"
     # )
 
+    mysql_folder = "/home/odroid/mysql_backups"
+    c.run(f"mkdir -p {mysql_folder}")
+
     c.sudo(
         "docker exec mysql mysqldump -u root -p'"
         + sudo_pass
@@ -67,7 +70,7 @@ def deploy(ctx):
 
 @task
 def backup_db(ctx):
-    ## must call with fab backup-db
+    # must call with fab backup-db
     ##
     timestr = time.strftime("%Y%m%d-%H%M%S")
     # print("Hello world!")
