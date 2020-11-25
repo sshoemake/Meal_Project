@@ -25,9 +25,9 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "meal_project",
-        "USER": "root",
+        "USER": config.get("DB_USER"),
         "PASSWORD": config.get("ROOT_PASS"),
-        "HOST": "172.18.0.2",
+        "HOST": config.get("DB_HOST_IP"),
         "PORT": "3306",
     }
 }

@@ -10,10 +10,12 @@
 
 <table class="table">
     <thead>
-        <th>Ingredient</th>
+        <th>Ingredient ({{ object_list.count }})</th>
         <th>Aisle</th>
         <th>Auto Add Item</th>
-        <th></th>
+        <th class="text-center"><a class="btn btn-outline-primary btn-xs" href="{% url 'ingredients-create' %}">New
+                Item</a>
+        </th>
     </thead>
 
     <tbody id="myTable">

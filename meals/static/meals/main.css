@@ -91,3 +91,9 @@ a.article-title:hover {
 	display:inline-block; width:TWO-TAB-WIDTH;
 }
 
+.btn-xs {
+  padding: .6rem .55rem;
+  font-size: .875rem;
+  line-height: .5;
+  border-radius: .2rem;
+}

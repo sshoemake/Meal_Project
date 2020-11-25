@@ -212,6 +212,20 @@ def add_ings_cart(request, **kwargs):
     return redirect("ingredients-home")
 
 
+def ing_exists_cart(request, ing):
+    cart = get_cart(request)
+
+    found = False
+    if cart:
+        cart_items = Cart_Details.objects.filter(cart=cart)
+        my_ing_ids = cart_items.values_list("ingredient_id", flat=True)
+
+        if ing.id in my_ing_ids:
+            found = True
+
+    return found
+
+
 def get_cart(request):
     try:
         the_id = request.session["cart_id"]

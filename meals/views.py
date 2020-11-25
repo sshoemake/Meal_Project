@@ -19,7 +19,7 @@ from django.views.generic import (
 from django.views.generic.detail import SingleObjectMixin
 from .models import Meal, Ingredient, Meal_Details
 from .forms import BookForm
-from carts.views import update_meal_cart, add_ings_cart, get_cart, cart_header_lists
+from carts.views import update_meal_cart, add_ings_cart, get_cart, cart_header_lists, ing_exists_cart
 from carts.models import Cart, Cart_Details
 import datetime
 
@@ -201,7 +201,8 @@ class MealIngUpdate(SingleObjectMixin, FormView):
 
         dd_post = request.POST.getlist("dd_ing_list", None)
         for ing_id in dd_post:
-            MD_1 = Meal_Details(ingredient_id=ing_id, meal=self.object, quantity="1")
+            MD_1 = Meal_Details(ingredient_id=ing_id,
+                                meal=self.object, quantity="1")
             MD_1.save()
 
         if form.is_valid():
@@ -284,7 +285,8 @@ def save_book_form(request, form, template_name):
             data["form_is_valid"] = False
     context = {"form": form}
     print(context)
-    data["html_form"] = render_to_string(template_name, context, request=request)
+    data["html_form"] = render_to_string(
+        template_name, context, request=request)
     print(data)
     return JsonResponse(data)
 
@@ -352,6 +354,9 @@ class IngDetailView(DetailView):
             meals.append(meal_detail.meal)
 
         context["meals"] = meals
+
+        ing_in_cart = ing_exists_cart(self.request, self.object)
+        context["ing_in_cart"] = ing_in_cart
 
         return context
 
