@@ -136,3 +136,27 @@ $ sudo service mysql restart
 installed on server | requirements.txt:
 mysqlclient==1.4.6					      |	#mysqlclient==1.4.6
 pkg-resources==0.0.0					      |	#pkg-resources==0.0.0
+
+
+
+# New version
+# containerized version
+#
+
+pre-requisite:
+sudo apt-get install git python3-venv libffi-dev python3-dev libssl-dev python3-setuptools libjpeg8-dev zlib1g-dev libmysqlclient-dev
+pip3 install wheel
+
+1. Checkout the project:
+  git clone https://github.com/sshoemake/Meal_Project.git
+
+2. Cd to project directory: s/b meal_project
+
+run vs deploying:
+
+docker-compose -f docker-compose-deploy.yml up
+http://localhost:8000
+
+TODO: move to a "real" webserver (i.e. apache or uwsgi or nginx)
+TDOO: env variables for deployment to different environments
+TODO: letsencrypt certs

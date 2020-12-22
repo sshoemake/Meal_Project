@@ -68,6 +68,10 @@ def get_date_label(int_wk):
     my_date = datetime.date.today()
     year, week_num, day_of_week = my_date.isocalendar()
     week_num = week_num + int(int_wk)
+    if week_num > 53:
+        week_num = week_num - 52
+        year = year + 1
+
     firstdayofweek = datetime.datetime.strptime(
         f"{year}-W{int(week_num )- 1}-1", "%Y-W%W-%w"
     ).date()
@@ -201,7 +205,8 @@ class MealIngUpdate(SingleObjectMixin, FormView):
 
         dd_post = request.POST.getlist("dd_ing_list", None)
         for ing_id in dd_post:
-            MD_1 = Meal_Details(ingredient_id=ing_id, meal=self.object, quantity="1")
+            MD_1 = Meal_Details(ingredient_id=ing_id,
+                                meal=self.object, quantity="1")
             MD_1.save()
 
         if form.is_valid():
@@ -284,7 +289,8 @@ def save_book_form(request, form, template_name):
             data["form_is_valid"] = False
     context = {"form": form}
     print(context)
-    data["html_form"] = render_to_string(template_name, context, request=request)
+    data["html_form"] = render_to_string(
+        template_name, context, request=request)
     print(data)
     return JsonResponse(data)
 

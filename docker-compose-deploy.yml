@@ -4,36 +4,42 @@ services:
   db:
     image: mysql/mysql-server:latest
     volumes:
+        - ./sql:/docker-entrypoint-initdb.d
         - db_data:/var/lib/mysql
     restart: always
+    #ports:
+    #    - '3306:3306'
+    networks:
+        - db
     environment:
       MYSQL_ROOT_PASSWORD: somewordpress
-      #MYSQL_DATABASE: wordpress
+      MYSQL_DATABASE: meal_project
+      MYSQL_ROOT_HOST: '%'
       #MYSQL_USER: wordpress
       #MYSQL_PASSWORD: wordpress
 
   app:
-    depends_on: 
-      - db
     build: 
       context: .
     volumes: 
       - static_data:/vol/web
+    command: sh -c "python manage.py runserver 0.0.0.0:8000"
     environment: 
       - DEBUG=1
+      - DJANGO_SETTINGS_MODULE=meal_project.settings.dev_mysql
       - SECRET_KEY=samplessecretkey123
-      - ALLOWED_HOSTS=127.0.0.1,localhost
-    
-  proxy:
-    build: 
-      context: ./proxy
-    volumes: 
-      - static_data:/vol/static
+      - ALLOWED_HOSTS=localhost
     ports: 
-      - "8080:8080"
+      - "8000:8000"
     depends_on: 
-      - app
+      - db
+    networks:
+      - db
 
 volumes: 
   static_data:
   db_data:
+
+networks:
+  db:
+    driver: bridge
