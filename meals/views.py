@@ -68,6 +68,10 @@ def get_date_label(int_wk):
     my_date = datetime.date.today()
     year, week_num, day_of_week = my_date.isocalendar()
     week_num = week_num + int(int_wk)
+    if week_num > 53:
+        week_num = week_num - 52
+        year = year + 1
+
     firstdayofweek = datetime.datetime.strptime(
         f"{year}-W{int(week_num )- 1}-1", "%Y-W%W-%w"
     ).date()
