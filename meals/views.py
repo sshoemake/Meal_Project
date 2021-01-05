@@ -72,6 +72,10 @@ def get_date_label(int_wk):
         week_num = week_num - 52
         year = year + 1
 
+    if week_num < 1:
+        week_num = 52 + week_num
+        year = year - 1
+
     firstdayofweek = datetime.datetime.strptime(
         f"{year}-W{int(week_num )- 1}-1", "%Y-W%W-%w"
     ).date()

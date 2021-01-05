@@ -58,6 +58,10 @@ def get_date_label(int_wk):
         week_num = week_num - 52
         year = year + 1
 
+    if week_num < 1:
+        week_num = 52 + week_num
+        year = year - 1
+
     firstdayofweek = datetime.datetime.strptime(
         f"{year}-W{int(week_num )- 1}-4", "%Y-W%W-%w"
     ).date()
@@ -257,6 +261,14 @@ def get_cart_or_create(request):
 def chg_cart_or_create(request):
     selected_week = request.session["selected_week"]
     yearweek = convert_sw_yw(selected_week)
+
+    if week_num > 53:
+        week_num = week_num - 52
+        year = year + 1
+
+    if week_num < 1:
+        week_num = 52 + week_num
+        year = year - 1
 
     try:
         existing_cart = Cart.objects.get(yearweek=yearweek)
