@@ -262,14 +262,6 @@ def chg_cart_or_create(request):
     selected_week = request.session["selected_week"]
     yearweek = convert_sw_yw(selected_week)
 
-    if week_num > 53:
-        week_num = week_num - 52
-        year = year + 1
-
-    if week_num < 1:
-        week_num = 52 + week_num
-        year = year - 1
-
     try:
         existing_cart = Cart.objects.get(yearweek=yearweek)
         the_id = existing_cart.id
@@ -291,5 +283,13 @@ def convert_sw_yw(selected_week):
     my_date = datetime.date.today()
     year, week_num, day_of_week = my_date.isocalendar()
     week_num = week_num + int(rel_week[selected_week])
+
+    if week_num > 53:
+        week_num = week_num - 52
+        year = year + 1
+
+    if week_num < 1:
+        week_num = 52 + week_num
+        year = year - 1
 
     return int(str(year) + str(week_num))
