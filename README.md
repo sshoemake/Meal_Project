@@ -154,9 +154,12 @@ pip3 install wheel
 
 run vs deploying:
 
-docker-compose -f docker-compose-deploy.yml up
+docker-compose -f docker-compose-deploy.yml up --build
 http://localhost:8000
 
 TODO: move to a "real" webserver (i.e. apache or uwsgi or nginx)
+  -comment out command line in docker-compose-deploy.yml
+  -comment out static collect in entrypoint.sh
+  -change socket to http in entryoint.sh
 TDOO: env variables for deployment to different environments
 TODO: letsencrypt certs

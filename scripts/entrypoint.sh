@@ -2,7 +2,7 @@
 
 set -e
 
-python manage.py collectstatic --noinput
+#python manage.py collectstatic --noinput
 
-uwsgi --socket :8000 --master --enable-threads --module meal_project.wsgi
+uwsgi --http :8000 --master --enable-threads --module meal_project.wsgi
 
