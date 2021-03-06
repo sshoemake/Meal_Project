@@ -149,6 +149,7 @@ pip3 install wheel
 
 1. Checkout the project:
   git clone https://github.com/sshoemake/Meal_Project.git
+   Branch?? -b containerize_app
 
 2. Cd to project directory: s/b meal_project
 
@@ -157,9 +158,6 @@ run vs deploying:
 docker-compose -f docker-compose-deploy.yml up --build
 http://localhost:8000
 
-TODO: move to a "real" webserver (i.e. apache or uwsgi or nginx)
-  -comment out command line in docker-compose-deploy.yml
-  -comment out static collect in entrypoint.sh
-  -change socket to http in entryoint.sh
+TODO: move to a "real" webserver (i.e. apache or uwsgi or nginx) - DONE (uwsgi)
 TDOO: env variables for deployment to different environments
 TODO: letsencrypt certs
