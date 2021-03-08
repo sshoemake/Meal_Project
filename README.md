@@ -157,7 +157,11 @@ run vs deploying:
 
 docker-compose -f docker-compose-deploy.yml up --build
 http://localhost:8000
+http://localhost:1337
 
-TODO: move to a "real" webserver (i.e. apache or uwsgi or nginx) - DONE (uwsgi)
+docker-compose down -v
+docker-compose -f docker-compose-deploy.yml logs -f
+
+TODO: move to a "real" webserver (i.e. apache or uwsgi or nginx) - DONE (Gunicorn)
 TDOO: env variables for deployment to different environments
 TODO: letsencrypt certs

@@ -9,8 +9,8 @@ services:
     restart: always
     #ports:
     #    - '3306:3306'
-    networks:
-        - db
+    #networks:
+    #    - db
     environment:
       MYSQL_ROOT_PASSWORD: somewordpress
       MYSQL_DATABASE: meal_project
@@ -20,26 +20,33 @@ services:
 
   app:
     build: 
-      context: .
+      context: ./app
     volumes: 
       - static_data:/vol/web
-    #command: sh -c "python manage.py runserver 0.0.0.0:8000"
+    command: gunicorn meal_project.wsgi:application --bind 0.0.0.0:8000
     environment: 
       - DEBUG=1
       - DJANGO_SETTINGS_MODULE=meal_project.settings.dev_mysql
       - SECRET_KEY=samplessecretkey123
       - ALLOWED_HOSTS=localhost
-    ports: 
-      - "8000:8000"
+    expose:
+      - '8000'
     depends_on: 
       - db
-    networks:
-      - db
+    #networks:
+    #  - db
+
+  nginx:
+    build: ./nginx
+    ports:
+      - 1337:80
+    depends_on:
+      - app
 
 volumes: 
   static_data:
   db_data:
 
-networks:
-  db:
-    driver: bridge
+#networks:
+#  db:
+#    driver: bridge
