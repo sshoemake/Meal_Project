@@ -3,6 +3,7 @@ from .models import Cart, Cart_Details
 from django.views.generic import DetailView
 from meals.models import Ingredient, Meal
 from django.db.models import F, Sum
+from django.http import HttpResponse
 import datetime
 
 
@@ -56,6 +57,10 @@ def get_date_label(int_wk):
     if week_num > 53:
         week_num = week_num - 52
         year = year + 1
+
+    if week_num < 1:
+        week_num = 52 + week_num
+        year = year - 1
 
     firstdayofweek = datetime.datetime.strptime(
         f"{year}-W{int(week_num )- 1}-4", "%Y-W%W-%w"
@@ -180,8 +185,9 @@ def found_ing_cart(request, **kwargs):
         update_CD.found = True
         update_CD.save()
 
+    return HttpResponse("OK")
     # return redirect("ingredients-home")
-    return redirect(request.META.get("HTTP_REFERER", "/"))
+    # return redirect(request.META.get("HTTP_REFERER", "/"))
 
 
 def add_ings_cart(request, **kwargs):
@@ -212,6 +218,20 @@ def add_ings_cart(request, **kwargs):
     request.session["items_total"] = cart.items_total
 
     return redirect("ingredients-home")
+
+
+def ing_exists_cart(request, ing):
+    cart = get_cart(request)
+
+    found = False
+    if cart:
+        cart_items = Cart_Details.objects.filter(cart=cart)
+        my_ing_ids = cart_items.values_list("ingredient_id", flat=True)
+
+        if ing.id in my_ing_ids:
+            found = True
+
+    return found
 
 
 def get_cart(request):
@@ -263,5 +283,13 @@ def convert_sw_yw(selected_week):
     my_date = datetime.date.today()
     year, week_num, day_of_week = my_date.isocalendar()
     week_num = week_num + int(rel_week[selected_week])
+
+    if week_num > 53:
+        week_num = week_num - 52
+        year = year + 1
+
+    if week_num < 1:
+        week_num = 52 + week_num
+        year = year - 1
 
     return int(str(year) + str(week_num))
