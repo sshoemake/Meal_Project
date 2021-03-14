@@ -13,8 +13,8 @@
 
 <form action="" method="post">
     {% csrf_token %}
-    <input type="checkbox" name="hide_found" onChange="this.form.submit()" {% if request.session.hide_found
-        %}checked="checked" {% endif %}> Hide found items?<br>
+    <input type="checkbox" name="hide_found" onChange="this.form.submit()"
+        {% if request.session.hide_found %}checked="checked" {% endif %}> Hide found items?<br>
 
 
     {% if cart.meals.count > 0 %}

@@ -19,7 +19,7 @@ from django.views.generic import (
 from django.views.generic.detail import SingleObjectMixin
 from .models import Meal, Ingredient, Meal_Details
 from .forms import BookForm
-from carts.views import update_meal_cart, add_ings_cart, get_cart, cart_header_lists
+from carts.views import update_meal_cart, add_ings_cart, get_cart, cart_header_lists, ing_exists_cart
 from carts.models import Cart, Cart_Details
 import datetime
 
@@ -71,6 +71,10 @@ def get_date_label(int_wk):
     if week_num > 53:
         week_num = week_num - 52
         year = year + 1
+
+    if week_num < 1:
+        week_num = 52 + week_num
+        year = year - 1
 
     firstdayofweek = datetime.datetime.strptime(
         f"{year}-W{int(week_num )- 1}-1", "%Y-W%W-%w"
@@ -358,6 +362,9 @@ class IngDetailView(DetailView):
             meals.append(meal_detail.meal)
 
         context["meals"] = meals
+
+        ing_in_cart = ing_exists_cart(self.request, self.object)
+        context["ing_in_cart"] = ing_in_cart
 
         return context
 
