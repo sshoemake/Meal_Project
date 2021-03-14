@@ -1,0 +1,44 @@
+version: '3.7'
+
+services: 
+  app:
+    build: 
+      context: ./app
+    volumes: 
+      - static_volume:/app/static
+      - media_volume:/app/media
+    command: gunicorn meal_project.wsgi:application --bind 0.0.0.0:8000 --timeout 90
+    env_file:
+      - ./.env.prod
+    expose:
+      - '8000'
+    depends_on: 
+      - db
+
+  db:
+    image: mysql/mysql-server:latest
+    volumes:
+        - ./sql:/docker-entrypoint-initdb.d
+        - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: somewordpress
+      MYSQL_DATABASE: meal_project
+      MYSQL_ROOT_HOST: '%'
+      #MYSQL_USER: wordpress
+      #MYSQL_PASSWORD: wordpress
+
+  nginx:
+    build: ./nginx
+    volumes: 
+      - static_volume:/app/static
+      - media_volume:/app/media
+    ports:
+      - 1337:80
+    depends_on:
+      - app
+
+volumes: 
+  static_volume:
+  media_volume:
+  db_data:

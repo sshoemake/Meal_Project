@@ -52,6 +52,8 @@ RUN pip install --no-cache /wheels/*
 #RUN apk del .tmp
 ENV APP_HOME=/app
 RUN mkdir $APP_HOME
+RUN mkdir $APP_HOME/static
+RUN mkdir $APP_HOME/media
 WORKDIR $APP_HOME
 
 # copy project

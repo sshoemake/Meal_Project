@@ -1,4 +1,8 @@
-# Meal_Project
+
+sudo touch /etc/config.json - old env properties
+
+# New version
+# containerized version
 
 pre-requisite:
 sudo apt-get install git python3-venv libffi-dev python3-dev libssl-dev python3-setuptools libjpeg8-dev zlib1g-dev libmysqlclient-dev
@@ -6,113 +10,28 @@ pip3 install wheel
 
 1. Checkout the project:
   git clone https://github.com/sshoemake/Meal_Project.git
+   Branch?? -b containerize_app
 
 2. Cd to project directory: s/b meal_project
 
-3. Create a Virtual Environment:
-  python3 -m venv venv
+3.
+  Build/Run Dev:
+  docker-compose up --build
+    -d for detached
+    http://localhost:8000
 
-4. Activate the Virtual Env.
-  source ./venv/bin/activate
-
-5. Install Packages
-  pip3 install -r requirements.txt
-
-
-python manage.py collectstatic
-
-IF Local:
-6. Run the Project:
-  python manage.py runserver
-
-IF Server:
-# Deploy to linux server:
-# run under apache & mysql
-
-sudo apt-get update
-sudo apt-get install mysql-server
-sudo systemctl status mysql
-sudo mysql_secure_installation
-#load data
-  sudo mysql
-  create database meal_project;
-  exit;
-  sudo mysql meal_project < meal_project_20200501-132836.sql
+  Build/Run Prod:
+  docker-compose -f docker-compose.prod.yml up --build
+    -d for detached
+    http://localhost:1337
 
 
-sudo apt-get install apache2
-sudo apt-get install libapache2-mod-wsgi-py3
+docker-compose down -v
+docker-compose -f docker-compose.prod.yml logs -f
 
-cd /etc/apache2/sites-available
-sudo cp 000-default.conf meal_project.conf
-sudo vi meal_project.conf
-Add this before the closing </VirtualHost>:
-
-	Alias /static /home/odroid/meal_project/static
-	<Directory /home/odroid/meal_project/static>
-		Require all granted
-	</Directory>
-
-        Alias /media /home/odroid/meal_project/media
-        <Directory /home/odroid/meal_project/media>
-                Require all granted
-        </Directory>
-
-	<Directory /home/odroid/meal_project/meal_project>
-		<Files production_wsgi.py>
-			Require all granted
-		</Files>
-	</Directory>
-
-	WSGIScriptAlias / /home/odroid/meal_project/meal_project/production_wsgi.py
-	WSGIDaemonProcess meal_app python-path=/home/odroid/meal_project python-home=/home/odroid/meal_project/venv
-	WSGIProcessGroup meal_app
-
-sudo a2ensite meal_project
-sudo a2dissite 000-default.conf
-
-sudo chown :www-data meal_project/db.sqlite3
-sudo chmod 664 meal_project/db.sqlite3
-
-sudo chown :www-data meal_project/
-sudo chmod 775 meal_project/
-
-sudo chown -R :www-data meal_project/media/
-sudo chmod -R 775 meal_project/media
-
-sudo touch /etc/config.json
-
-  {
-    "SECRET_KEY": "",
-    "EMAIL_USER": "",
-    "EMAIL_PASS": "",
-    "ROOT_PASS": ""
-  }
-
-sudo service apache2 restart
-
-
-#TEST site using sqlite3 database
-python manage.py runserver 0.0.0.0:8000 --settings=meal_project.settings.production
-Had to install mysqlclient on linux
-#Had an access issue to the database
-sudo mysql
-grant all privileges on meal_project.* to root@localhost;
-exit;
-
-sudo mysql
-mysql> USE mysql;
-mysql> UPDATE user SET plugin='mysql_native_password' WHERE User='root';
-mysql> FLUSH PRIVILEGES;
-mysql> exit;
-
-$ sudo service mysql restart
-
-mysql -u root
-ALTER USER 'root'@'localhost' IDENTIFIED BY 'PASSWORD';
-exit;
-$ sudo service mysql restart
-
+TODO: move to a "real" webserver (i.e. apache or uwsgi or nginx) - DONE (Gunicorn)
+TDOO: env variables for deployment to different environments - DONE
+TODO: letsencrypt certs
 
 ## TODO
 1. Refactor Meals project (split out ingredients)
@@ -126,42 +45,8 @@ $ sudo service mysql restart
     python manage.py startapp stores
     Item will be able to be linked to stores for aisle reference
 6. Fix issue where default week is selected but cart qty and detail are out of sync
-7. Add Shopping option on cart screen that will hide items as you put them in your real cart
+7. Add Shopping option on cart screen that will hide items as you put them in your real cart - Done
 8. Deploy enhancements:
     Backup database from docker instance
     recycle mysql docker instance
-9. create a docker to host the apache/wsgi instance
-
-
-installed on server | requirements.txt:
-mysqlclient==1.4.6					      |	#mysqlclient==1.4.6
-pkg-resources==0.0.0					      |	#pkg-resources==0.0.0
-
-
-
-# New version
-# containerized version
-#
-
-pre-requisite:
-sudo apt-get install git python3-venv libffi-dev python3-dev libssl-dev python3-setuptools libjpeg8-dev zlib1g-dev libmysqlclient-dev
-pip3 install wheel
-
-1. Checkout the project:
-  git clone https://github.com/sshoemake/Meal_Project.git
-   Branch?? -b containerize_app
-
-2. Cd to project directory: s/b meal_project
-
-run vs deploying:
-
-docker-compose -f docker-compose-deploy.yml up --build
-http://localhost:8000
-http://localhost:1337
-
-docker-compose down -v
-docker-compose -f docker-compose-deploy.yml logs -f
-
-TODO: move to a "real" webserver (i.e. apache or uwsgi or nginx) - DONE (Gunicorn)
-TDOO: env variables for deployment to different environments
-TODO: letsencrypt certs
+9. create a docker to host the apache/wsgi instance (ngnx/gunicorn)
