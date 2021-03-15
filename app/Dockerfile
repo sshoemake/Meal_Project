@@ -81,4 +81,4 @@ RUN chown -R user:user /app
 
 USER user
 
-CMD ["/app/entrypoint.sh"]
+ENTRYPOINT ["/app/entrypoint.sh"]
