@@ -30,6 +30,10 @@ def deploy(ctx):
         + ".sql"
     )
 
+    ## from mysql docker site:
+    ##$ docker exec some-mysql sh -c 'exec mysqldump --all-databases -uroot -p"$MYSQL_ROOT_PASSWORD"' > /some/path/on/your/host/all-databases.sql
+
+
     site_folder = "/home/odroid/meal_project"
     c.run(f"mkdir -p {site_folder}")
 
