@@ -8,4 +8,5 @@ venv
 *.pyc
 __pycache__/
 */__pycache__/
-*/*/static/*
+*/static/*
+*/media/*
