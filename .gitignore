@@ -11,3 +11,4 @@ __pycache__/
 */static/*
 */media/*
 !*/media/default.jpg
+db.sqlite3

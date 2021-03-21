@@ -29,6 +29,14 @@ pip3 install wheel
 docker-compose down -v
 docker-compose -f docker-compose.prod.yml logs -f
 
+
+## manually load database from sql dump
+Find running container for mysql:
+>docker container ls
+
+>docker exec -i [container_id] sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" meal_project' < ./meal_project_[date].sql
+
+
 TODO: move to a "real" webserver (i.e. apache or uwsgi or nginx) - DONE (Gunicorn)
 TDOO: env variables for deployment to different environments - DONE
 TODO: letsencrypt certs
@@ -50,3 +58,5 @@ TODO: letsencrypt certs
     Backup database from docker instance
     recycle mysql docker instance
 9. create a docker to host the apache/wsgi instance (ngnx/gunicorn)
+10. add a "return to default" button for meal image
+11. Fix issue with uploading image error
