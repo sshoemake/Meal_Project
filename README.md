@@ -1,6 +1,4 @@
 
-sudo touch /etc/config.json - old env properties
-
 # New version
 # containerized version
 
@@ -10,20 +8,18 @@ pip3 install wheel
 
 1. Checkout the project:
   git clone https://github.com/sshoemake/Meal_Project.git
-   Branch?? -b containerize_app
 
-2. Cd to project directory: s/b meal_project
+2. Cd to project directory: s/b Meal_Project
 
-3.
-  Build/Run Dev:
+3a. Build/Run Dev:
   docker-compose up --build
     -d for detached
     http://localhost:8000
 
-  Build/Run Prod:
+3b. Build/Run Prod:
   docker-compose -f docker-compose.prod.yml up --build
     -d for detached
-    http://localhost:1337
+    http://localhost
 
 
 docker-compose down -v
@@ -37,9 +33,8 @@ Find running container for mysql:
 >docker exec -i [container_id] sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" meal_project' < ./meal_project_[date].sql
 
 
-TODO: move to a "real" webserver (i.e. apache or uwsgi or nginx) - DONE (Gunicorn)
-TDOO: env variables for deployment to different environments - DONE
-TODO: letsencrypt certs
+TODO: Move certbot certs to a volume
+TODO: Database env properties
 
 ## TODO
 1. Refactor Meals project (split out ingredients)
@@ -57,6 +52,5 @@ TODO: letsencrypt certs
 8. Deploy enhancements:
     Backup database from docker instance
     recycle mysql docker instance
-9. create a docker to host the apache/wsgi instance (ngnx/gunicorn)
-10. add a "return to default" button for meal image
-11. Fix issue with uploading image error
+9. add a "return to default" button for meal image
+10. Fix issue with uploading image error
