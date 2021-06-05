@@ -1,11 +1,26 @@
 from django.db import models
 from django.db.models import Sum
 from meals.models import Ingredient, Meal
+import datetime
 
 
 class Cart(models.Model):
     meals = models.ManyToManyField(Meal, blank=True)
     yearweek = models.IntegerField(unique=True)
+
+    def __str__(self):
+        year = str(self.yearweek)[:4]
+        week = str(self.yearweek)[4:]
+
+        firstdayofweek = datetime.datetime.strptime(
+            f"{year}-W{int(week)- 1}-4", "%Y-W%W-%w"
+        ).date()
+        # }-4" <- 4 = Thursday, 1 = Monday, etc.
+
+        my_date = datetime.date.today()
+        weeks_back = (my_date - firstdayofweek).days / 7
+
+        return "Cart ID: " + str(self.yearweek) + ", Year: " + year + ", Week: " + week + ", Date: " + firstdayofweek.strftime("%b %-d") + ", weeks back: " + str(int(weeks_back))
 
     @property
     def items_total(self):

@@ -35,6 +35,12 @@
 
 </form>
 
+{% if carts %}
+<article class="media content-section">
+  {% include "meals/includes/partial_cart_list.html" %}
+</article>
+{% endif %}
+
 {% endblock content %}
 {% block javascript %}
 <script type="text/javascript">

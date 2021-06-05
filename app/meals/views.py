@@ -239,6 +239,12 @@ class MealDisplay(JSONResponseMixin, DetailView):
         context["ingredients"] = Ingredient.objects.all().order_by("name")
         my_MD = Meal_Details.objects.filter(meal=self.object)
         context["curr_ing_ids"] = my_MD.values_list("ingredient_id", flat=True)
+
+        # Find all the carts this meal exists in
+        carts = Cart.objects.filter(
+            meals__in=[self.object]).order_by('-yearweek')
+        context["carts"] = carts
+
         return context
 
 
@@ -355,11 +361,9 @@ class IngDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        meal_details = Meal_Details.objects.filter(ingredient=self.object)
-
-        meals = []
-        for meal_detail in meal_details.all():
-            meals.append(meal_detail.meal)
+        #meal_details = Meal_Details.objects.filter(ingredient=self.object)
+        meals = Meal.objects.filter(
+            meal_details__in=Meal_Details.objects.filter(ingredient=self.object).all())
 
         context["meals"] = meals
 

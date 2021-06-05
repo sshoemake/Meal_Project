@@ -10,27 +10,7 @@
   class="textinput textInput form-control">
 </br>
 
-<table class="table">
-  <thead>
-    <th></th>
-    <th>Meal ({{ meals.count }})</th>
-    <th><a class="float-right btn btn-outline-primary btn-xs" href="{% url 'meal-create' %}">New Meal</a></th>
-  </thead>
-
-  <tbody id="myTable">
-
-    {% for meal in meals %}
-
-    <tr>
-      <td><img class="rounded-circle article-img" src="{{ meal.image.url }}"></td>
-      <td><a class="mr-2" href="{% url 'meal-detail' meal.id %}">{{ meal.name }}</a></td>
-      <td><a class="float-right" href="{% url 'meal-addtocart' meal.id %}">Add to Cart</a></td>
-    </tr>
-
-    {% endfor %}
-
-  </tbody>
-</table>
+{% include "meals/includes/partial_meal_list.html" %}
 
 <!-- THE MODAL WE WILL BE USING -->
 <div class="modal fade" id="modal-book">

@@ -3,7 +3,7 @@
 # containerized version
 
 pre-requisite:
-sudo apt-get install git python3-venv libffi-dev python3-dev libssl-dev python3-setuptools libjpeg8-dev zlib1g-dev libmysqlclient-dev
+sudo apt-get install git python3-venv libffi-dev python3-dev libssl-dev python3-setuptools libjpeg8-dev zlib1g-dev libmysqlclient-dev python3-pip docker-compose
 pip3 install wheel
 
 1. Checkout the project:
@@ -35,6 +35,8 @@ Find running container for mysql:
 
 TODO: Move certbot certs to a volume
 TODO: Database env properties
+TODO: Meal history (on Meal Detail screen)
+TODO: switch db from MySQL to PostgreSQL
 
 ## TODO
 1. Refactor Meals project (split out ingredients)
@@ -48,9 +50,9 @@ TODO: Database env properties
     python manage.py startapp stores
     Item will be able to be linked to stores for aisle reference
 6. Fix issue where default week is selected but cart qty and detail are out of sync
-7. Add Shopping option on cart screen that will hide items as you put them in your real cart - Done
-8. Deploy enhancements:
+7. Deploy enhancements:
     Backup database from docker instance
     recycle mysql docker instance
-9. add a "return to default" button for meal image
-10. Fix issue with uploading image error
+8. add a "return to default" button for meal image
+9. Fix issue with uploading image error
+10. Add API interface to support future Siri integration

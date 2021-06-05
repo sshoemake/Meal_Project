@@ -14,33 +14,13 @@
       </div>
     </div>
     <h2 class="article-title">{{ object.name }}</h2>
-    <p class="article-content">{{ object.aisle|floatformat }}</p>
+    <p class="article-content">Aisle: {{ object.aisle|floatformat }}</p>
   </div>
 </article>
 
 {% if meals %}
 <article class="media content-section">
-  <table class="table">
-    <thead>
-      <th></th>
-      <th>Meal</th>
-      <th></th>
-    </thead>
-
-    <tbody id="myTable">
-
-      {% for meal in meals %}
-
-      <tr>
-        <td><img class="rounded-circle article-img" src="{{ meal.image.url }}"></td>
-        <td><a class="mr-2" href="{% url 'meal-detail' meal.id %}">{{ meal.name }}</a></td>
-        <td><a class="float-right" href="{% url 'meal-addtocart' meal.id %}">Add to Cart</a></td>
-      </tr>
-
-      {% endfor %}
-
-    </tbody>
-  </table>
+  {% include "meals/includes/partial_meal_list.html" %}
 </article>
 {% endif %}
 

@@ -1,0 +1,21 @@
+<table class="table">
+    <thead>
+        <th></th>
+        <th>Cart ({{ carts.count }})</th>
+        <th></th>
+    </thead>
+
+    <tbody id="myTable">
+
+        {% for cart in carts %}
+
+        <tr>
+            <td></td>
+            <td><a class="mr-2" href="{% url 'meal-detail' meal.id %}">{{ cart }}</a></td>
+            <td></td>
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+</table>
