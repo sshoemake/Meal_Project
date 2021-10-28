@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import Sum
-from meals.models import Ingredient, Meal
+from meals.models import Meal
+from ingredients.models import Ingredient
 import datetime
 
 

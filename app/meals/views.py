@@ -245,10 +245,14 @@ class MealDisplay(JSONResponseMixin, DetailView):
             meals__in=[self.object])
         # .order_by('-yearweek')
 
-        sorted_carts = sorted(
-            carts, key=lambda x: (-int(str(x.yearweek)[:4]), -int(str(x.yearweek)[5:6])))
+        # if carts:
+        #    sorted_carts = sorted(
+        #        carts, key=lambda x: (-int(str(x.yearweek)
+        #                                   [:4]), -int(str(x.yearweek)[5:6])))
+        # else:
+        #    sorted_carts = carts
 
-        context["carts"] = sorted_carts
+        context["carts"] = carts
 
         return context
 
@@ -334,83 +338,3 @@ def book_update(request, **kwargs):
     # form = {"instance": meal}
     # print(context)
     return save_book_form(request, form, "meals/includes/partial_meal_update.html")
-
-
-class IngListView(ListView):
-    model = Ingredient
-    ordering = ["name"]
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        cart = get_cart(self.request)
-
-        if cart:
-            cart_details = Cart_Details.objects.filter(cart=cart)
-        else:
-            cart_details = Cart_Details.objects.none()
-
-        cart_item_list = []
-        for cd in cart_details.all():
-            cart_item_list.append(cd.ingredient)
-
-        context["cart_item_list"] = cart_item_list
-        context.update(cart_header_lists(self.request))
-
-        return context
-
-
-class IngDetailView(DetailView):
-    model = Ingredient
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-
-        # meal_details = Meal_Details.objects.filter(ingredient=self.object)
-        meals = Meal.objects.filter(
-            meal_details__in=Meal_Details.objects.filter(ingredient=self.object).all())
-
-        context["meals"] = meals
-
-        ing_in_cart = ing_exists_cart(self.request, self.object)
-        context["ing_in_cart"] = ing_in_cart
-
-        return context
-
-
-class IngCreateView(LoginRequiredMixin, CreateView):
-    model = Ingredient
-    fields = ["name", "aisle", "auto_add"]
-    # success_url = '/'
-
-    def form_valid(self, form):
-        # form.instance.author = self.request.user
-        return super().form_valid(form)
-
-
-class IngUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Ingredient
-    fields = ["name", "aisle", "auto_add"]
-
-    def form_valid(self, form):
-        # form.instance.author = self.request.user
-        return super().form_valid(form)
-
-    def test_func(self):
-        # meal = self.get_object()
-        # if self.request.user == meal.author:
-        #    return True
-        # return False
-        return True
-
-
-class IngDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = Ingredient
-    success_url = reverse_lazy("ingredients-home")
-
-    def test_func(self):
-        # meal = self.get_object()
-        # if self.request.user == meal.author:
-        #    return True
-        # return False
-        return True

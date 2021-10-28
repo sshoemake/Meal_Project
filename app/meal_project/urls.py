@@ -35,10 +35,12 @@ urlpatterns = [
         name="logout",
     ),
     path("", include("meals.urls")),
+    path("", include("ingredients.urls")),
     path("", include("carts.urls")),
     path("", include("stores.urls")),
 ]
 
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)

@@ -32,6 +32,7 @@ ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 INSTALLED_APPS = [
     "carts.apps.CartsConfig",
     "meals.apps.MealsConfig",
+    "ingredients.apps.IngredientsConfig",
     "users.apps.UsersConfig",
     "stores.apps.StoresConfig",
     "crispy_forms",

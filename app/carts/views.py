@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from .models import Cart, Cart_Details
 from django.views.generic import DetailView
-from meals.models import Ingredient, Meal
+from meals.models import Meal
+from ingredients.models import Ingredient
 from django.db.models import F, Sum
 from django.http import HttpResponse
 import datetime

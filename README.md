@@ -22,6 +22,7 @@ pip3 install wheel
     http://localhost
 
 
+# -v = volume, deletes data!!
 docker-compose down -v
 docker-compose -f docker-compose.prod.yml logs -f
 
@@ -30,7 +31,16 @@ docker-compose -f docker-compose.prod.yml logs -f
 Find running container for mysql:
 >docker container ls
 
+# get the container id (use in fabric later)
+sudo docker ps -aqf "name=^meal_project_db_1$"
+
+## load database
 >docker exec -i [container_id] sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" meal_project' < ./meal_project_[date].sql
+
+## Backup Database
+>sudo docker exec -i [container_id] sh -c 'exec mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" meal_project' > ~/mysql_backups/meal_project_[date].sql
+--OR--
+>sudo docker exec -i `sudo docker ps -aqf "name=^meal_project-db-1$"` sh -c 'exec mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" meal_project' > ~/mysql_backups/meal_project_`date +"%Y_%m_%d_%I_%M_%p"`.sql
 
 
 TODO: Move certbot certs to a volume
@@ -40,6 +50,9 @@ TODO: switch db from MySQL to PostgreSQL
 
 ## TODO
 1. Refactor Meals project (split out ingredients)
+  - migration, update sql export:
+    meals_ingredient -> ingredients_ingredient
+    :%s/meals_ingredient/ingredients_ingredient/g
 2. Add ingredient categories (i.e. produce/dairy/bread etc.)
 3. For cart items, add expandable bootstrap rows to show what meal an item came from
 4. Modify cart to be Week-based and not session-based, login still required
