@@ -27,7 +27,7 @@ def deploy(ctx):
     # from mysql docker site:
     # $ docker exec some-mysql sh -c 'exec mysqldump --all-databases -uroot -p"$MYSQL_ROOT_PASSWORD"' > /some/path/on/your/host/all-databases.sql
 
-    site_folder = "/home/odroid/meal_project"
+    site_folder = "/home/odroid/Meal_Project"
     c.run(f"mkdir -p {site_folder}")
 
     # current_commit = c.local("HOME=~ git log -n 1 --format=%H")
@@ -39,10 +39,15 @@ def deploy(ctx):
             c.run("git fetch")
         c.run("git reset --hard origin/master")
 
+        c.sudo("docker-compose down")
+        c.run("mv docker-compose.yml docker-compose.dev.yml")
+        c.run("mv docker-compose.prod.yml docker-compose.yml")
+        c.sudo("docker-compose up --build -d")
+
     ## manually run ##
-    # docker-compose down
-    # rename docker-compose-prod.yml to docker-compose.yml
-    # docker-compose up --build -d
+    # sudo docker-compose down
+    # rename docker-compose.prod.yml to docker-compose.yml
+    # sudo docker-compose up --build -d
 
 
 @task

@@ -14,3 +14,11 @@
     </form>
 </div>
 {% endblock content %}
+
+{% block javascript %}
+<script>
+    $(function () {
+        $("#id_name").focus();
+    });
+</script>
+{% endblock javascript %}
