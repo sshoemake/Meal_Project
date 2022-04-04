@@ -23,7 +23,7 @@
 
         <tr>
             <td><a class="mr-2" href="{% url 'ingredients-detail' ingredient.id %}">{{ ingredient.name }}</a></td>
-            <td>{{ ingredient.aisle|floatformat }}</td>
+            <td>{{ ingredient.ing_store_aisle|floatformat }}</td>
             <td>{{ ingredient.auto_add }}</td>
             <td class="text-center"><a href="{% url 'update-ing-cart' ingredient.id %}">
                     {% if ingredient in cart_item_list %}Add++{% else %}Add to Cart{% endif %}

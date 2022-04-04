@@ -40,5 +40,5 @@ class Cart_Details(models.Model):
     quantity = models.PositiveSmallIntegerField(default=1)
     found = models.BooleanField(default=False)
 
-    class Meta:
-        ordering = ["ingredient__aisle"]
+    # class Meta:
+    #     ordering = ["ingredient__aisle"]

@@ -109,9 +109,6 @@ class MealAddCartView(View):
         update_meal_cart(request, **kwargs)
         add_ings_cart(request, **kwargs)
 
-        # for ingredient in request.POST.getlist("ingtoadd"):
-        #    print(ingredient)
-
         messages.success(request, "Your item(s) have been added to the Cart!")
         return redirect("meals-home")
 
@@ -148,10 +145,6 @@ class MealCartUpdate(SingleObjectMixin, FormView):
     template_name = "meals/addtocart.html"
     form_class = AuthorInterestForm
 
-    # .objects.filter(id=kwargs.get("pk", "")).first()
-    # context = {"meal": model}
-    # return render(request, "meals/meal_detail.html", context)
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
@@ -187,9 +180,6 @@ class MealIngUpdate(SingleObjectMixin, FormView):
     template_name = "meals/meal_detail.html"
     form_class = AuthorInterestForm
     model = Meal
-    # .objects.filter(id=kwargs.get("pk", "")).first()
-    # context = {"meal": model}
-    # return render(request, "meals/meal_detail.html", context)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

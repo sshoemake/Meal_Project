@@ -6,6 +6,8 @@ from django.views.generic import ListView, DetailView, UpdateView, DeleteView
 from .models import Store
 
 # Create your views here.
+
+
 class StoreListView(ListView):
     model = Store
     # ordering = ["name"]
@@ -47,14 +49,19 @@ class StoreDetailView(DetailView):
 
 class StoreUpdateView(LoginRequiredMixin, UpdateView):
     model = Store
-    fields = ["name", "address", "city", "state", "zip_code"]
+    fields = ["name", "address", "city", "state", "zip_code", "default"]
 
     def form_valid(self, form):
         # form.instance.author = self.request.user
+
+        # check if default checkbox is checked
+        # if so clear all store defaults before updating
+        if form.instance.default:
+            Store.objects.update(default=False)
+
         return super().form_valid(form)
 
 
 class StoreDeleteView(LoginRequiredMixin, DeleteView):
     model = Store
     success_url = reverse_lazy("store-list")
-

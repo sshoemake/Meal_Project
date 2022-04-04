@@ -39,15 +39,12 @@ def deploy(ctx):
             c.run("git fetch")
         c.run("git reset --hard origin/master")
 
-        c.sudo("docker-compose down")
         c.run("mv docker-compose.yml docker-compose.dev.yml")
         c.run("mv docker-compose.prod.yml docker-compose.yml")
-        c.sudo("docker-compose up --build -d")
 
-    ## manually run ##
-    # sudo docker-compose down
-    # rename docker-compose.prod.yml to docker-compose.yml
-    # sudo docker-compose up --build -d
+    # hack / can't use sudo inside a "cd"
+    c.sudo(f'bash -c "cd {site_folder} && docker-compose down"')
+    c.sudo(f'bash -c "cd {site_folder} && docker-compose up --build -d"')
 
 
 @task
@@ -146,5 +143,7 @@ def welcome(ctx):
     print("test")
 
 ##
-# /Users/shannonshoemake//Library/Python/3.8/bin/fab welcome
+# /Users/shannonshoemake/Library/Python/3.8/bin/fab welcome
+# or
+# /Users/shannonshoemake/Library/Python/3.8/bin/fab deploy
 ##

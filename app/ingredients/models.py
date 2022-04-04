@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from stores.models import Store
 
 
 class Ingredient(models.Model):
@@ -15,3 +16,9 @@ class Ingredient(models.Model):
 
     def get_absolute_url(self):
         return reverse("ingredients-detail", kwargs={"pk": self.pk})
+
+
+class Ing_Store(models.Model):
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
+    store = models.ForeignKey(Store, on_delete=models.CASCADE)
+    aisle = models.DecimalField(max_digits=4, decimal_places=1)

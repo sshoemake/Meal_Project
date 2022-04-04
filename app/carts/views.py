@@ -2,10 +2,12 @@ from django.shortcuts import render, redirect
 from .models import Cart, Cart_Details
 from django.views.generic import DetailView
 from meals.models import Meal
-from ingredients.models import Ingredient
+from ingredients.models import Ing_Store, Ingredient
 from django.db.models import F, Sum
 from django.http import HttpResponse
 import datetime
+from django.db.models.expressions import OuterRef, Subquery
+from stores.models import Store
 
 
 def CartListView(request):
@@ -21,6 +23,17 @@ def CartListView(request):
 
     if cart:
         cart_items = Cart_Details.objects.filter(cart=cart)
+        # join aisle detail from store linked to user's profile
+        #profile = request.user.profile
+        def_store = Store.objects.get(id=request.session["def_store"])
+
+        ing_store_aisles = Ing_Store.objects.filter(
+            store=def_store,
+            ingredient_id=OuterRef('ingredient__id')
+        )[:1].values('aisle')
+
+        cart_items = cart_items.annotate(
+            ing_store_aisle=Subquery(ing_store_aisles)).order_by('ing_store_aisle')
 
         context = {"cart": cart, "cart_items": cart_items}
     else:

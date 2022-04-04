@@ -21,14 +21,14 @@ pip3 install wheel
     -d for detached
     http://localhost
 
-
-# -v = volume, deletes data!!
-docker-compose down -v
+## Docker and Compose commands:
+##
+docker-compose down -v # -v = volume, deletes data!!
 docker-compose -f docker-compose.prod.yml logs -f
 
 
 ## manually load database from sql dump
-Find running container for mysql:
+# Find running container for mysql:
 >docker container ls
 
 # get the container id (use in fabric later)
@@ -41,7 +41,7 @@ sudo docker ps -aqf "name=^meal_project_db_1$"
 >sudo docker exec -i [container_id] sh -c 'exec mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" meal_project' > ~/mysql_backups/meal_project_[date].sql
 --OR--
 >sudo docker exec -i `sudo docker ps -aqf "name=^meal_project-db-1$"` sh -c 'exec mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" meal_project' > ~/mysql_backups/meal_project_`date +"%Y_%m_%d_%I_%M_%p"`.sql
-
+  (onserver - meal_project_db_1$)
 
 TODO: Move certbot certs to a volume
 TODO: Database env properties
@@ -56,8 +56,14 @@ TODO: switch db from MySQL to PostgreSQL
     b. selected_week - session variable that drives cart display and meal list
     c. meal_list - list of meals by day for the selected week
 4. Create a Store project
-    python manage.py startapp stores
-    Item will be able to be linked to stores for aisle reference
+    python manage.py startapp stores - DONE
+    Item will be able to be linked to stores for aisle reference - In Progress
+    Use docker dashboard to attach to mysql and run the following commands:
+    mysql -uroot -p"$MYSQL_ROOT_PASSWORD" meal_project
+    update query:
+    insert into ingredients_ing_store (ingredient_id, aisle, store_id) 
+    select id, aisle, '1' from ingredients_ingredient;
+    
 5. Fix issue where default week is selected but cart qty and detail are out of sync
 6. Deploy enhancements:
     Backup database from docker instance - DONE
@@ -66,3 +72,5 @@ TODO: switch db from MySQL to PostgreSQL
 8. Fix issue with uploading image error
 9. Add API interface to support future Siri integration
 10. Allow users to update their password
+11. setup dockerized phpMyAdmin
+    https://towardsdatascience.com/connect-to-mysql-running-in-docker-container-from-a-local-machine-6d996c574e55

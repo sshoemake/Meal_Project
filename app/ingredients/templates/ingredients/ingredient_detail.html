@@ -1,22 +1,60 @@
 {% extends "meals/base.html" %}
+{% load crispy_forms_tags %}
 {% block content %}
-<article class="media content-section">
-  <img class="rounded-circle article-img" src="">
-  <div class="media-body">
-    <div class="article-metadata">
-      <a class="mr-2" href="#">{{ object.name }}</a>
-      <a class="float-right" href="{% url 'update-ing-cart' object.id %}">
-        {% if ing_in_cart %}Add++{% else %}Add to Cart{% endif %}
-      </a>
-      <div>
-        <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'ingredients-update' object.id %}">Update</a>
-        <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'ingredients-delete' object.id %}">Delete</a>
+
+<form method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <article class="media content-section">
+    <img class="rounded-circle article-img" src="">
+    <div class="media-body">
+      <div class="article-metadata">
+        <a class="mr-2" href="#">{{ object.name }}</a>
+        <a class="float-right" href="{% url 'update-ing-cart' object.id %}">
+          {% if ing_in_cart %}Add++{% else %}Add to Cart{% endif %}
+        </a>
+        <div>
+          <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'ingredients-update' object.id %}">Update</a>
+          <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'ingredients-delete' object.id %}">Delete</a>
+        </div>
       </div>
+      <h2 class="article-title">{{ object.name }}</h2>
+
+      <div>
+
+        <table class="table">
+          <thead>
+            <th style="width:10%;"></th>
+            <th style="width:25%;">Store</th>
+            <th style="width:25%;">Aisle</th>
+            <th style="width:40%;"></th>
+          </thead>
+
+          <tbody id="myTable">
+
+            {% for sa in store_aisles %}
+
+            <tr>
+              <td></td>
+              <td><input class="form-control" type="hidden" name="Store_ids" value="{{ sa.id }}">{{ sa }}</td>
+              <td><input class="form-control" type="text" name="Aisles" value="{{ sa.ing_store_aisle }}"></td>
+              <td></td>
+            </tr>
+
+            {% endfor %}
+
+          </tbody>
+        </table>
+
+      </div>
+      <div class="form-group">
+        <button class="btn btn-outline-info btn-sm mt-1 mb-1" type="submit">Save</button>
+      </div>
+
     </div>
-    <h2 class="article-title">{{ object.name }}</h2>
-    <p class="article-content">Aisle: {{ object.aisle|floatformat }}</p>
-  </div>
-</article>
+  </article>
+
+</form>
 
 {% if meals %}
 <article class="media content-section">

@@ -45,13 +45,28 @@
             <a class="nav-item nav-link" href="{% url 'ingredients-home' %}">Ingredients</a>
             <a class="nav-item nav-link" href="{% url 'store-list' %}">Stores</a>
           </div>
+
+          <!-- Navbar Middle -->
+          <form method="GET">
+            <div class="navbar-nav mr-auto">
+              <label class="nav-item nav-link" for="stores">Store:</label>
+
+              <select class="textinput textInput form-control" name="stores" id="stores" onchange="this.form.submit()">
+                {% for store in all_stores %}
+                <option value="{{ store.id }}" {% ifequal store.id request.session.def_store %}selected{% endifequal %}>
+                  {{ store.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </form>
+
           <!-- Navbar Right Side -->
           <div class="navbar-nav">
             {% if user.is_authenticated %}
             <a class="nav-item nav-link" href="{% url 'profile' %}">Profile</a>
             <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
-            <a class="nav-item nav-link" href="{% url 'cart' %}">Cart <span
-                class="badge badge-primary">{{ request.session.items_total }}</span></a>
+            <a class="nav-item nav-link" href="{% url 'cart' %}">Cart <span class="badge badge-primary">
+                {{ request.session.items_total }}</span></a>
             {% else %}
             <a class="nav-item nav-link" href="{% url 'login' %}">Login</a>
             <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
@@ -76,7 +91,7 @@
       <div class="col-md-4">
         <div class="content-section">
           <h3>Our Sidebar</h3>
-          <p class='text-muted'>You can put any information here you'd like.
+          <p class='text-muted'>
           <div class="list-group">
             <a href="{% url 'meal-create' %}" class="list-group-item list-group-item-light">New Meal</a>
             <a href="{% url 'ingredients-create' %}" class="list-group-item list-group-item-light">New Ingredient</a>
@@ -105,6 +120,7 @@
               <script src="{% static 'aui/js/aui-soy.min.js' %}"></script> -->
   {% block javascript %}
   {% endblock %}
+
 </body>
 
 </html>
