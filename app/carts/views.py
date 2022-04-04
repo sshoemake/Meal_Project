@@ -43,7 +43,7 @@ def CartListView(request):
             else:
                 aisle_sort = 'ing_store_aisle'
         except:
-            request.session["reverse_sort"] == False
+            request.session["reverse_sort"] = False
             aisle_sort = 'ing_store_aisle'
 
         cart_items = cart_items.annotate(
