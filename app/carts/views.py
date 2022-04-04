@@ -19,6 +19,11 @@ def CartListView(request):
         else:
             request.session["hide_found"] = False
 
+        if "reverse_sort" in request.POST:
+            request.session["reverse_sort"] = True
+        else:
+            request.session["reverse_sort"] = False
+
     cart = get_cart(request)
 
     if cart:
@@ -32,8 +37,13 @@ def CartListView(request):
             ingredient_id=OuterRef('ingredient__id')
         )[:1].values('aisle')
 
+        if request.session["reverse_sort"] == True:
+            aisle_sort = '-ing_store_aisle'
+        else:
+            aisle_sort = 'ing_store_aisle'
+
         cart_items = cart_items.annotate(
-            ing_store_aisle=Subquery(ing_store_aisles)).order_by('ing_store_aisle')
+            ing_store_aisle=Subquery(ing_store_aisles)).order_by(aisle_sort)
 
         context = {"cart": cart, "cart_items": cart_items}
     else:

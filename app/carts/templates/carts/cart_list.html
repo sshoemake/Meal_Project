@@ -14,7 +14,11 @@
 <form action="" method="post">
     {% csrf_token %}
     <input type="checkbox" name="hide_found" onChange="this.form.submit()" {% if request.session.hide_found %}
-        checked="checked" {% endif %}> Hide found items?<br>
+        checked="checked" {% endif %}> Hide found items?
+    <br>
+    <input type="checkbox" name="reverse_sort" onChange="this.form.submit()" {% if request.session.reverse_sort %}
+        checked="checked" {% endif %}> Reverse Sort
+    <br>
 
     {% if cart.meals.count > 0 %}
     <table class="table">
