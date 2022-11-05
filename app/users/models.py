@@ -6,6 +6,7 @@ from stores.models import Store
 
 
 class Profile(models.Model):
+    id = models.BigAutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.ImageField(default="default.jpg", upload_to="profile_pics")
     def_store = models.ForeignKey(

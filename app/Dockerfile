@@ -3,7 +3,7 @@
 ###########
 
 # pull official base image
-FROM python:3.8-alpine as builder
+FROM python:3.9-alpine as builder
 
 # set work directory
 WORKDIR /usr/src/app
@@ -29,7 +29,7 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requir
 #########
 
 # pull official base image
-FROM python:3.8-alpine
+FROM python:3.9-alpine
 
 ENV PATH="/scripts:${PATH}"
 

@@ -4,6 +4,7 @@ from stores.models import Store
 
 
 class Ingredient(models.Model):
+    id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=50, unique=True)
     aisle = models.DecimalField(max_digits=4, decimal_places=1)
     auto_add = models.BooleanField()
@@ -19,6 +20,7 @@ class Ingredient(models.Model):
 
 
 class Ing_Store(models.Model):
+    id = models.BigAutoField(primary_key=True)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     store = models.ForeignKey(Store, on_delete=models.CASCADE)
     aisle = models.DecimalField(max_digits=4, decimal_places=1)

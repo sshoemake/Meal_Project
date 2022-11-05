@@ -6,6 +6,7 @@ import datetime
 
 
 class Cart(models.Model):
+    id = models.BigAutoField(primary_key=True)
     meals = models.ManyToManyField(Meal, blank=True)
     yearweek = models.IntegerField(unique=True)
 
@@ -35,6 +36,7 @@ class Cart(models.Model):
 
 
 class Cart_Details(models.Model):
+    id = models.BigAutoField(primary_key=True)
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     quantity = models.PositiveSmallIntegerField(default=1)

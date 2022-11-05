@@ -5,6 +5,7 @@ from PIL import Image
 
 
 class Meal(models.Model):
+    id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=50, unique=True)
     notes = models.TextField(null=True, blank=True)
     image = models.ImageField(default="default.jpg", upload_to="meal_pics")
@@ -27,6 +28,7 @@ class Meal(models.Model):
 
 
 class Meal_Details(models.Model):
+    id = models.BigAutoField(primary_key=True)
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     meal = models.ForeignKey(Meal, on_delete=models.CASCADE)
     quantity = models.PositiveSmallIntegerField()
