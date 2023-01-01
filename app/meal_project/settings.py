@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "ingredients.apps.IngredientsConfig",
     "users.apps.UsersConfig",
     "stores.apps.StoresConfig",
+    "metrics.apps.MetricsConfig",
     "crispy_forms",
     "django.contrib.admin",
     "django.contrib.auth",

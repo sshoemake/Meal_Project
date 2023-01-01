@@ -38,6 +38,7 @@ urlpatterns = [
     path("", include("ingredients.urls")),
     path("", include("carts.urls")),
     path("", include("stores.urls")),
+    path("", include("metrics.urls")),
 ]
 
 

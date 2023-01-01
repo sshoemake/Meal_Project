@@ -37,7 +37,7 @@ sudo docker ps -aqf "name=^meal_project_db_1$"
 ## load database
 >sudo docker exec -i [container_id] sh -c 'exec mysql -uroot -p"$MYSQL_ROOT_PASSWORD" meal_project' < ./meal_project_[date].sql
 
-## Backup Database
+## Backup Database 
 >sudo docker exec -i [container_id] sh -c 'exec mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" meal_project' > ~/mysql_backups/meal_project_[date].sql
 --OR--
 >sudo docker exec -i `sudo docker ps -aqf "name=^meal_project-db-1$"` sh -c 'exec mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" meal_project' > ~/mysql_backups/meal_project_`date +"%Y_%m_%d_%I_%M_%p"`.sql
@@ -45,8 +45,9 @@ sudo docker ps -aqf "name=^meal_project_db_1$"
 
 TODO: Move certbot certs to a volume
 TODO: Database env properties
-TODO: Meal history (on Meal Detail screen)
+TODO: Meal history (on Meal Detail screen) - DONE (v1) not very pretty
 TODO: switch db from MySQL to PostgreSQL
+TODO: Add Top 10 Meals - Metrics - DONE (v1)   
 
 ## TODO
 1. Add ingredient categories (i.e. produce/dairy/bread etc.)
@@ -55,15 +56,7 @@ TODO: switch db from MySQL to PostgreSQL
     a. date_list (-3, curr week, +3) - DONE
     b. selected_week - session variable that drives cart display and meal list
     c. meal_list - list of meals by day for the selected week
-4. Create a Store project
-    python manage.py startapp stores - DONE
-    Item will be able to be linked to stores for aisle reference - In Progress
-    Use docker dashboard to attach to mysql and run the following commands:
-    mysql -uroot -p"$MYSQL_ROOT_PASSWORD" meal_project
-    update query:
-    insert into ingredients_ing_store (ingredient_id, aisle, store_id) 
-    select id, aisle, '1' from ingredients_ingredient;
-    
+4. Meals, update model and UI to support Quantity value for Ingredient items
 5. Fix issue where default week is selected but cart qty and detail are out of sync
 6. Deploy enhancements:
     Backup database from docker instance - DONE
