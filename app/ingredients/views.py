@@ -137,7 +137,7 @@ class AuthorInterestForm(forms.Form):
     # curr_ing_ids = my_MD.values_list("ingredient_id", flat=True)
 
 
-class IngAisleUpdate(SingleObjectMixin, FormView):
+class IngAisleUpdate(LoginRequiredMixin, SingleObjectMixin, FormView):
     template_name = "ingredients/ingredient_detail.html"
     form_class = AuthorInterestForm
     model = Ingredient

@@ -96,7 +96,7 @@ class MealDetailView(View):
         return view(request, *args, **kwargs)
 
 
-class MealAddCartView(View):
+class MealAddCartView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         view = MealCartDisplay.as_view()
         return view(request, *args, **kwargs)
@@ -176,7 +176,7 @@ class MealCartUpdate(SingleObjectMixin, FormView):
         return redirect("meals-home")
 
 
-class MealIngUpdate(SingleObjectMixin, FormView):
+class MealIngUpdate(LoginRequiredMixin, SingleObjectMixin, FormView):
     template_name = "meals/meal_detail.html"
     form_class = AuthorInterestForm
     model = Meal

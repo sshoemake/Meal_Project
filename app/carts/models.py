@@ -2,13 +2,18 @@ from django.db import models
 from django.db.models import Sum
 from meals.models import Meal
 from ingredients.models import Ingredient
+from users.models import Profile
 import datetime
 
 
 class Cart(models.Model):
     id = models.BigAutoField(primary_key=True)
     meals = models.ManyToManyField(Meal, blank=True)
-    yearweek = models.IntegerField(unique=True)
+    yearweek = models.IntegerField()
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('yearweek', 'profile')
 
     def __str__(self):
         year = str(self.yearweek)[:4]

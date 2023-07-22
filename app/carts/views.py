@@ -8,6 +8,8 @@ from django.http import HttpResponse
 import datetime
 from django.db.models.expressions import OuterRef, Subquery
 from stores.models import Store
+from users.models import Profile
+from django.contrib.auth.decorators import login_required
 
 
 def CartListView(request):
@@ -100,6 +102,7 @@ def get_date_label(int_wk):
     return firstdayofweek.strftime("%b %-d")
 
 
+@login_required
 def update_ing_cart(request, **kwargs):
     cart = get_cart_or_create(request)
 
@@ -127,6 +130,7 @@ def update_ing_cart(request, **kwargs):
     return redirect(request.META.get("HTTP_REFERER", "/"))
 
 
+@login_required
 def update_meal_cart(request, **kwargs):
     cart = get_cart_or_create(request)
 
@@ -160,6 +164,7 @@ def select_cart(request, **kwargs):
     return redirect(request.META.get("HTTP_REFERER", "/"))
 
 
+@login_required
 def remove_ing_cart(request, **kwargs):
     cart = get_cart_or_create(request)
 
@@ -289,13 +294,15 @@ def get_cart_or_create(request):
 def chg_cart_or_create(request):
     selected_week = request.session["selected_week"]
     yearweek = convert_sw_yw(selected_week)
+    profile = request.user.profile
 
     try:
-        existing_cart = Cart.objects.get(yearweek=yearweek)
+        existing_cart = Cart.objects.get(yearweek=yearweek, profile=profile)
         the_id = existing_cart.id
     except:
         new_cart = Cart()
         new_cart.yearweek = yearweek
+        new_cart.profile = profile
         new_cart.save()
         the_id = new_cart.id
 
