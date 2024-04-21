@@ -17,7 +17,7 @@ services:
       - db
 
   db:
-    image: mysql/mysql-server:latest
+    image: mysql:8.0-oracle
     volumes:
         - ./sql:/docker-entrypoint-initdb.d
         - db_data:/var/lib/mysql
