@@ -9,7 +9,7 @@ pip3 install wheel
 1. Checkout the project:
   git clone https://github.com/sshoemake/Meal_Project.git
 
-2. Cd to project directory: s/b Meal_Project
+2. Cd to project directory: i.e. cd Meal_Project
 
 3a. Build/Run Dev:
   docker-compose up --build
@@ -43,12 +43,6 @@ sudo docker ps -aqf "name=^meal_project_db_1$"
 >sudo docker exec -i `sudo docker ps -aqf "name=^meal_project-db-1$"` sh -c 'exec mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" meal_project' > ~/mysql_backups/meal_project_`date +"%Y_%m_%d_%I_%M_%p"`.sql
   (onserver - meal_project_db_1$)
 
-TODO: Move certbot certs to a volume
-TODO: Database env properties
-TODO: Meal history (on Meal Detail screen) - DONE (v1) not very pretty
-TODO: switch db from MySQL to PostgreSQL
-TODO: Add Top 10 Meals - Metrics - DONE (v1)   
-
 ## TODO
 1. Add ingredient categories (i.e. produce/dairy/bread etc.)
 2. For cart items, add expandable bootstrap rows to show what meal an item came from
@@ -67,3 +61,8 @@ TODO: Add Top 10 Meals - Metrics - DONE (v1)
 10. Allow users to update their password
 11. setup dockerized phpMyAdmin
     https://towardsdatascience.com/connect-to-mysql-running-in-docker-container-from-a-local-machine-6d996c574e55
+12. Move certbot certs to a volume
+13. Database env properties
+14. Meal history (on Meal Detail screen) - DONE (v1) not very pretty
+15. switch db from MySQL to PostgreSQL
+16. Add Top 10 Meals - Metrics - DONE (v1)   

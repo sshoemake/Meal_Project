@@ -53,7 +53,7 @@
 
               <select class="textinput textInput form-control" name="stores" id="stores" onchange="this.form.submit()">
                 {% for store in all_stores %}
-                <option value="{{ store.id }}" {% ifequal store.id request.session.def_store %}selected{% endifequal %}>
+                <option value="{{ store.id }}" {% if store.id == request.session.def_store %}selected{% endif %}>
                   {{ store.name }}</option>
                 {% endfor %}
               </select>
