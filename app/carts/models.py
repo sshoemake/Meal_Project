@@ -39,6 +39,11 @@ class Cart(models.Model):
 
     # Add item_cnt property
 
+    #create a Meal_Details class
+# class Meal_Details(models.Model):
+#     id = models.BigAutoField(primary_key=True)
+#     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+#     meal = models.ForeignKey(Meal, on_delete=models.CASCADE)
 
 class Cart_Details(models.Model):
     id = models.BigAutoField(primary_key=True)
