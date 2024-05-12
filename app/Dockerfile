@@ -34,7 +34,7 @@ FROM python:3.10-alpine
 ENV PATH="/scripts:${PATH}"
 
 # install dependencies
-COPY ./requirements.txt /requirements.txt
+COPY ./app/requirements.txt /requirements.txt
 RUN apk add --update --no-cache libffi-dev openssl-dev jpeg-dev zlib-dev mariadb-dev
 
 COPY --from=builder /usr/src/app/wheels /wheels
@@ -52,7 +52,7 @@ WORKDIR $APP_HOME
 COPY . $APP_HOME
 
 # copy entrypoint.sh
-COPY ./entrypoint.sh $APP_HOME
+COPY ./app/entrypoint.sh $APP_HOME
 
 RUN adduser -D user
 RUN chown -R user:user /app
