@@ -16,7 +16,7 @@ services:
     db:
         image: mysql:8.0-oracle
         volumes:
-            - ./sql:/docker-entrypoint-initdb.d
+            - ./sql/:/docker-entrypoint-initdb.d/
             - db_data:/var/lib/mysql
         restart: always
         environment:
