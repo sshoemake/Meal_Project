@@ -24,7 +24,6 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
     
     - name: Build the Docker image
-    - run:
+    - run: |
         docker build . --file ./app/Dockerfile --tag ghcr.io/sshoemake/meal_project:latest
-        docker push ghcr.io/sshoemake/meal_project:latest
-        
+        docker push ghcr.io/sshoemake/meal_project:latest        
