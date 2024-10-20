@@ -1,6 +1,9 @@
 
-# New version
-# containerized version
+# Meal Project
+
+Django based application for shopping and meal planning.
+
+# Build and Deployment
 
 pre-requisite:
 sudo apt-get install git python3-venv libffi-dev python3-dev libssl-dev python3-setuptools libjpeg8-dev zlib1g-dev libmysqlclient-dev python3-pip docker-compose
@@ -12,20 +15,18 @@ pip3 install wheel
 2. Cd to project directory: i.e. cd Meal_Project
 
 3a. Build/Run Dev:
-  docker-compose up --build
+  docker compose up --build
     -d for detached
     http://localhost:8000
 
 3b. Build/Run Prod:
-  docker-compose -f docker-compose.prod.yml up --build
+  docker compose -f docker-compose.prod.yml up --build
     -d for detached
     http://localhost
 
 ## Docker and Compose commands:
-##
-docker-compose down -v # -v = volume, deletes data!!
-docker-compose -f docker-compose.prod.yml logs -f
-
+docker compose down -v # -v = volume, deletes data!!
+docker compose -f docker-compose.prod.yml logs -f
 
 ## manually load database from sql dump
 # Find running container for mysql:
@@ -63,6 +64,4 @@ sudo docker ps -aqf "name=^meal_project_db_1$"
     https://towardsdatascience.com/connect-to-mysql-running-in-docker-container-from-a-local-machine-6d996c574e55
 12. Move certbot certs to a volume
 13. Database env properties
-14. Meal history (on Meal Detail screen) - DONE (v1) not very pretty
-15. switch db from MySQL to PostgreSQL
-16. Add Top 10 Meals - Metrics - DONE (v1)   
+14. switch db from MySQL to PostgreSQL

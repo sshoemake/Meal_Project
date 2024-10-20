@@ -13,7 +13,7 @@ class TestModels(TestCase):
             state = 'AZ',
             zip_code = '85298'
         )
-        self.assertEquals(str(a_store), 'Test Store')
+        self.assertEqual(str(a_store), 'Test Store')
         self.assertTrue(isinstance(a_store, Store))
 
 class TestViews(TestCase):
@@ -27,6 +27,7 @@ class TestViews(TestCase):
         # mock the response
         response = self.client.get(self.listview_url)
 
+        print("debug: ")
         print(response)
 
         # write assertions

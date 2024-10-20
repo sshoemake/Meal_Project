@@ -1,7 +1,8 @@
 services: 
   app:
     build: 
-      context: ./app
+      context: .
+      dockerfile: ./app/Dockerfile
     restart: unless-stopped
     volumes: 
       - static_volume:/app/static

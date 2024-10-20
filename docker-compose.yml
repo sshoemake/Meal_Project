@@ -1,7 +1,8 @@
 services: 
     app:
         build: 
-            context: ./app
+            context: .
+            dockerfile: ./app/Dockerfile
         volumes: 
             - ./app:/app
         command: python manage.py runserver 0.0.0.0:8000

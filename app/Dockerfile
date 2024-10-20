@@ -3,21 +3,21 @@
 ###########
 
 # pull official base image
-FROM python:3.10-alpine as builder
+FROM python:3.12-alpine AS builder
 
 # set work directory
 WORKDIR /usr/src/app
 
 # set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 # install dependencies
 RUN apk update \
     && apk add gcc python3-dev musl-dev libc-dev make linux-headers libffi-dev openssl-dev jpeg-dev zlib-dev mariadb-dev
 
 # lint
-RUN pip install --upgrade pip
+RUN pip install --upgrade pip setuptools wheel
 
 # install dependencies
 COPY ./app/requirements.txt .
@@ -29,7 +29,7 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requir
 #########
 
 # pull official base image
-FROM python:3.10-alpine
+FROM python:3.12-alpine
 
 ENV PATH="/scripts:${PATH}"
 

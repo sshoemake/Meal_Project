@@ -43,8 +43,8 @@ def deploy(ctx):
         c.run("mv docker-compose.prod.yml docker-compose.yml")
 
     # hack / can't use sudo inside a "cd"
-    c.sudo(f'bash -c "cd {site_folder} && docker-compose down"')
-    c.sudo(f'bash -c "cd {site_folder} && docker-compose up --build -d"')
+    c.sudo(f'bash -c "cd {site_folder} && docker compose down"')
+    c.sudo(f'bash -c "cd {site_folder} && docker compose up --build -d"')
 
 
 @task
