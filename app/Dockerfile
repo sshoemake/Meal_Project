@@ -49,7 +49,7 @@ RUN mkdir $APP_HOME/media
 WORKDIR $APP_HOME
 
 # copy project
-COPY . $APP_HOME
+COPY ./app $APP_HOME
 
 # copy entrypoint.sh
 COPY ./app/entrypoint.sh $APP_HOME
