@@ -25,6 +25,7 @@ jobs:
 
     - name: Build the Docker image
       run: |
+        docker buildx ls
         DOCKER_DEFAULT_PLATFORM="linux/arm64" docker buildx build . \
         --platform linux/arm64 \
         --file ./app/Dockerfile \
