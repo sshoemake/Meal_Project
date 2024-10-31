@@ -36,5 +36,5 @@ jobs:
         sbom: true
         push: true
         tags: |
-          "sshoemake/meal_project:latest"
-          "sshoemake/meal_project:${{ github.ref_name }}"
+          "ghcr.io/sshoemake/meal_project:latest"
+          "ghcr.io/sshoemake/meal_project:${{ github.ref_name }}"
