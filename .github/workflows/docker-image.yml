@@ -36,5 +36,5 @@ jobs:
         sbom: true
         push: true
         tags: |
-          "${{ github.repository }}:latest"
-          "${{ github.repository }}:${{ github.ref_name }}"
+          "sshoemake/meal_project:latest"
+          "sshoemake/meal_project:${{ github.ref_name }}"
