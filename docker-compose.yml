@@ -1,31 +1,31 @@
 services: 
-    app:
-        build: 
-            context: .
-            dockerfile: ./app/Dockerfile
-        volumes: 
-            - ./app:/app
-        command: python manage.py runserver 0.0.0.0:8000
-        ports: 
-            - 8000:8000
-            - 3000:3000
-        env_file:
-            - ./.env.dev
-        depends_on:
-            - db
+  app:
+    build: 
+      context: .
+      dockerfile: ./app/Dockerfile
+    volumes: 
+      - ./app:/app
+    command: python manage.py runserver 0.0.0.0:8000
+    ports: 
+      - 8000:8000
+      - 3000:3000
+    env_file:
+      - ./.env.dev
+    depends_on:
+      - db
 
-    db:
-        image: mysql:8.0-oracle
-        volumes:
-            - ./sql/:/docker-entrypoint-initdb.d/
-            - db_data:/var/lib/mysql
-        restart: always
-        environment:
-            MYSQL_ROOT_PASSWORD: somewordpress
-            MYSQL_DATABASE: meal_project
-            MYSQL_ROOT_HOST: '%'
-        #MYSQL_USER: wordpress
-        #MYSQL_PASSWORD: wordpress
+  db:
+    image: mysql:8.0-oracle
+    volumes:
+      - ./sql/:/docker-entrypoint-initdb.d/
+      - db_data:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: somewordpress
+      MYSQL_DATABASE: meal_project
+      MYSQL_ROOT_HOST: '%'
+    #MYSQL_USER: wordpress
+    #MYSQL_PASSWORD: wordpress
 
 volumes: 
-    db_data:
+  db_data:
