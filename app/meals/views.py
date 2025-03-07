@@ -20,7 +20,7 @@ from django.views.generic.detail import SingleObjectMixin
 from .models import Meal, Ingredient, Meal_Details
 from .forms import BookForm
 from carts.views import update_meal_cart, add_ings_cart, get_cart, cart_header_lists, ing_exists_cart
-from carts.models import Cart, Cart_Details
+from carts.models import Cart, Cart_Details, Days
 import datetime
 
 
@@ -137,43 +137,46 @@ class MealCartDisplay(DetailView):
         my_ing_ids = my_MD.values_list("ingredient_id", flat=True)
 
         context["ing_list"] = Ingredient.objects.filter(id__in=my_ing_ids)
+
+        context["days_of_week"] = Days.DAYS_OF_WEEK
+
         return context
 
 
-class MealCartUpdate(SingleObjectMixin, FormView):
-    model = Meal
-    template_name = "meals/addtocart.html"
-    form_class = AuthorInterestForm
+# class MealCartUpdate(SingleObjectMixin, FormView):
+#     model = Meal
+#     template_name = "meals/addtocart.html"
+#     form_class = AuthorInterestForm
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
 
-        my_MD = Meal_Details.objects.filter(meal=self.object)
-        my_ing_ids = my_MD.values_list("ingredient_id", flat=True)
+#         my_MD = Meal_Details.objects.filter(meal=self.object)
+#         my_ing_ids = my_MD.values_list("ingredient_id", flat=True)
 
-        context["ing_list"] = Ingredient.objects.filter(id__in=my_ing_ids)
-        return context
+#         context["ing_list"] = Ingredient.objects.filter(id__in=my_ing_ids)
+#         return context
 
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        form = self.get_form()
+#     def post(self, request, *args, **kwargs):
+#         self.object = self.get_object()
+#         form = self.get_form()
 
-        # my_MD = Meal_Details.objects.filter(meal=self.object)
-        # my_MD.delete()
+#         # my_MD = Meal_Details.objects.filter(meal=self.object)
+#         # my_MD.delete()
 
-        # dd_post = request.POST.getlist("dd_ing_list", None)
-        # for ing_id in dd_post:
-        #     MD_1 = Meal_Details(ingredient_id=ing_id, meal=self.object, quantity="1")
-        #     MD_1.save()
+#         # dd_post = request.POST.getlist("dd_ing_list", None)
+#         # for ing_id in dd_post:
+#         #     MD_1 = Meal_Details(ingredient_id=ing_id, meal=self.object, quantity="1")
+#         #     MD_1.save()
 
-        if form.is_valid():
-            # Update Meal_Details data (i.e. remove existing and add from page)
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
+#         if form.is_valid():
+#             # Update Meal_Details data (i.e. remove existing and add from page)
+#             return self.form_valid(form)
+#         else:
+#             return self.form_invalid(form)
 
-    def get_success_url(self):
-        return redirect("meals-home")
+#     def get_success_url(self):
+#         return redirect("meals-home")
 
 
 class MealIngUpdate(LoginRequiredMixin, SingleObjectMixin, FormView):
@@ -232,15 +235,7 @@ class MealDisplay(JSONResponseMixin, DetailView):
 
         # Find all the carts this meal exists in
         carts = Cart.objects.filter(
-            meals__in=[self.object])
-        # .order_by('-yearweek')
-
-        # if carts:
-        #    sorted_carts = sorted(
-        #        carts, key=lambda x: (-int(str(x.yearweek)
-        #                                   [:4]), -int(str(x.yearweek)[5:6])))
-        # else:
-        #    sorted_carts = carts
+            meals__meal=self.object).distinct()
 
         context["carts"] = carts
 

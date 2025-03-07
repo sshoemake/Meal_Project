@@ -8,7 +8,7 @@ import datetime
 
 class Cart(models.Model):
     id = models.BigAutoField(primary_key=True)
-    meals = models.ManyToManyField(Meal, blank=True)
+    # meals = models.ManyToManyField(Meal, blank=True)
     yearweek = models.IntegerField()
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
 
@@ -35,15 +35,32 @@ class Cart(models.Model):
             "quantity__sum"
         ]
 
-        return int(ing_cnt or 0) + self.meals.count()
+        meal_cnt = Meals.objects.filter(cart=self).count()
+
+        return int(ing_cnt or 0) + meal_cnt
 
     # Add item_cnt property
 
+class Days(models.Model):
+    DAYS_OF_WEEK = (
+        (0, 'Monday'),
+        (1, 'Tuesday'),
+        (2, 'Wednesday'),
+        (3, 'Thursday'),
+        (4, 'Friday'),
+        (5, 'Saturday'),
+        (6, 'Sunday'),
+    )
+
+    id = models.BigAutoField(primary_key=True)
+    day = models.CharField(max_length=1, choices=DAYS_OF_WEEK)
+
     #create a Meal_Details class
-# class Meal_Details(models.Model):
-#     id = models.BigAutoField(primary_key=True)
-#     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
-#     meal = models.ForeignKey(Meal, on_delete=models.CASCADE)
+class Meals(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    meal = models.ForeignKey(Meal, on_delete=models.CASCADE)
+    days = models.ManyToManyField(Days)
 
 class Cart_Details(models.Model):
     id = models.BigAutoField(primary_key=True)

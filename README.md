@@ -3,11 +3,16 @@
 
 Django based application for shopping and meal planning.
 
+<img src="images/meal_project_1.png" height="300">
+
 # Build and Deployment
 
 pre-requisite:
+
+```
 sudo apt-get install git python3-venv libffi-dev python3-dev libssl-dev python3-setuptools libjpeg8-dev zlib1g-dev libmysqlclient-dev python3-pip docker-compose
 pip3 install wheel
+```
 
 1. Checkout the project:
   git clone https://github.com/sshoemake/Meal_Project.git

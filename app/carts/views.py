@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .models import Cart, Cart_Details
+from .models import Cart, Cart_Details, Meals
 from django.views.generic import DetailView
 from meals.models import Meal
 from ingredients.models import Ing_Store, Ingredient
@@ -13,8 +13,6 @@ from django.contrib.auth.decorators import login_required
 
 
 def CartListView(request):
-    #request.session["hide_found"] = False
-
     if request.method == "POST":
         if "hide_found" in request.POST:
             request.session["hide_found"] = True
@@ -29,6 +27,7 @@ def CartListView(request):
     cart = get_cart(request)
 
     if cart:
+        meal_items = Meals.objects.filter(cart=cart)
         cart_items = Cart_Details.objects.filter(cart=cart)
         # join aisle detail from store linked to user's profile
         #profile = request.user.profile
@@ -51,7 +50,7 @@ def CartListView(request):
         cart_items = cart_items.annotate(
             ing_store_aisle=Subquery(ing_store_aisles)).order_by(aisle_sort)
 
-        context = {"cart": cart, "cart_items": cart_items}
+        context = {"cart": cart, "meal_items": meal_items, "cart_items": cart_items}
     else:
         empty_message = "Your Cart is Empty, please keep shopping."
         context = {"empty": True, "empty_message": empty_message}
@@ -136,15 +135,18 @@ def update_meal_cart(request, **kwargs):
 
     try:
         meal = Meal.objects.filter(id=kwargs.get("pk", "")).first()
-    except Meal.DoesNotExist:
-        pass
     except:
         pass
 
-    if not meal in cart.meals.all():
-        cart.meals.add(meal)
+    cart_meals = Meals.objects.filter(cart=cart)
+    my_meal_ids = cart_meals.values_list("meal_id", flat=True)
+
+    if not meal.id in my_meal_ids:
+        add_MD = Meals(cart=cart, meal=meal)
+        add_MD.save()
     else:
-        cart.meals.remove(meal)
+        delete_MD = Meals.objects.get(cart=cart, meal=meal)
+        delete_MD.delete()
 
     request.session["items_total"] = cart.items_total
 
@@ -193,14 +195,6 @@ def remove_ing_cart(request, **kwargs):
 
 
 def found_ing_cart(request, **kwargs):
-    #hide_found = False
-
-    # if "hide_found" in request.GET:
-    # print("final_list")
-    # current_final_value = request.POST.get("final_list")
-    # print(current_final_value)
-    #    hide_found = True
-
     cart = get_cart_or_create(request)
 
     try:
@@ -219,8 +213,6 @@ def found_ing_cart(request, **kwargs):
         update_CD.save()
 
     return HttpResponse("OK")
-    # return redirect("ingredients-home")
-    # return redirect(request.META.get("HTTP_REFERER", "/"))
 
 
 def add_ings_cart(request, **kwargs):
@@ -231,8 +223,6 @@ def add_ings_cart(request, **kwargs):
 
     try:
         ing_ids = request.POST.getlist("ingtoadd")
-    # except Ingredient.DoesNotExist:
-    #    pass
     except:
         pass
 

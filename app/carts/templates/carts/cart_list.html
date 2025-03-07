@@ -20,18 +20,18 @@
         checked="checked" {% endif %}> Reverse Sort
     <br>
 
-    {% if cart.meals.count > 0 %}
+    {% if meal_items.count > 0 %}
     <table class="table">
         <thead>
-            <th>Meals ({{ cart.meals.count }})</th>
+            <th>Meals ({{ meal_items.count }})</th>
             <th></th>
             <th></th>
         </thead>
-        {% for meal in cart.meals.all %}
+        {% for item in meal_items.all %}
         <tr>
-            <td>{{ meal.name }}</td>
+            <td>{{ item.meal.name }}</td>
             <td></td>
-            <td><a class="float-right" href="{% url 'update-meal-cart' meal.id %}">Remove</a></td>
+            <td><a class="float-right" href="{% url 'update-meal-cart' item.meal.id %}">Remove</a></td>
         </tr>
         {% endfor %}
 

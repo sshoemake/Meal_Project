@@ -20,11 +20,20 @@
 
             Ingredients:
             <div>
-                {% for ing in ing_list %}
-                <input type='checkbox' name='ingtoadd' value='{{ing.id}}' id='{{ing.id}}'
-                    {% if ing.auto_add is True %}checked{% endif %} />
-                <span><label class='list' for='{{ing.name}}'>{{ing.name}}</label></span></br>
-                {% endfor %}
+                <div class="border-right">
+                    {% for ing in ing_list %}
+                    <input type='checkbox' name='ingtoadd' value='{{ing.id}}' id='{{ing.id}}'
+                        {% if ing.auto_add is True %}checked{% endif %} />
+                    <span><label class='list' for='{{ing.name}}'>{{ing.name}}</label></span></br>
+                    {% endfor %}
+                </div>
+                <div class="verticalLine">
+                    Meal Day(s)</br>
+                    {% for day in days_of_week %}
+                        <input type='checkbox' name='dayofweek' value='{{day.0}}' id='{{day.0}}'/>
+                        <span><label class='list' for='{{day.1}}'>{{day.1}}</label></span></br>
+                    {% endfor %}
+                </div>
             </div>
             <div class="form-group">
                 </br>
