@@ -102,10 +102,14 @@ class MealAddCartView(LoginRequiredMixin, View):
         return view(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        # view = MealCartUpdate.as_view()
-        # return view(request, *args, **kwargs)
-        # meal = get_object_or_404(Meal, pk=kwargs.get("pk", ""))
-        # add_meal_cart(meal.pk)
+        try:
+            ing_ids = request.POST.getlist("dayofweek")
+        except:
+            pass
+
+        for ing_id in ing_ids:
+            print(ing_id, flush=True)
+
         update_meal_cart(request, **kwargs)
         add_ings_cart(request, **kwargs)
 

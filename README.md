@@ -46,8 +46,18 @@ sudo docker ps -aqf "name=^meal_project_db_1$"
 ## Backup Database 
 >sudo docker exec -i [container_id] sh -c 'exec mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" meal_project' > ~/mysql_backups/meal_project_[date].sql
 --OR--
->sudo docker exec -i `sudo docker ps -aqf "name=^meal_project-db-1$"` sh -c 'exec mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" meal_project' > ~/mysql_backups/meal_project_`date +"%Y_%m_%d_%I_%M_%p"`.sql
+>sudo docker exec -i `sudo docker ps -aqf "name=^mp_runner-db-1$"` sh -c 'exec mysqldump -u root -p"$MYSQL_ROOT_PASSWORD" meal_project' > ~/mysql_backups/meal_project_`date +"%Y_%m_%d_%I_%M_%p"`.sql
   (onserver - meal_project_db_1$)
+
+
+sudo docker exec -i `sudo docker ps -aqf "name=^mp_runner-app-1$"` sh -c 'exec python manage.py dumpdata contenttypes --indent=4 --natural-foreign' > contenttype.json
+
+sudo docker exec -i `sudo docker ps -aqf "name=^mp_runner-app-1$"` sh -c 'exec python manage.py dumpdata --exclude contenttypes --indent=4 --natural-foreign' > everything_else.json
+
+    python manage.py dumpdata contenttypes --indent=4 --natural-foreign > contenttype.json
+    python manage.py dumpdata --exclude contenttypes --indent=4 --natural-foreign > everything_else.json
+
+
 
 ## TODO
 1. Add ingredient categories (i.e. produce/dairy/bread etc.)
