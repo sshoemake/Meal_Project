@@ -14,19 +14,31 @@ pip3 install wheel
 
 2. Cd to project directory: i.e. cd Meal_Project
 
-3a. Build/Run Dev:
-  docker compose up --build
-    -d for detached
-    http://localhost:8000
+python3 -m venv venv
+source venv/bin/activate
 
-3b. Build/Run Prod:
-  docker compose -f docker-compose.prod.yml up --build
-    -d for detached
-    http://localhost
+pip install --upgrade pip
+pip install -r app/requirements.txt
 
-## Docker and Compose commands:
-docker compose down -v # -v = volume, deletes data!!
-docker compose -f docker-compose.prod.yml logs -f
+docker compose up -d
+
+python manage.py migrate
+python manage.py createsuperuser
+
+python manage.py runserver
+
+Import old mysql data (not working):
+python manage.py sqlflush | python manage.py dbshell
+python manage.py loaddata contenttype.json
+python manage.py loaddata everything_else.json
+
+
+insert into public.stores_store ("name", "address", "city", "state", "zip_code", "default")
+values ('Albertsons', 'address', 'city', 'AZ', '95829', true)
+
+
+blow away database and data:
+  docker compose down -v
 
 ## manually load database from sql dump
 # Find running container for mysql:
