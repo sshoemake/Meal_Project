@@ -18,12 +18,17 @@ python3 -m venv venv
 source venv/bin/activate
 
 pip install --upgrade pip
-pip install -r app/requirements.txt
+pip install -r requirements.txt
 
 docker compose up -d
 
 python manage.py migrate
 python manage.py createsuperuser
+
+http://localhost:8080/browser/
+
+insert into public.stores_store ("name", "address", "city", "state", "zip_code", "default")
+values ('Albertsons', 'address', 'city', 'AZ', '95829', true)
 
 python manage.py runserver
 
@@ -33,12 +38,14 @@ python manage.py loaddata contenttype.json
 python manage.py loaddata everything_else.json
 
 
-insert into public.stores_store ("name", "address", "city", "state", "zip_code", "default")
-values ('Albertsons', 'address', 'city', 'AZ', '95829', true)
 
 
 blow away database and data:
   docker compose down -v
+
+Run tests
+python manage.py test
+
 
 ## manually load database from sql dump
 # Find running container for mysql:
