@@ -6,7 +6,8 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'apps.meal_project.settings')
+    settings_module = 'apps.meal_project.prod_settings' if 'WEBSITE_HOSTNAME' in os.environ else 'apps.meal_project.settings'
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', settings_module)
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

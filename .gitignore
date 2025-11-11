@@ -12,3 +12,6 @@ __pycache__/
 */media/*
 !*/media/default.jpg
 db.sqlite3
+
+# macOS Finder metadata
+.DS_Store
