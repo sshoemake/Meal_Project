@@ -5,7 +5,7 @@
 <br>
 
 {% if empty %}
-<h2 style="text-align:center;">{{ empty_message }}</h2>
+<h2 style="text-align:center;">{{ empty_message|default:"Your cart is empty." }}</h2>
 
 {% else %}
 
