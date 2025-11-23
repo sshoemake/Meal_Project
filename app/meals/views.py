@@ -19,8 +19,8 @@ from django.views.generic import (
 from django.views.generic.detail import SingleObjectMixin
 from .models import Meal, Ingredient, Meal_Details
 from .forms import BookForm
-from carts.views import update_meal_cart, add_ings_cart, get_cart, cart_header_lists, ing_exists_cart
-from carts.models import Cart, Cart_Details
+from app.carts.views import update_meal_cart, add_ings_cart, get_cart, cart_header_lists, ing_exists_cart
+from app.carts.models import Cart, Cart_Details
 import datetime
 
 

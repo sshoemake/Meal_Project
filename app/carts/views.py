@@ -1,31 +1,27 @@
 from django.shortcuts import render, redirect
 from .models import Cart, Cart_Details
 from django.views.generic import DetailView
-from meals.models import Meal
-from ingredients.models import Ing_Store, Ingredient
+from app.meals.models import Meal
+from app.ingredients.models import Ing_Store, Ingredient
 from django.db.models import F, Sum
 from django.http import HttpResponse
 import datetime
 from django.db.models.expressions import OuterRef, Subquery
-from stores.models import Store
-from users.models import Profile
+from app.stores.models import Store
+from app.users.models import Profile
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
 
-
-def CartListView(request):
+def cart_list(request):
     #request.session["hide_found"] = False
 
     if request.method == "POST":
-        if "hide_found" in request.POST:
-            request.session["hide_found"] = True
-        else:
-            request.session["hide_found"] = False
-
-        if "reverse_sort" in request.POST:
-            request.session["reverse_sort"] = True
-        else:
-            request.session["reverse_sort"] = False
-
+        # handle checkbox toggles in session
+        request.session['hide_found'] = 'hide_found' in request.POST
+        request.session['reverse_sort'] = 'reverse_sort' in request.POST
+        # redirect to GET to render full context
+        return redirect(reverse('cart-list'))
+    
     cart = get_cart(request)
 
     if cart:
@@ -51,16 +47,19 @@ def CartListView(request):
         cart_items = cart_items.annotate(
             ing_store_aisle=Subquery(ing_store_aisles)).order_by(aisle_sort)
 
-        context = {"cart": cart, "cart_items": cart_items}
-    else:
-        empty_message = "Your Cart is Empty, please keep shopping."
-        context = {"empty": True, "empty_message": empty_message}
+    empty = (cart.meals.count() == 0 and cart_items.count() == 0)
+
+    context = {
+        'cart': cart,
+        'cart_items': cart_items,
+        'empty': empty,
+        'empty_message': "Your shopping cart is empty.",
+    }
 
     # add cart header partial details to context
     context.update(cart_header_lists(request))
-
-    template = "carts/cart_list.html"
-    return render(request, template, context)
+    
+    return render(request, "carts/cart_list.html", context)
 
 
 def cart_header_lists(request):

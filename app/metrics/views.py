@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.db.models import Count
-from carts.models import Cart
+from app.carts.models import Cart
 from django.views.generic import (
     ListView,
 )

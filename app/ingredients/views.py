@@ -19,13 +19,13 @@ from django.views.generic import (
     FormView,
 )
 from django.views.generic.detail import SingleObjectMixin
-from meals.models import Meal, Meal_Details
+from app.meals.models import Meal, Meal_Details
 from .models import Ing_Store, Ingredient
 #from .forms import BookForm
-from carts.views import update_meal_cart, add_ings_cart, get_cart, cart_header_lists, ing_exists_cart
-from carts.models import Cart, Cart_Details
-from stores.models import Store
-from users.models import User, Profile
+from app.carts.views import update_meal_cart, add_ings_cart, get_cart, cart_header_lists, ing_exists_cart
+from app.carts.models import Cart, Cart_Details
+from app.stores.models import Store
+from app.users.models import User, Profile
 from django.db.models import Max, Case, When, F, query
 import datetime
 from django.db.models.expressions import OuterRef, Subquery

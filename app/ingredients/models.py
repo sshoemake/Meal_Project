@@ -1,6 +1,6 @@
 from django.db import models
 from django.urls import reverse
-from stores.models import Store
+from app.stores.models import Store
 
 
 class Ingredient(models.Model):

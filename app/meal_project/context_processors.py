@@ -1,4 +1,4 @@
-from stores.models import Store
+from app.stores.models import Store
 
 
 def store_renderer(request):
@@ -17,9 +17,12 @@ def store_renderer(request):
             profile = request.user.profile
             store = profile.def_store
             request.session["def_store"] = store.id
-        else:
-            store = Store.objects.get(default=True)
-            request.session["def_store"] = store.id
+        else:            
+            try:
+                store = Store.objects.get(default=True)
+                request.session["def_store"] = store.id
+            except:
+                request.session["def_store"] = None
 
     return {'all_stores': Store.objects.all(),
             }

@@ -18,7 +18,10 @@ from django.contrib.auth import views as auth_views
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from users import views as user_views
+from app.users import views as user_views
+from django.views.decorators.http import require_POST
+from django.views.generic import TemplateView
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -29,16 +32,27 @@ urlpatterns = [
         auth_views.LoginView.as_view(template_name="users/login.html"),
         name="login",
     ),
+    # path(
+    #     "logout/",
+    #     auth_views.LogoutView.as_view(template_name="users/logout.html"),
+    #     name="logout",
+    # ),
+    path(
+        "logout/confirm/",
+        TemplateView.as_view(template_name="users/logout_confirm.html"),
+        name="logout_confirm",
+    ),
+    # actual logout endpoint — require POST only
     path(
         "logout/",
-        auth_views.LogoutView.as_view(template_name="users/logout.html"),
+        require_POST(auth_views.LogoutView.as_view(template_name="users/logout.html")),
         name="logout",
-    ),
-    path("", include("meals.urls")),
-    path("", include("ingredients.urls")),
-    path("", include("carts.urls")),
-    path("", include("stores.urls")),
-    path("", include("metrics.urls")),
+    ),    
+    path("", include("app.meals.urls")),
+    path("", include("app.ingredients.urls")),
+    path("", include("app.carts.urls")),
+    path("", include("app.stores.urls")),
+    path("", include("app.metrics.urls")),
 ]
 
 

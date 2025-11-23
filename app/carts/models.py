@@ -1,8 +1,8 @@
 from django.db import models
 from django.db.models import Sum
-from meals.models import Meal
-from ingredients.models import Ingredient
-from users.models import Profile
+from app.meals.models import Meal
+from app.ingredients.models import Ingredient
+from app.users.models import Profile
 import datetime
 
 

@@ -1,6 +1,6 @@
 from django.db import models
 from django.urls import reverse
-from ingredients.models import Ingredient
+from app.ingredients.models import Ingredient
 from PIL import Image
 
 

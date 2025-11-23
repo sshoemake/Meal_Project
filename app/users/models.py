@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.files.storage import default_storage
 from PIL import Image
-from stores.models import Store
+from app.stores.models import Store
 
 
 class Profile(models.Model):

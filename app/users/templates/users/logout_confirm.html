@@ -1,0 +1,8 @@
+{% extends "meals/base.html" %}
+{% block content %}
+    <form action="{% url 'logout' %}" method="post">
+        {% csrf_token %}
+        <p>Are you sure you want to log out?</p>
+        <button class="btn btn-outline-info btn-sm mt-1 mb-1" type="submit">Log out</button>
+    </form>
+{% endblock content %}
