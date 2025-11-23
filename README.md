@@ -57,3 +57,8 @@ Django based application for shopping and meal planning.
 
 # Run tests
   python manage.py test
+
+# Build and test Docker image
+  docker build -t meal_project:latest .
+
+  docker run --rm -it -p 8000:8000 -v "$(pwd)/db:/app/db" -e DEBUG=1 meal_project:latest
