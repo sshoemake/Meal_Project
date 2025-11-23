@@ -16,8 +16,6 @@ __pycache__/
 
 # Django / project artifacts
 *.sqlite3
-db/
-app/db/
 app/static/
 static/
 media/
