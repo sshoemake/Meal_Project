@@ -1,6 +1,5 @@
 venv
 .vscode
-.env.*
 
 ### Django ###
 *.log
@@ -11,7 +10,21 @@ __pycache__/
 */static/*
 */media/*
 !*/media/default.jpg
-db.sqlite3
 
 # macOS Finder metadata
 .DS_Store
+
+# Django / project artifacts
+*.sqlite3
+db/
+app/db/
+app/static/
+static/
+media/
+.env
+.env.* 
+
+# Coverage / test outputs
+htmlcov/
+.coverage
+.pytest_cache/

@@ -1,0 +1,29 @@
+{% extends "meals/base.html" %}
+
+{% block content %}
+
+<table class="table">
+  <thead>
+    <th>Ranking</th>
+    <th>Meal</th>
+    <th>Cart Totals</th>
+  </thead>
+
+  <tbody id="myTable">
+    {% for meal in object_list %}
+
+    <tr>
+      <td>#{{ forloop.counter }}</td>
+      <td>{{ meal.meals__name }}</td>
+      <td>{{ meal.total }}</td>
+    </tr>
+
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock content %}
+
+{% block javascript %}
+
+{% endblock javascript %}

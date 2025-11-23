@@ -19,10 +19,15 @@ Django based application for shopping and meal planning.
   pip install -r requirements.txt
 
 5. Startup/Create database in docker
-  docker compose up -d
+  ~~docker compose up -d~~
 
   python manage.py migrate
+
   python manage.py createsuperuser
+  or
+  python manage.py loaddata data_dump.json
+
+  python manage.py collectstatic
 
   python manage.py runserver
 
@@ -37,14 +42,9 @@ Django based application for shopping and meal planning.
   Username = myuser
 
 
-# Import data
+# Import data (store)
   insert into public.stores_store ("name", "address", "city", "state", "zip_code", "default")
   values ('Albertsons', 'address', 'city', 'AZ', '95829', true)
-
-  Import old mysql data (not working):
-  python manage.py sqlflush | python manage.py dbshell - skipped
-  python manage.py loaddata contenttype.json
-  python manage.py loaddata everything_else.json (ran twice)
 
 
 # blow away database and data:
