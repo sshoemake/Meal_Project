@@ -28,3 +28,7 @@ jobs:
 
       - name: Push image
         run: docker push ghcr.io/${{ github.repository_owner }}/meal_project:latest
+
+## Example run command (local):
+#  docker run --rm -it -p 8000:8000 -v "$(pwd)/db:/app/db" -e DEBUG=1 mp_test:latest
+#
