@@ -7,7 +7,7 @@ venv
 *.pyc
 __pycache__/
 */__pycache__/
-*/static/*
+# */static/*
 */media/*
 !*/media/default.jpg
 
@@ -16,7 +16,7 @@ __pycache__/
 
 # Django / project artifacts
 *.sqlite3
-app/static/
+# app/static/
 app/staticfiles/
 static/
 media/
