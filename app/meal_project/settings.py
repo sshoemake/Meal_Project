@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "widget_tweaks",
 ]
 
 MIDDLEWARE = [
@@ -121,7 +120,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = str(BASE_DIR / "static")
+# Directory where `collectstatic` will gather static files for production.
+# It must NOT be the same as any path listed in `STATICFILES_DIRS`.
+STATIC_ROOT = str(BASE_DIR / "staticfiles")
+
+# Additional locations the staticfiles app will search (project-level static assets).
+# Keep your source static files in `BASE_DIR/static/` and let `collectstatic`
+# copy them into `STATIC_ROOT` (staticfiles) for serving in production.
+STATICFILES_DIRS = [
+    str(BASE_DIR / "static"),
+]
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media' 

@@ -17,6 +17,7 @@ __pycache__/
 # Django / project artifacts
 *.sqlite3
 app/static/
+app/staticfiles/
 static/
 media/
 .env
@@ -26,3 +27,10 @@ media/
 htmlcov/
 .coverage
 .pytest_cache/
+
+# Allow tracking project-level static assets (keep app static ignored)
+!static/
+!static/css/
+!static/js/
+!static/css/*.css
+!static/js/*.js
