@@ -15,7 +15,7 @@ Django based application for shopping and meal planning.
   source venv/bin/activate
 
 4. Install required packages
-  pip install --upgrade pip
+  python -m pip install --upgrade pip
   pip install -r requirements.txt
 
 5. Startup/Create database in docker
@@ -52,7 +52,6 @@ Django based application for shopping and meal planning.
 
 # Delete a Virtual Environment
   deactivate
-
   rm -rf venv
 
 # Run tests

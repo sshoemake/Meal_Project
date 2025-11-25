@@ -20,6 +20,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
   && rm -rf /var/lib/apt/lists/*
 
+# Ensure pip/setuptools/wheel are up-to-date before installing requirements
+RUN python -m pip install --upgrade pip
+
 # Copy and install Python requirements first to leverage Docker cache
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
