@@ -36,9 +36,6 @@ RUN useradd --create-home --shell /bin/bash appuser \
     && mkdir -p /app/db /app/static \
     && chown -R appuser:appuser /app
 
-RUN mkdir /var/run/sshd
-EXPOSE 2222
-
 # Switch to non-root user
 USER appuser
 
@@ -53,6 +50,7 @@ RUN python manage.py collectstatic --noinput
 
 # Expose default Django port
 EXPOSE 8000
+EXPOSE 2222
 
 # Default command: run migrations then start development server.
 # For production replace this with Gunicorn or another WSGI server.
