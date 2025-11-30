@@ -54,4 +54,4 @@ EXPOSE 2222
 
 # Default command: run migrations then start development server.
 # For production replace this with Gunicorn or another WSGI server.
-CMD ["sh", "-c", "/usr/sbin/sshd -D && python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"]
+CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"]
