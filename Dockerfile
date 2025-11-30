@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     zlib1g-dev \
     unixodbc-dev \
     curl \
+    openssh-server \
   && rm -rf /var/lib/apt/lists/*
 
 # Ensure pip/setuptools/wheel are up-to-date before installing requirements
@@ -34,6 +35,9 @@ COPY . .
 RUN useradd --create-home --shell /bin/bash appuser \
     && mkdir -p /app/db /app/static \
     && chown -R appuser:appuser /app
+
+RUN mkdir /var/run/sshd
+EXPOSE 2222
 
 # Switch to non-root user
 USER appuser
@@ -52,4 +56,4 @@ EXPOSE 8000
 
 # Default command: run migrations then start development server.
 # For production replace this with Gunicorn or another WSGI server.
-CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"]
+CMD ["sh", "-c", "/usr/sbin/sshd -D && python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"]
