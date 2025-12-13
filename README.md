@@ -3,6 +3,19 @@
 
 Django based application for shopping and meal planning.
 
+## Tech Stack
+
+- **Language:** Python 3 (development and runtime)
+- **Framework:** Django (server-side web framework)
+- **Database:** PostgreSQL 15 (containerized)
+- **Reverse proxy & TLS:** Traefik v3 (LetsEncrypt/ACME via `acme.json`)
+- **Containerization:** Docker, Docker Compose
+- **Container registry:** GitHub Container Registry (ghcr.io) (used in compose)
+- **Frontend:** Django templates with static CSS/JS
+- **Testing:** Django test runner (`python manage.py test`)
+- **Packaging & deps:** pip, `requirements.txt`, virtualenv
+
+
 # Build and Deployment
 
 1. Checkout the project:
@@ -20,6 +33,10 @@ Django based application for shopping and meal planning.
 
 5. Startup/Create database in docker
   ~~docker compose up -d~~
+  docker compose -f compose/docker-compose.yml \
+    -f compose/docker-compose.dev.yml \
+    --env-file compose/.env.dev \
+    --profile dev up -d
 
   python manage.py migrate
 

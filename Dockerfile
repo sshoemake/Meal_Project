@@ -18,7 +18,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     zlib1g-dev \
     unixodbc-dev \
     curl \
-    openssh-server \
   && rm -rf /var/lib/apt/lists/*
 
 # Ensure pip/setuptools/wheel are up-to-date before installing requirements
@@ -50,8 +49,5 @@ RUN python manage.py collectstatic --noinput
 
 # Expose default Django port
 EXPOSE 8000
-EXPOSE 2222
 
-# Default command: run migrations then start development server.
-# For production replace this with Gunicorn or another WSGI server.
-CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"]
+CMD ["gunicorn", "your_project.wsgi:application", "-b", "0.0.0.0:8000", "--workers=4"]
