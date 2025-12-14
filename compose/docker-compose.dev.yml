@@ -2,3 +2,14 @@
 services:
   db:
     profiles: ["dev"]
+  
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_container
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: your_pgadmin_password
+    ports:
+      - "8080:80"
+    depends_on:
+      - db

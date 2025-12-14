@@ -38,7 +38,9 @@ Django based application for shopping and meal planning.
     --env-file compose/.env.dev \
     --profile dev up -d
 
-  python manage.py migrate
+  Migrations
+    Dev: python manage.py migrate
+    Prod: run via docker compose exec web migrate
 
   python manage.py createsuperuser
   or
@@ -65,7 +67,11 @@ Django based application for shopping and meal planning.
 
 
 # blow away database and data:
-  docker compose down -v
+  ~~docker compose down -v~~
+  docker compose -f compose/docker-compose.yml \
+    -f compose/docker-compose.dev.yml \
+    --env-file compose/.env.dev \
+    --profile dev down -v
 
 # Delete a Virtual Environment
   deactivate
