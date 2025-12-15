@@ -88,7 +88,7 @@ DATABASES = {
         "NAME": os.environ.get("POSTGRES_DB", "appdb"),
         "USER": os.environ.get("POSTGRES_USER", "appuser"),
         "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "strong_password_here"),
-        "HOST": "localhost",
+        "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
         "PORT": 5432,
     }
 }

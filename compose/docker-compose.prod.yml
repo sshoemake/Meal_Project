@@ -37,12 +37,12 @@ services:
       - "traefik.http.routers.web.middlewares=security-headers@file"
 
   db:
-    image: postgres:16
+    image: postgres:18
     container_name: myapp-db
     restart: always
     env_file: .env.prod
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/18/docker
     networks:
       - internal
     healthcheck:
@@ -57,4 +57,4 @@ networks:
     internal: true
 
 volumes:
-  postgres_data:
+  pg_data:

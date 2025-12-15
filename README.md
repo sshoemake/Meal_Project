@@ -84,3 +84,13 @@ Django based application for shopping and meal planning.
   docker build -t meal_project:latest .
 
   docker run --rm -it -p 8000:8000 -v "$(pwd)/db:/app/db" -e DEBUG=1 meal_project:latest
+
+    docker compose -f compose/docker-compose.yml \
+    -f compose/docker-compose.uat.yml \
+    --env-file compose/.env.uat \
+    --profile uat up -d
+    
+    docker compose -f compose/docker-compose.yml \
+    -f compose/docker-compose.uat.yml \
+    --env-file compose/.env.uat \
+    run --rm web python manage.py migrate --noinput
