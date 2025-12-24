@@ -32,13 +32,12 @@ COPY . .
 
 # Create app user and required directories
 RUN useradd --create-home --shell /bin/bash appuser \
-    && mkdir -p /app/db /app/static \
+    && mkdir -p /app/static \
     && chown -R appuser:appuser /app
 
 # Switch to non-root user
 USER appuser
 
-# Ensure settings referring to STATIC_ROOT/DB can succeed during collectstatic
 ENV HOME=/home/appuser
 ENV PATH="$HOME/.local/bin:$PATH"
 

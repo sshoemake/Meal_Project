@@ -10,8 +10,10 @@ https://docs.djangoproject.com/en/2.2/howto/deployment/wsgi/
 import os
 
 from django.core.wsgi import get_wsgi_application
+from whitenoise import WhiteNoise
 
-settings_module = 'app.meal_project.prod_settings' if 'WEBSITE_HOSTNAME' in os.environ else 'app.meal_project.settings'
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', settings_module)
+# Use the environment variable DJANGO_SETTINGS_MODULE; fallback to dev for safety
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app.meal_project.settings.dev")
 
 application = get_wsgi_application()
+application = WhiteNoise(application, root='/app/static')

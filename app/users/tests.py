@@ -11,7 +11,7 @@ class BaseTest(TestCase):
 
         self.user={
             'username':'shoes',
-            'email':'sshoemake@yahoo.com',
+            'email':'shoes@shoes.com',
             'password1':'1XISRUkwtuK',
             'password2':'1XISRUkwtuK'
         }

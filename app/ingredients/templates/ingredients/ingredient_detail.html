@@ -37,7 +37,7 @@
             <tr>
               <td></td>
               <td><input class="form-control" type="hidden" name="Store_ids" value="{{ sa.id }}">{{ sa }}</td>
-              <td><input class="form-control" type="text" name="Aisles" value="{{ sa.ing_store_aisle }}"></td>
+              <td><input class="form-control" type="text" name="Aisles" value="{{ sa.ing_store_aisle|default_if_none:'' }}"></td>
               <td></td>
             </tr>
 

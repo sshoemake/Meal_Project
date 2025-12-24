@@ -7,7 +7,7 @@ Django based application for shopping and meal planning.
 
 - **Language:** Python 3 (development and runtime)
 - **Framework:** Django (server-side web framework)
-- **Database:** PostgreSQL 15 (containerized)
+- **Database:** PostgreSQL 18 (containerized)
 - **Reverse proxy & TLS:** Traefik v3 (LetsEncrypt/ACME via `acme.json`)
 - **Containerization:** Docker, Docker Compose
 - **Container registry:** GitHub Container Registry (ghcr.io) (used in compose)
@@ -32,23 +32,18 @@ Django based application for shopping and meal planning.
   pip install -r requirements.txt
 
 5. Startup/Create database in docker
-  ~~docker compose up -d~~
-  docker compose -f compose/docker-compose.yml \
-    -f compose/docker-compose.dev.yml \
-    --env-file compose/.env.dev \
-    --profile dev up -d
+  ./compose/up.sh dev
 
-  Migrations
-    Dev: python manage.py migrate
-    Prod: run via docker compose exec web migrate
+6. Database migrations
+  ./compose/manage.sh dev migrate
 
-  python manage.py createsuperuser
-  or
-  python manage.py loaddata data_dump.json
+7. Misc
+  ./compose/manage.sh dev loaddata data_dump.json
 
-  python manage.py collectstatic
+  ./compose/manage.sh dev collectstatic
 
-  python manage.py runserver
+8. Start Application
+  ./compose/manage.sh dev runserver
 
   http://127.0.0.1:8000/
 
@@ -67,11 +62,7 @@ Django based application for shopping and meal planning.
 
 
 # blow away database and data:
-  ~~docker compose down -v~~
-  docker compose -f compose/docker-compose.yml \
-    -f compose/docker-compose.dev.yml \
-    --env-file compose/.env.dev \
-    --profile dev down -v
+  ./compose/down.sh dev
 
 # Delete a Virtual Environment
   deactivate
@@ -80,17 +71,11 @@ Django based application for shopping and meal planning.
 # Run tests
   python manage.py test
 
-# Build and test Docker image
+# Build and test Docker image in UAT
   docker build -t meal_project:latest .
-
-  docker run --rm -it -p 8000:8000 -v "$(pwd)/db:/app/db" -e DEBUG=1 meal_project:latest
-
-    docker compose -f compose/docker-compose.yml \
-    -f compose/docker-compose.uat.yml \
-    --env-file compose/.env.uat \
-    --profile uat up -d
-    
-    docker compose -f compose/docker-compose.yml \
-    -f compose/docker-compose.uat.yml \
-    --env-file compose/.env.uat \
-    run --rm web python manage.py migrate --noinput
+  ./compose/up.sh uat
+  ./compose/manage.sh uat migrate
+  docker cp ../backup_meal_project_12242025.json compose-web-1:/tmp/
+  open command line in web container
+  python manage.py /tmp/data_dump.json
+  ./compose/down.sh uat

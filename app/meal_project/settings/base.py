@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -22,16 +23,18 @@ PROJECT_TITLE = "Project Title"
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-rj#-z^kx3j+1ay397otg6j8m_8#v^$^$jys6&41vy^&6le)ezc'
-# SECRET_KEY = os.environ.get("SECRET_KEY")
+# SECRET_KEY = 'django-insecure-rj#-z^kx3j+1ay397otg6j8m_8#v^$^$jys6&41vy^&6le)ezc'
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', "change_me")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-# DEBUG = int(os.environ.get("DEBUG", default=0))
+DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']
+ALLOWED_HOSTS = os.getenv(
+    "DJANGO_ALLOWED_HOSTS",
+    "localhost,127.0.0.1"
+).split(",")
 
-CSRF_TRUSTED_ORIGINS = [ 'https://*' ]
+ALLOWED_HOSTS = [h for h in ALLOWED_HOSTS if h]
 
 # Application definition
 
@@ -53,6 +56,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -85,10 +89,10 @@ WSGI_APPLICATION = "app.meal_project.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("POSTGRES_DB", "appdb"),
-        "USER": os.environ.get("POSTGRES_USER", "appuser"),
-        "PASSWORD": os.environ.get("POSTGRES_PASSWORD", "strong_password_here"),
-        "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
+        "NAME": os.getenv("POSTGRES_DB", "appdb_dev"),
+        "USER": os.getenv("POSTGRES_USER", "appuser_dev"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "strong_password_here"),
+        "HOST": os.getenv("POSTGRES_HOST", "localhost"),
         "PORT": 5432,
     }
 }
@@ -141,3 +145,15 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 LOGIN_REDIRECT_URL = "meals-home"
 LOGIN_URL = "login"
+
+def parse_trusted_origins(raw_origins, default_scheme="http://"):
+    """
+    Converts a comma-separated string into a list of origins with schemes.
+    Adds default_scheme if missing.
+    Filters out empty strings.
+    """
+    return [
+        o if o.startswith(("http://", "https://")) else f"{default_scheme}{o}"
+        for o in (origin.strip() for origin in raw_origins.split(","))
+        if o
+    ]
