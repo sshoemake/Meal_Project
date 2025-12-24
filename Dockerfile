@@ -18,7 +18,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     zlib1g-dev \
     unixodbc-dev \
     curl \
-    openssh-server \
   && rm -rf /var/lib/apt/lists/*
 
 # Ensure pip/setuptools/wheel are up-to-date before installing requirements
@@ -33,13 +32,12 @@ COPY . .
 
 # Create app user and required directories
 RUN useradd --create-home --shell /bin/bash appuser \
-    && mkdir -p /app/db /app/static \
+    && mkdir -p /app/static \
     && chown -R appuser:appuser /app
 
 # Switch to non-root user
 USER appuser
 
-# Ensure settings referring to STATIC_ROOT/DB can succeed during collectstatic
 ENV HOME=/home/appuser
 ENV PATH="$HOME/.local/bin:$PATH"
 
@@ -50,8 +48,5 @@ RUN python manage.py collectstatic --noinput
 
 # Expose default Django port
 EXPOSE 8000
-EXPOSE 2222
 
-# Default command: run migrations then start development server.
-# For production replace this with Gunicorn or another WSGI server.
-CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py runserver 0.0.0.0:8000"]
+CMD ["gunicorn", "app.meal_project.wsgi:application", "-b", "0.0.0.0:8000", "--workers=4"]

@@ -40,7 +40,7 @@ class TestViews(TestCase):
 
         self.user={
             'username':'shoes',
-            'email':'sshoemake@yahoo.com',
+            'email':'shoes@shoes.com',
             'password1':'1XISRUkwtuK',
             'password2':'1XISRUkwtuK'
         }
@@ -53,7 +53,6 @@ class TestViews(TestCase):
         user.save()
 
         self.client.login(username='shoes',password='1XISRUkwtuK')
-
 
         # urls
         self.listview_url = reverse('store-create')

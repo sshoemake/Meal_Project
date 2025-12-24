@@ -13,16 +13,16 @@ def store_renderer(request):
             new_store_id = request.GET.get("stores", None)
             request.session["def_store"] = int(new_store_id)
     else:
-        if request.user.is_authenticated:
-            profile = request.user.profile
-            store = profile.def_store
-            request.session["def_store"] = store.id
-        else:            
-            try:
+        try:
+            if request.user.is_authenticated:
+                profile = request.user.profile
+                store = profile.def_store
+            else:            
                 store = Store.objects.get(default=True)
-                request.session["def_store"] = store.id
-            except:
-                request.session["def_store"] = None
+            
+            request.session["def_store"] = store.id
+        except:
+            request.session["def_store"] = None
 
     return {'all_stores': Store.objects.all(),
             }
