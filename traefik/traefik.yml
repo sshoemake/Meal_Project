@@ -3,6 +3,7 @@ log:
 
 api:
   dashboard: true
+  insecure: false
 
 entryPoints:
   web:
@@ -20,7 +21,7 @@ providers:
 certificatesResolvers:
   letsencrypt:
     acme:
-      email: "${TRAEFIK_LETSENCRYPT_EMAIL}"
       storage: /acme.json
-      httpChallenge:
-        entryPoint: web
+      dnsChallenge:
+        provider: cloudflare
+        delayBeforeCheck: 0

@@ -1,26 +1,27 @@
-
 services:
 
   traefik:
-    image: traefik:v3.0
+    image: traefik:v3.6.5
     container_name: traefik
-    restart: always
+    restart: unless-stopped
     command:
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
     ports:
       - "80:80"
       - "443:443"
+    environment:
+      - CLOUDFLARE_DNS_API_TOKEN=${TRAEFIK_CF_API_TOKEN}   # must have DNS edit permission
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
-      - ./traefik/acme.json:/acme.json
-      - ./traefik/dynamic:/etc/traefik/dynamic:ro
+      - ../traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ../traefik/acme.json:/acme.json
+      - ../traefik/dynamic:/etc/traefik/dynamic:ro
     networks:
       - public
 
   web:
-    image: ghcr.io/YOUR_USER/YOUR_APP:latest
+    image: ghcr.io/sshoemake/meal_project:latest
     restart: always
     env_file: .env.prod
     depends_on:
@@ -30,11 +31,14 @@ services:
       - internal
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.web.rule=Host(`${DJANGO_ALLOWED_HOSTS}`)"
+      - "traefik.docker.network=public"
+      - "traefik.http.routers.web.rule=Host(`sshoemake.com`) || Host(`www.sshoemake.com`)"
       - "traefik.http.routers.web.entrypoints=websecure"
+      - "traefik.http.routers.web.tls=true"
       - "traefik.http.routers.web.tls.certresolver=letsencrypt"
-      - "traefik.http.services.web.loadbalancer.server.port=8000"
       - "traefik.http.routers.web.middlewares=security-headers@file"
+      - "traefik.http.services.web.loadbalancer.server.port=8000"
+      - "traefik.http.services.web.loadbalancer.server.scheme=http"
 
   db:
     image: postgres:18
