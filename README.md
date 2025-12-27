@@ -26,7 +26,7 @@ Django based application for shopping and meal planning.
 3. Create Virtual Environment
 
   ```bash
-  python3 -m venv venv
+  python3.12 -m venv venv
   source venv/bin/activate
   ```
 

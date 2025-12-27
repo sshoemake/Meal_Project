@@ -5,6 +5,11 @@ import sys
 
 
 def main():
+    if sys.version_info[:2] != (3, 12):
+        raise RuntimeError(
+            f"Python 3.12 required, found {sys.version.split()[0]}"
+        )
+
     """Run administrative tasks."""
     # Use environment variable if set, fallback to dev settings
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app.meal_project.settings.dev")
