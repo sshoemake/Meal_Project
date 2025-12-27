@@ -5,26 +5,35 @@ on:
     branches: [ main ] # Adjust branch names as necessary
 
 jobs:
-  test:
+  unit-test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: test_db
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_db
+      DJANGO_SETTINGS_MODULE: app.meal_project.settings.dev
+
     steps:
-    - name: Check out code
-      uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x' # Specify your required Python version (e.g., '3.10')
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"   # 👈 see note below
 
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt # Assumes you have a requirements.txt file
+      - run: pip install -r requirements.txt
 
-    - name: Run Tests
-      # Set Django settings module environment variable
-      # env:
-      #   DJANGO_SETTINGS_MODULE: your_project_name.settings # Replace with your project's settings module
-      run: |
-        python manage.py test
+      - run: python manage.py test
