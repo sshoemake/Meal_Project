@@ -89,9 +89,9 @@ WSGI_APPLICATION = "app.meal_project.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("POSTGRES_DB", "appdb_dev"),
-        "USER": os.getenv("POSTGRES_USER", "appuser_dev"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "strong_password_here"),
+        "NAME": os.getenv("POSTGRES_DB", "test_db"),
+        "USER": os.getenv("POSTGRES_USER", "postgres"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "postgres"),
         "HOST": os.getenv("POSTGRES_HOST", "localhost"),
         "PORT": 5432,
     }

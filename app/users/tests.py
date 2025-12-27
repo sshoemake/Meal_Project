@@ -30,13 +30,13 @@ class RegisterTest(BaseTest):
         # print(response)
 
     def test_cant_register_duplicate_username(self):
-        self.client.post(self.register_url,self.user,format='text/html')
-        
-        response = self.client.post(self.register_url,self.user,format='text/html')
-        
-        self.assertEqual(response.status_code, 302)
-        # self.assertTemplateUsed(response, 'users/register.html')
-        print(response)
+        self.client.post(self.register_url, self.user)
+
+        response = self.client.post(self.register_url, self.user)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "A user with that username already exists")
+
 
 class LoginTest(BaseTest):
     def test_can_access_page(self):
