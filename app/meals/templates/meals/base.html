@@ -30,7 +30,7 @@
   {% endif %}
 </head>
 
-<body>
+<body class="theme-{{ user_theme }}">
   <header class="site-header">
     <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
       <div class="container">
@@ -91,14 +91,12 @@
       <div class="col-md-4">
         <div class="content-section">
           <h3>Our Sidebar</h3>
-          <p class='text-muted'>
           <div class="list-group">
-            <a href="{% url 'meal-create' %}" class="list-group-item list-group-item-light">New Meal</a>
-            <a href="{% url 'ingredients-create' %}" class="list-group-item list-group-item-light">New Ingredient</a>
-            <a href="{% url 'store-create' %}" class=" list-group-item list-group-item-light">New Store</a>
-            <a href="{% url 'metrics-home' %}" class=" list-group-item list-group-item-light">Metrics</a>
+            <a href="{% url 'meal-create' %}" class="list-group-item list-group-item">New Meal</a>
+            <a href="{% url 'ingredients-create' %}" class="list-group-item list-group-item">New Ingredient</a>
+            <a href="{% url 'store-create' %}" class=" list-group-item list-group-item">New Store</a>
+            <a href="{% url 'metrics-home' %}" class=" list-group-item list-group-item">Metrics</a>
           </div>
-          </p>
         </div>
       </div>
     </div>

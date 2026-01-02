@@ -79,6 +79,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "app.meal_project.context_processors.store_renderer",
+                "app.meal_project.context_processors.user_theme",
             ]
         },
     }

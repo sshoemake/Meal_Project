@@ -26,3 +26,8 @@ def store_renderer(request):
 
     return {'all_stores': Store.objects.all(),
             }
+
+def user_theme(request):
+    if request.user.is_authenticated:
+        return {"user_theme": request.user.profile.theme}
+    return {"user_theme": "light"}
