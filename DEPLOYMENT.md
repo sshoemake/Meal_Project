@@ -107,3 +107,19 @@ docker compose -f compose/docker-compose.yml \
                -f compose/docker-compose.dev.yml \
                --env-file compose/.env.dev \
                --profile dev up
+
+# Build and test Docker image in UAT
+
+  ```bash
+  docker build -t meal_project:latest .
+  ./compose/up.sh uat
+  ./compose/manage.sh uat migrate
+  docker cp ../backup_meal_project_12242025.json compose-web-1:/tmp/
+  open command line in web container:
+  docker exec -it compose-web-1 bash
+  python manage.py loaddata /tmp/backup_meal_project_12242025.json
+  python manage.py collectstatic
+  TEST (http://127.0.0.1:8000/)
+  Stop and remove volumes:
+  ./compose/down.sh uat -v 
+  ```

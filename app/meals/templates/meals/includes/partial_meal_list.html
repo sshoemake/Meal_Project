@@ -1,21 +1,23 @@
-<table class="table">
-    <thead>
-        <th></th>
-        <th>Meal ({{ meals.count }})</th>
-        <th><a class="float-right btn btn-outline-primary btn-xs" href="{% url 'meal-create' %}">New Meal</a></th>
-    </thead>
+<div class="surface">
+    <table class="table">
+        <thead>
+            <th></th>
+            <th>Meal ({{ meals.count }})</th>
+            <th><a class="float-end btn btn-outline-primary btn-sm" href="{% url 'meal-create' %}">New Meal</a></th>
+        </thead>
 
-    <tbody id="myTable">
+        <tbody id="myTable">
 
-        {% for meal in meals %}
+            {% for meal in meals %}
 
-        <tr>
-            <td><img class="rounded-circle article-img" src="{{ meal.image.url }}"></td>
-            <td><a class="mr-2" href="{% url 'meal-detail' meal.id %}">{{ meal.name }}</a></td>
-            <td><a class="float-right" href="{% url 'meal-addtocart' meal.id %}">Add to Cart</a></td>
-        </tr>
+            <tr>
+                <td><img class="rounded-circle article-img" src="{{ meal.image.url }}"></td>
+                <td><a class="me-2" href="{% url 'meal-detail' meal.id %}">{{ meal.name }}</a></td>
+                <td><a class="float-end" href="{% url 'meal-addtocart' meal.id %}">Add to Cart</a></td>
+            </tr>
 
-        {% endfor %}
+            {% endfor %}
 
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>

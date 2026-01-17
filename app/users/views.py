@@ -39,3 +39,12 @@ def profile(request):
         'p_form': p_form
     }
     return render(request, 'users/profile.html', context)
+
+
+@login_required
+def set_theme(request):
+    theme = request.POST.get("theme")
+    if theme in dict(UserProfile._meta.get_field("theme").choices):
+        request.user.userprofile.theme = theme
+        request.user.userprofile.save()
+    return redirect(request.META.get("HTTP_REFERER", "/"))

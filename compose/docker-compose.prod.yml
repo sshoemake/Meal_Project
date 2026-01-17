@@ -31,7 +31,7 @@ services:
       - internal
     labels:
       - "traefik.enable=true"
-      - "traefik.docker.network=public"
+      - "traefik.docker.network=compose_public"
       - "traefik.http.routers.web.rule=Host(`sshoemake.com`) || Host(`www.sshoemake.com`)"
       - "traefik.http.routers.web.entrypoints=websecure"
       - "traefik.http.routers.web.tls=true"

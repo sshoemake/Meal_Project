@@ -11,6 +11,15 @@ class Profile(models.Model):
     image = models.ImageField(default="default.jpg", upload_to="profile_pics")
     def_store = models.ForeignKey(
         Store, on_delete=models.CASCADE, blank=True, null=True)
+    theme = models.CharField(
+        max_length=50,
+        choices=[
+            ("light", "Light"),
+            ("dark", "Dark"),
+            ("auto", "Auto"),
+        ],
+        default="light",
+    )
 
     def __str__(self):
         return f"{self.user.username} Profile"

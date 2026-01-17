@@ -52,7 +52,7 @@ Django based application for shopping and meal planning.
 7. Misc
 
   ```bash
-  ./compose/manage.sh dev loaddata data_dump.json
+  ./compose/manage.sh dev loaddata ../backup_meal_project_12242025.json
 
   ./compose/manage.sh dev collectstatic
   ```
@@ -75,11 +75,6 @@ Django based application for shopping and meal planning.
   Username = myuser
   ```
 
-# Import data (store)
-  insert into public.stores_store ("name", "address", "city", "state", "zip_code", "default")
-  values ('Albertsons', 'address', 'city', 'AZ', '95829', true)
-
-
 # blow away database and data:
   
   ```bash
@@ -97,16 +92,6 @@ Django based application for shopping and meal planning.
   
   ```bash
   python manage.py test
-  ```
-
-# Build and test Docker image in UAT
-
-  ```bash
-  docker build -t meal_project:latest .
-  ./compose/up.sh uat
-  ./compose/manage.sh uat migrate
-  docker cp ../backup_meal_project_12242025.json compose-web-1:/tmp/
-  open command line in web container
-  python manage.py loaddata /tmp/data_dump.json
-  ./compose/down.sh uat
+  python manage.py check
+  python manage.py shell
   ```
