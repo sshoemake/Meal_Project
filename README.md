@@ -106,7 +106,11 @@ Django based application for shopping and meal planning.
   ./compose/up.sh uat
   ./compose/manage.sh uat migrate
   docker cp ../backup_meal_project_12242025.json compose-web-1:/tmp/
-  open command line in web container
-  python manage.py loaddata /tmp/data_dump.json
-  ./compose/down.sh uat
+  open command line in web container:
+  docker exec -it compose-web-1 bash
+  python manage.py loaddata /tmp/backup_meal_project_12242025.json
+  python manage.py collectstatic
+  TEST (http://127.0.0.1:8000/)
+  Stop and remove volumes:
+  ./compose/down.sh uat -v 
   ```
