@@ -92,4 +92,6 @@ Django based application for shopping and meal planning.
   
   ```bash
   python manage.py test
+  python manage.py check
+  python manage.py shell
   ```
