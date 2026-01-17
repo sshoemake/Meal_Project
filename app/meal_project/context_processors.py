@@ -1,4 +1,5 @@
 from app.stores.models import Store
+from datetime import datetime
 
 
 def store_renderer(request):
@@ -27,7 +28,19 @@ def store_renderer(request):
     return {'all_stores': Store.objects.all(),
             }
 
+
 def user_theme(request):
+    theme = 'light'
+
     if request.user.is_authenticated:
-        return {"user_theme": request.user.profile.theme}
-    return {"user_theme": "light"}
+        pref = request.user.profile.theme
+
+        if pref == 'auto':
+            hour = datetime.now().hour
+            theme = 'dark' if hour >= 18 or hour < 7 else 'light'
+        else:
+            theme = pref
+
+    return {
+        'theme_class': f'theme-{theme}'
+    }

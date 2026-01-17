@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='profile',
             name='theme',
-            field=models.CharField(choices=[('light', 'Light'), ('dark', 'Dark'), ('solarized', 'Solarized')], default='light', max_length=50),
+            field=models.CharField(choices=[('light', 'Light'), ('dark', 'Dark'), ('auto', 'Auto')], default='light', max_length=50),
         ),
     ]

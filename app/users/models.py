@@ -16,7 +16,7 @@ class Profile(models.Model):
         choices=[
             ("light", "Light"),
             ("dark", "Dark"),
-            ("solarized", "Solarized"),
+            ("auto", "Auto"),
         ],
         default="light",
     )

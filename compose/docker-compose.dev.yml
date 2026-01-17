@@ -16,7 +16,7 @@ services:
     image: postgres:18
     container_name: myapp-db
     restart: always
-    env_file: .env.prod
+    env_file: .env.dev
     volumes:
       - pg_data:/var/lib/postgresql/18/docker
     healthcheck:
