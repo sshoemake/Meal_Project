@@ -17,8 +17,12 @@
 
 {% block javascript %}
 <script>
-    $(function () {
-        $("#id_name").focus();
-    });
+document.addEventListener("DOMContentLoaded", function() {
+    const nameInput = document.getElementById("id_name");
+    if (nameInput) {
+        nameInput.focus();
+    }
+});
 </script>
+
 {% endblock javascript %}

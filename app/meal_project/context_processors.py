@@ -42,5 +42,5 @@ def user_theme(request):
             theme = pref
 
     return {
-        'theme_class': f'theme-{theme}'
+        'theme': f'{theme}'
     }

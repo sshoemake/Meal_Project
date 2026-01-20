@@ -41,27 +41,29 @@
 {% block javascript %}
 
 <script>
-    $(function () {
-        $("#myInput").focus();
-    });
+document.addEventListener("DOMContentLoaded", function() {
+    const myInput = document.getElementById("myInput");
+    const myTableRows = document.querySelectorAll("#myTable tr");
 
-    $(document).ready(function () {
-        $("#myInput").on("keyup", function () {
-            var value = $(this).val().toLowerCase();
-            $("#myTable tr").filter(function () {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-            });
+    // Focus on input
+    myInput.focus();
 
+    // Keyup event for filtering
+    myInput.addEventListener("keyup", function(e) {
+        const value = myInput.value.toLowerCase();
+
+        myTableRows.forEach(function(row) {
+            const text = row.textContent.toLowerCase();
+            row.style.display = text.includes(value) ? "" : "none";
         });
 
-        $("#myInput").on("keyup", function (e) {
-            if (e.keyCode === 13) {
-                // Do something
-                $(this).select();
-            }
-        });
+        // Enter key behavior
+        if (e.key === "Enter") {
+            myInput.select();
+            // Additional code for Enter can go here
+        }
     });
-
+});
 </script>
 
 {% endblock javascript %}
