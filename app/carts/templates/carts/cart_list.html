@@ -73,7 +73,7 @@
             {% for item in cart_items.all %}
             {% if not request.session.hide_found or request.session.hide_found and not item.found %}
             <tbody>
-                <tr data-toggle="collapse" id="ing{{ item.ingredient.id }}" data-target="#accordion{{ item.ingredient.id }}"
+                <tr data-bs-toggle="collapse" id="ing{{ item.ingredient.id }}" data-bs-target="#accordion{{ item.ingredient.id }}"
                     class="clickable">
                     <td>{{ item.ingredient.name }} {% if item.quantity > 1 %} (Qty: {{ item.quantity }})
                         {% endif %}</td>
