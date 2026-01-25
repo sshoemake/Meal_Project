@@ -4,6 +4,7 @@ VENV := venv
 .PHONY: clean venv install up test fresh
 
 clean:
+	deactivate
 	rm -rf $(VENV)
 
 venv:

@@ -20,7 +20,7 @@
 
       Ingredients:
       <div>
-        <select style='width:100%;' class="js-example-basic-multiple" name="dd_ing_list" multiple="multiple">
+        <select style='width:100%;' class="form-select js-example-basic-multiple" name="dd_ing_list" multiple="multiple">
           {% for ingredient in ingredients %}
           <option value={{ ingredient.id }} {% if ingredient.id in curr_ing_ids %}selected{% endif %}>
             {{ ingredient.name }}</option>
@@ -43,9 +43,18 @@
 
 {% endblock content %}
 {% block javascript %}
-<script type="text/javascript">
-  $(document).ready(function () {
-    $('.js-example-basic-multiple').select2();
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.js-example-basic-multiple').forEach((el) => {
+    if (el.tomselect) return; // prevents double-init
+
+    new TomSelect(el, {
+      plugins: ['remove_button'],
+      maxItems: null,
+      create: false,
+      persist: false
+    });
   });
+});
 </script>
 {% endblock javascript %}

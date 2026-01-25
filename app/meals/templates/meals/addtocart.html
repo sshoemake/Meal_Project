@@ -19,7 +19,7 @@
             <p class="article-content">{{ object.notes }}</p>
 
             Ingredients:
-            <div>
+            <div class="form-check">
                 {% for ing in ing_list %}
                 <input
                     class="form-check-input"
@@ -47,9 +47,4 @@
 
 {% endblock content %}
 {% block javascript %}
-<script type="text/javascript">
-    $(document).ready(function () {
-        $('.js-example-basic-multiple').select2();
-    });
-</script>
 {% endblock javascript %}

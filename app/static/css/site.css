@@ -1,3 +1,6 @@
+/* =========================
+   Root / Bootstrap variable mapping
+   ========================= */
 :root {
   --bg-color: #fafafa;
   --text-color: #333333;
@@ -24,60 +27,42 @@
   --table-text: var(--text-color);
 }
 
-.table {
-  --bs-table-bg: var(--table-bg);
-  --bs-table-color: var(--table-text);
-  --bs-table-border-color: var(--border-color);
+/* =========================
+   Dark Mode (Bootstrap 5.3 data-bs-theme)
+   ========================= */
+[data-bs-theme="dark"] {
+  --bs-body-bg: #212529;
+  --bs-body-color: #f8f9fa;
+  --bs-secondary-bg: #343a40;
+  --bs-border-color: #495057;
+  --bs-tertiary-bg: #343a40;
+
+  --list-bg: #343a40;
+  --list-text: #f8f9fa;
+  --list-hover-bg: #495057;
+
+  --input-bg: #2f2f30;
+  --input-text: #f8f9fa;
+  --input-border: #3a3a3a;
+  --input-focus-border: #0d6efd;
+
+  --table-bg: #343a40;
+  --table-text: #f8f9fa;
 }
 
-.table > :not(caption) > * > * {
-  background-color: var(--bs-table-bg);
-  color: var(--bs-table-color);
-}
-
-.table thead th {
-  border-bottom: 2px solid var(--border-color);
-}
-
+/* =========================
+   Body
+   ========================= */
 body {
-  background: var(--bg-color);
-  color: var(--text-color);
+  background: var(--bs-body-bg);
+  color: var(--bs-body-color);
   margin-top: 5rem;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-body.theme-dark {
-  --bg-color: #1e1e1e;
-  --text-color: #d4d4d4;
-  --surface-bg: #252526;
-  --border-color: #333333;
-
-  --bs-body-bg: var(--bg-color);
-  --bs-body-color: var(--text-color);
-  --bs-tertiary-bg: var(--surface-bg);
-  --bs-secondary-bg: var(--surface-bg);
-  --bs-border-color: var(--border-color);
-  
-  --list-bg: #252526;
-  --list-text: #d4d4d4;
-  --list-hover-bg: #2f2f30;
-
-  --input-bg: #1f1f1f;
-  --input-text: #e0e0e0;
-  --input-border: #3a3a3a;
-  --input-focus-border: #7aa2f7;
-
-  --table-bg: #252526;
-  --table-text: #d4d4d4;
-
-  --link-color: #7aa2f7;
-}
-
-.theme-auto {
-  --bg-color: #fdf6e3;
-  --text-color: #657b83;
-}
-
+/* =========================
+   Forms / Inputs
+   ========================= */
 .form-control,
 .form-select {
   background-color: var(--input-bg);
@@ -93,56 +78,17 @@ body.theme-dark {
   box-shadow: 0 0 0 0.15rem rgba(122, 162, 247, 0.25);
 }
 
-.surface,
-.content-section {
-  background-color: var(--surface-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 0.375rem;
-  padding: 1rem;
-}
-
-body.theme-dark .form-select {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='rgba(212,212,212,0.8)' d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592c.86 0 1.32 1.013.753 1.658L8.753 11.14a1 1 0 0 1-1.506 0z'/%3e%3c/svg%3e");
-}
-
-body.theme-dark .form-control::placeholder {
-  color: rgba(255, 255, 255, 0.4);
-}
-
 .form-control::placeholder {
   color: rgba(0, 0, 0, 0.4);
 }
 
-.list-group-item {
-  background-color: var(--list-bg);
-  color: var(--list-text);
-  border-color: var(--border-color);
-}
-
-.list-group-item:hover,
-.list-group-item:focus {
-  background-color: var(--list-hover-bg);
-  color: var(--list-text);
-}
-
-.form-control[type="file"] {
-  background-color: var(--input-bg);
-  color: var(--input-text);
-  border-color: var(--input-border);
-}
-
+/* File input button */
 .form-control[type="file"]::file-selector-button {
   background-color: var(--surface-bg);
   color: var(--text-color);
   border: 1px solid var(--border-color);
   padding: 0.375rem 0.75rem;
   margin-right: 0.75rem;
-}
-
-body.theme-dark .form-control[type="file"]::file-selector-button {
-  background-color: #2f2f30;
-  color: #d4d4d4;
-  border-color: #3a3a3a;
 }
 
 .form-control[type="file"]::file-selector-button:hover {
@@ -154,44 +100,187 @@ body.theme-dark .form-control[type="file"]::file-selector-button {
   box-shadow: 0 0 0 0.15rem rgba(122, 162, 247, 0.25);
 }
 
+/* Badges */
 .badge.bg-primary {
   background-color: var(--input-focus-border);
   color: #fff;
 }
 
-a {
-  color: var(--link-color);
-}
-
-/* Base checkbox styling */
+/* Checkboxes */
 .form-check-input {
   background-color: var(--input-bg);
   border-color: var(--input-border);
   cursor: pointer;
 }
-
-/* Checked state */
 .form-check-input:checked {
   background-color: var(--input-focus-border);
   border-color: var(--input-focus-border);
 }
-
-/* Focus ring */
 .form-check-input:focus {
   border-color: var(--input-focus-border);
   box-shadow: 0 0 0 0.15rem rgba(122, 162, 247, 0.25);
 }
-
-/* Disabled state */
 .form-check-input:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
+/* =========================
+   Tables
+   ========================= */
+.table {
+  --bs-table-bg: var(--table-bg);
+  --bs-table-color: var(--table-text);
+  --bs-table-border-color: var(--bs-border-color);
+}
+.table > :not(caption) > * > * {
+  background-color: var(--bs-table-bg);
+  color: var(--bs-table-color);
+}
+.table thead th {
+  border-bottom: 2px solid var(--bs-border-color);
+}
+
+/* =========================
+   Lists / List Groups
+   ========================= */
+.list-group-item {
+  background-color: var(--list-bg);
+  color: var(--list-text);
+  border-color: var(--bs-border-color);
+}
+.list-group-item:hover,
+.list-group-item:focus {
+  background-color: var(--list-hover-bg);
+  color: var(--list-text);
+}
+
+/* =========================
+   Surfaces / Sections
+   ========================= */
+.surface,
+.content-section {
+  background-color: var(--bs-tertiary-bg);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.375rem;
+  padding: 1rem;
+  margin-bottom: 20px;
+}
+
+/* =========================
+   Links & Headings
+   ========================= */
+a {
+  color: var(--link-color, #0d6efd);
+}
 h1, h2, h3, h4, h5, h6 {
   color: #444444;
 }
 
+/* =========================
+   Articles
+   ========================= */
+.article-title {
+  color: #444444;
+}
+a.article-title:hover {
+  color: #428bca;
+  text-decoration: none;
+}
+.article-content {
+  white-space: pre-line;
+}
+.article-img {
+  height: 65px;
+  width: 65px;
+  margin-right: 16px;
+}
+.article-metadata {
+  padding-bottom: 1px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid #e3e3e3;
+}
+.article-metadata a:hover {
+  color: #333;
+  text-decoration: none;
+}
+.article-svg {
+  width: 25px;
+  height: 25px;
+  vertical-align: middle;
+}
+
+/* =========================
+   Account / Profile
+   ========================= */
+.account-img {
+  height: 125px;
+  width: 125px;
+  margin-right: 20px;
+  margin-bottom: 16px;
+}
+.account-heading {
+  font-size: 2.5rem;
+}
+
+/* =========================
+   Tom Select (Bootstrap 5.3 compatible)
+   ========================= */
+.ts-wrapper {
+  width: 100%;
+}
+
+.ts-control {
+  min-height: calc(1.5em + 0.75rem + 2px);
+  padding: 0.375rem 0.75rem;
+  border-radius: var(--bs-border-radius);
+  border: 1px solid var(--bs-border-color);
+  background-color: var(--input-bg);
+  color: var(--input-text);
+  font-size: 1rem;
+}
+
+.ts-control .item {
+  border-radius: var(--bs-border-radius-sm);
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  background-color: var(--bs-secondary-bg);
+  color: var(--bs-body-color);
+  border: 1px solid var(--bs-border-color);
+}
+
+.ts-control .item .remove {
+  color: var(--bs-body-color);
+  border-left: 1px solid var(--bs-border-color);
+}
+
+.ts-control .item .remove:hover {
+  background-color: var(--bs-border-color);
+}
+
+.ts-dropdown {
+  border-radius: var(--bs-border-radius);
+  border: 1px solid var(--bs-border-color);
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+}
+
+.ts-dropdown .option.active,
+.ts-dropdown .option:hover {
+  background-color: var(--bs-primary);
+  color: #fff;
+}
+
+.ts-dropdown .option {
+  border-bottom: 1px solid #2b3035;
+}
+.ts-dropdown .option:last-child {
+  border-bottom: none;
+}
+
+/* =========================
+   Misc
+   ========================= */
 ul {
   margin: 0;
 }
@@ -203,68 +292,11 @@ ul {
 .site-header .navbar-nav .nav-link {
   color: #cbd5db;
 }
-
 .site-header .navbar-nav .nav-link:hover {
   color: #ffffff;
 }
-
 .site-header .navbar-nav .nav-link.active {
   font-weight: 500;
-}
-
-.content-section {
-  background: var(--surface-bg);
-  padding: 10px 20px;
-  border: 1px solid var(--border-color);
-  border-radius: 3px;
-  margin-bottom: 20px;
-}
-
-.article-title {
-  color: #444444;
-}
-
-a.article-title:hover {
-  color: #428bca;
-  text-decoration: none;
-}
-
-.article-content {
-  white-space: pre-line;
-}
-
-.article-img {
-  height: 65px;
-  width: 65px;
-  margin-right: 16px;
-}
-
-.article-metadata {
-  padding-bottom: 1px;
-  margin-bottom: 4px;
-  border-bottom: 1px solid #e3e3e3
-}
-
-.article-metadata a:hover {
-  color: #333;
-  text-decoration: none;
-}
-
-.article-svg {
-  width: 25px;
-  height: 25px;
-  vertical-align: middle;
-}
-
-.account-img {
-  height: 125px;
-  width: 125px;
-  margin-right: 20px;
-  margin-bottom: 16px;
-}
-
-.account-heading {
-  font-size: 2.5rem;
 }
 
 .hiddenRow {
@@ -272,5 +304,6 @@ a.article-title:hover {
 }
 
 .tab-2{
-	display:inline-block; width:TWO-TAB-WIDTH;
+  display:inline-block;
+  width:TWO-TAB-WIDTH;
 }

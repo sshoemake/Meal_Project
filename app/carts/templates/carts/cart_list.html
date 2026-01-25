@@ -6,7 +6,6 @@
 
 {% if empty %}
 <h2 style="text-align:center;">{{ empty_message|default:"Your cart is empty." }}</h2>
-
 {% else %}
 
 <h1>Shopping Cart:</h1>
@@ -49,6 +48,7 @@
                 <th></th>
                 <th></th>
             </thead>
+            <tbody>
             {% for meal in cart.meals.all %}
             <tr>
                 <td>{{ meal.name }}</td>
@@ -56,7 +56,7 @@
                 <td><a class="float-end" href="{% url 'update-meal-cart' meal.id %}">Remove</a></td>
             </tr>
             {% endfor %}
-
+            </tbody>
         </table>
     </div>
     {% endif %}
@@ -69,36 +69,26 @@
                 <th>Aisle</th>
                 <th></th>
             </thead>
-
-            {% for item in cart_items.all %}
-            {% if not request.session.hide_found or request.session.hide_found and not item.found %}
             <tbody>
-                <tr data-toggle="collapse" id="ing{{ item.ingredient.id }}" data-target="#accordion{{ item.ingredient.id }}"
-                    class="clickable">
-                    <td>{{ item.ingredient.name }} {% if item.quantity > 1 %} (Qty: {{ item.quantity }})
-                        {% endif %}</td>
+            {% for item in cart_items.all %}
+                {% if not hide_found or not item.found %}
+                <tr id="ing{{ item.ingredient.id }}" class="clickable">
+                    <td>{{ item.ingredient.name }}{% if item.quantity > 1 %} (Qty: {{ item.quantity }}){% endif %}</td>
                     <td>{{ item.ing_store_aisle|floatformat }}</td>
                     <td>
-                        {% if request.session.hide_found and not item.found %}
-                        {% url 'found-ing-cart' item.ingredient.id as the_url %}
-                        <a class="float-end" onclick="hideItem('{{ the_url }}', 'ing{{ item.ingredient.id }}')"
-                            href="javascript:void(0)">Hide</a>
+                        {% if hide_found and not item.found %}
+                            {% url 'found-ing-cart' item.ingredient.id as the_url %}
+                            <a href="#" class="float-end hide-link"
+                            data-url="{{ the_url }}"
+                            data-target="ing{{ item.ingredient.id }}">Hide</a>
                         {% else %}
-                        <a class="float-end" href="{% url 'remove-ing-cart' item.ingredient.id %}">Remove</a>
+                            <a class="float-end" href="{% url 'remove-ing-cart' item.ingredient.id %}">Remove</a>
                         {% endif %}
                     </td>
                 </tr>
-                <!--             <tr class="hiddenRow">
-                    <td colspan="3" class="hiddenRow">
-                        <div id="accordion{{ item.ingredient.id }}" class="collapse"><span class="tab-1">Hidden by
-                                default<br>Hidden by default</span>
-                        </div>
-                    </td>
-                </tr> -->
-            </tbody>
-            {% endif %}
+                {% endif %}
             {% endfor %}
-
+            </tbody>
         </table>
     </div>
     {% endif %}
@@ -106,29 +96,44 @@
 </form>
 
 {% endif %}
-
 {% endblock content %}
+
 {% block javascript %}
 <script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function () {
+    // Attach click handler to all hide links
+    const hideLinks = document.querySelectorAll('.hide-link');
 
-    function hideItem(url, item) {
+    hideLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
 
-        $.ajax({
-            type: "POST",
-            url: url,
-            data: {
-                csrfmiddlewaretoken: '{{ csrf_token }}'
-            },
-            success: function () {
-                var row = document.getElementById(item);
-                if (row.style.display == '') {
-                    row.style.display = 'none';
+            const url = this.dataset.url;
+            const targetId = this.dataset.target;
+            const row = document.getElementById(targetId);
+
+            if (!row) return;
+
+            // Send POST request to mark as found
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: 'csrfmiddlewaretoken={{ csrf_token }}'
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Remove the row from the DOM immediately
+                    row.remove();
+                } else {
+                    console.error('Failed to hide item');
                 }
-            }
-
+            })
+            .catch(err => console.error(err));
         });
-
-    }
-
+    });
+});
 </script>
 {% endblock javascript %}

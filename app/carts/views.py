@@ -23,6 +23,7 @@ def cart_list(request):
         return redirect(reverse('cart-list'))
     
     cart = get_cart(request)
+    hide_found = request.session.get('hide_found', False)
 
     if cart:
         cart_items = Cart_Details.objects.filter(cart=cart)
@@ -52,6 +53,7 @@ def cart_list(request):
     context = {
         'cart': cart,
         'cart_items': cart_items,
+        'hide_found': hide_found,
         'empty': empty,
         'empty_message': "Your shopping cart is empty.",
     }
@@ -167,59 +169,47 @@ def select_cart(request, **kwargs):
 def remove_ing_cart(request, **kwargs):
     cart = get_cart_or_create(request)
 
-    try:
-        ingredient = Ingredient.objects.filter(id=kwargs.get("pk", "")).first()
-    except Ingredient.DoesNotExist:
-        pass
-    except:
-        pass
+    ingredient = Ingredient.objects.filter(pk=kwargs.get("pk")).first()
+    if not ingredient:
+        return redirect(request.META.get("HTTP_REFERER", "/"))
 
-    cart_items = Cart_Details.objects.filter(cart=cart)
-    my_ing_ids = cart_items.values_list("ingredient_id", flat=True)
+    cart_item = Cart_Details.objects.filter(
+        cart=cart,
+        ingredient=ingredient
+    ).first()
 
-    if ingredient.id in my_ing_ids:
-        update_CD = Cart_Details.objects.get(cart=cart, ingredient=ingredient)
-        if update_CD.quantity > 1:
-            update_CD.quantity = F("quantity") - 1
-            update_CD.save()
-        else:
-            update_CD.delete()
+    if not cart_item:
+        return redirect(request.META.get("HTTP_REFERER", "/"))
+
+    if cart_item.quantity > 1:
+        cart_item.quantity = F("quantity") - 1
+        cart_item.save()
+    else:
+        cart_item.delete()
 
     request.session["items_total"] = cart.items_total
 
-    # return redirect("ingredients-home")
     return redirect(request.META.get("HTTP_REFERER", "/"))
 
 
 def found_ing_cart(request, **kwargs):
-    #hide_found = False
-
-    # if "hide_found" in request.GET:
-    # print("final_list")
-    # current_final_value = request.POST.get("final_list")
-    # print(current_final_value)
-    #    hide_found = True
-
     cart = get_cart_or_create(request)
 
     try:
-        ingredient = Ingredient.objects.filter(id=kwargs.get("pk", "")).first()
+        ingredient = Ingredient.objects.get(pk=kwargs.get("pk"))
     except Ingredient.DoesNotExist:
-        pass
-    except:
-        pass
+        return HttpResponse("OK")  # graceful exit
 
-    cart_items = Cart_Details.objects.filter(cart=cart)
-    my_ing_ids = cart_items.values_list("ingredient_id", flat=True)
+    cart_item = Cart_Details.objects.filter(
+        cart=cart,
+        ingredient=ingredient
+    ).first()
 
-    if ingredient.id in my_ing_ids:
-        update_CD = Cart_Details.objects.get(cart=cart, ingredient=ingredient)
-        update_CD.found = True
-        update_CD.save()
+    if cart_item:
+        cart_item.found = True
+        cart_item.save()
 
     return HttpResponse("OK")
-    # return redirect("ingredients-home")
-    # return redirect(request.META.get("HTTP_REFERER", "/"))
 
 
 def add_ings_cart(request, **kwargs):
