@@ -7,7 +7,6 @@ from django.views.generic import (
 
 
 def home(request):
-    #context = {"meals": Meal.objects.all()}
     return render(request, "metrics/home.html")
 
 

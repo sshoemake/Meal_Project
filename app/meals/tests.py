@@ -1,11 +1,18 @@
+import json
+
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.http import JsonResponse
 from django.test import TestCase
 from django.urls import reverse
+from django.contrib.auth.models import User
 from PIL import Image
 from io import BytesIO
+
 from app.meals.models import Meal, Meal_Details
 from app.ingredients.models import Ingredient
+from app.carts.models import Cart
+from app.meals.views import JSONResponseMixin, get_date_label
 
 
 class MealModelTest(TestCase):
@@ -304,3 +311,91 @@ class MealDetailsModelTest(TestCase):
         
         self.assertEqual(self.meal_details.quantity, 200)
         self.assertEqual(meal_details2.quantity, 400)
+
+class MealsViewsTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="tester", password="pass")
+        self.profile = self.user.profile
+        # self.profile = Profile.objects.create(user=self.user)
+
+    def test_json_response_mixin_gets_and_renders(self):
+        mix = JSONResponseMixin()
+        data = {"ok": True}
+        resp = mix.render_to_json_response(data)
+        self.assertIsInstance(resp, JsonResponse)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(json.loads(resp.content.decode()), data)
+
+    def test_home_view_lists_meals(self):
+        Meal.objects.create(name="Meal X")
+        resp = self.client.get(reverse("meals-home"))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, "Meal X")
+
+    def test_get_date_label_returns_string(self):
+        s = get_date_label(0)
+        self.assertIsInstance(s, str)
+        self.assertTrue(len(s) > 0)
+
+    def test_meal_detail_get_and_context(self):
+        m = Meal.objects.create(name="DetailMeal")
+        # create ingredient and meal_details
+        ing = Ingredient.objects.create(name="I1", aisle=1.0, auto_add=True)
+        Meal_Details.objects.create(ingredient=ing, meal=m, quantity=1)
+
+        # create a cart that contains this meal so MealDisplay.carts picks it up
+        cart = Cart.objects.create(yearweek=202201, profile=self.profile)
+        cart.meals.add(m)
+
+        resp = self.client.get(reverse("meal-detail", kwargs={"pk": m.pk}))
+        self.assertEqual(resp.status_code, 200)
+        # context available
+        self.assertIn("ingredients", resp.context)
+        self.assertIn("curr_ing_ids", resp.context)
+        self.assertIn("carts", resp.context)
+
+    def test_meal_ing_update_post_creates_meal_details(self):
+        m = Meal.objects.create(name="UpdMeal")
+        i1 = Ingredient.objects.create(name="A", aisle=1.0, auto_add=True)
+        i2 = Ingredient.objects.create(name="B", aisle=1.0, auto_add=True)
+
+        self.client.login(username="tester", password="pass")
+
+        data = {"message": "hi", "dd_ing_list": [str(i1.pk), str(i2.pk)]}
+        resp = self.client.post(reverse("meal-detail", kwargs={"pk": m.pk}), data)
+
+        # should redirect to meal-detail
+        self.assertIn(resp.status_code, (302, 303))
+
+        mds = Meal_Details.objects.filter(meal=m)
+        self.assertEqual(mds.count(), 2)
+
+    def test_addtocart_post_adds_meal_to_cart(self):
+        m = Meal.objects.create(name="CartMeal")
+        # create cart and set session to use it (avoid creation path)
+        cart = Cart.objects.create(yearweek=202201, profile=self.profile)
+
+        self.client.login(username="tester", password="pass")
+        session = self.client.session
+        session["cart_id"] = cart.id
+        session.save()
+
+        resp = self.client.post(reverse("meal-addtocart", kwargs={"pk": m.pk}))
+        self.assertIn(resp.status_code, (302, 303))
+
+        cart.refresh_from_db()
+        self.assertIn(m, cart.meals.all())
+
+    def test_book_create_returns_json_and_creates_meal(self):
+        data = {"name": "Booked", "notes": "n"}
+        resp = self.client.post(reverse("book_create"), data)
+        # save_book_form returns JsonResponse
+        self.assertEqual(resp.status_code, 200)
+        js = resp.json()
+        self.assertTrue(js.get("form_is_valid"))
+        self.assertTrue(Meal.objects.filter(name="Booked").exists())
+
+    def test_about_view(self):
+        resp = self.client.get(reverse("meals-about"))
+        self.assertEqual(resp.status_code, 200)
+        self.assertContains(resp, "About")

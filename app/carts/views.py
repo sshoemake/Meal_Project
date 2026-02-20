@@ -18,7 +18,7 @@ def cart_list(request):
     if request.method == "POST":
         # handle checkbox toggles in session
         request.session['hide_found'] = 'hide_found' in request.POST
-        request.session['reverse_sort'] = 'reverse_sort' in request.POST
+        # request.session['reverse_sort'] = 'reverse_sort' in request.POST
         # redirect to GET to render full context
         return redirect(reverse('cart-list'))
     
@@ -36,17 +36,14 @@ def cart_list(request):
             ingredient_id=OuterRef('ingredient__id')
         )[:1].values('aisle')
 
-        try:
-            if request.session["reverse_sort"] == True:
-                aisle_sort = '-ing_store_aisle'
-            else:
-                aisle_sort = 'ing_store_aisle'
-        except:
-            request.session["reverse_sort"] = False
-            aisle_sort = 'ing_store_aisle'
-
         cart_items = cart_items.annotate(
-            ing_store_aisle=Subquery(ing_store_aisles)).order_by(aisle_sort)
+            ing_store_aisle=Subquery(ing_store_aisles)
+        )
+
+        if def_store.walk_mode == Store.WALK_REVERSE:
+            cart_items = cart_items.order_by('-ing_store_aisle')
+        else:
+            cart_items = cart_items.order_by('ing_store_aisle')
 
     empty = (cart.meals.count() == 0 and cart_items.count() == 0)
 

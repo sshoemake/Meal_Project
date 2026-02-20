@@ -95,3 +95,12 @@ Django based application for shopping and meal planning.
   python manage.py check
   python manage.py shell
   ```
+
+# Test Coverage
+
+  ```bash
+  pip install coverage
+  coverage run manage.py test
+  coverage report -or- coverage html
+  Open: htmlcov/index.html
+  ```

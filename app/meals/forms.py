@@ -9,6 +9,13 @@ class BookForm(forms.ModelForm):
         fields = ["name", "notes"]
         # exclude = ("",)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for fname, field in self.fields.items():
+            existing = field.widget.attrs.get("class", "")
+            classes = f"{existing} form-control".strip()
+            field.widget.attrs.update({"class": classes})
+
 
 # BookFormset = forms.inlineformset_factory(Meal, Meal_Details, form=BookForm, extra=2)
 

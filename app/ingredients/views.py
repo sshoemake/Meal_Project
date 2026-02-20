@@ -132,9 +132,6 @@ class IngredientDisplay(JSONResponseMixin, DetailView):
 
 class AuthorInterestForm(forms.Form):
     message = forms.CharField()
-    # ingredients = Ingredient.objects.all()
-    # my_MD = Meal_Details.objects.filter(meal=self.object)
-    # curr_ing_ids = my_MD.values_list("ingredient_id", flat=True)
 
 
 class IngAisleUpdate(LoginRequiredMixin, SingleObjectMixin, FormView):

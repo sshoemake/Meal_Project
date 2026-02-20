@@ -21,7 +21,7 @@ class CartSetupTestCase(TestCase):
     def setUp(self):
         """Set up test data"""
         self.client = Client()
-        print("Setting up test data...")
+
         # Create test user
         self.user = User.objects.create_user(
             username='testuser',
@@ -320,7 +320,7 @@ class CartListViewTests(CartSetupTestCase):
         session['selected_week'] = 3
         session['cart_id'] = self.cart.id
         session['hide_found'] = False
-        session['reverse_sort'] = False
+        # session['reverse_sort'] = False
         session.save()
     
     def test_cart_list_view_displays_remove_link(self):
@@ -417,20 +417,6 @@ class CartListViewTests(CartSetupTestCase):
         
         # Check session was updated
         self.assertTrue(self.client.session.get('hide_found'))
-    
-    def test_cart_list_view_toggle_reverse_sort_checkbox(self):
-        """Test that reverse_sort checkbox toggles correctly"""
-        # POST with reverse_sort checkbox
-        response = self.client.post(
-            reverse('cart-list'),
-            data={'reverse_sort': 'on'}
-        )
-        
-        # Should redirect
-        self.assertEqual(response.status_code, 302)
-        
-        # Check session was updated
-        self.assertTrue(self.client.session.get('reverse_sort'))
     
     def test_cart_list_displays_item_quantity(self):
         """Test that item quantity is displayed when > 1"""
