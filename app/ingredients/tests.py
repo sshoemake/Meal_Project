@@ -1,8 +1,115 @@
 from django.test import TestCase
 from django.urls import reverse
 from decimal import Decimal
+from django.contrib.auth.models import User
+
 from app.ingredients.models import Ingredient, Ing_Store
 from app.stores.models import Store
+from app.meals.models import Meal, Meal_Details
+from app.carts.models import Cart, Cart_Details
+from app.ingredients.views import JSONResponseMixin
+from django.http import JsonResponse
+import json
+
+
+class IngredientsViewsTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="tester", password="pass")
+        # profile is created by the app signal or factory in project
+        self.profile = self.user.profile
+
+        # create a store and default session values
+        self.store = Store.objects.create(name="Store1", default=True)
+
+    def test_json_response_mixin(self):
+        mix = JSONResponseMixin()
+        data = {"ok": True}
+        resp = mix.render_to_json_response(data)
+        self.assertIsInstance(resp, JsonResponse)
+        self.assertEqual(json.loads(resp.content.decode()), data)
+
+    def test_ing_list_view_queryset_and_context(self):
+        # create ingredients and mapping to store
+        i1 = Ingredient.objects.create(name="A", aisle=1.0, auto_add=True)
+        i2 = Ingredient.objects.create(name="B", aisle=2.0, auto_add=False)
+        Ing_Store.objects.create(ingredient=i1, store=self.store, aisle=5.5)
+
+        # create cart and a cart detail for i2 to appear in cart_item_list
+        cart = Cart.objects.create(yearweek=202201, profile=self.profile)
+        cd = Cart_Details.objects.create(cart=cart, ingredient=i2, quantity=1)
+
+        # set session keys
+        session = self.client.session
+        session["def_store"] = self.store.id
+        session["cart_id"] = cart.id
+        session.save()
+
+        resp = self.client.get(reverse("ingredients-home"))
+        self.assertEqual(resp.status_code, 200)
+
+        # object_list should be present and annotated
+        obj_list = resp.context["object_list"]
+        self.assertGreaterEqual(len(obj_list), 2)
+        # ensure annotation exists on at least one object
+        annotated = [getattr(o, "ing_store_aisle", None) for o in obj_list]
+        self.assertIn(5.5, [a for a in annotated if a is not None])
+
+        # cart_item_list should include ingredient from cart
+        self.assertIn(i2, resp.context["cart_item_list"])
+
+    def test_ingredient_display_context(self):
+        ing = Ingredient.objects.create(name="C", aisle=1.0, auto_add=True)
+        meal = Meal.objects.create(name="Meal1")
+        Meal_Details.objects.create(ingredient=ing, meal=meal, quantity=1)
+
+        resp = self.client.get(reverse("ingredients-detail", kwargs={"pk": ing.pk}))
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn("meals", resp.context)
+        self.assertIn(meal, resp.context["meals"])
+        self.assertIn("store_aisles", resp.context)
+
+    def test_ing_aisle_update_post_creates_ing_store_entries(self):
+        ing = Ingredient.objects.create(name="D", aisle=1.0, auto_add=True)
+        store2 = Store.objects.create(name="S2")
+
+        # login required
+        self.client.login(username="tester", password="pass")
+
+        url = reverse("ingredients-detail", kwargs={"pk": ing.pk})
+        data = {
+            "Aisles": ["10.5", ""],
+            "Store_ids": [str(store2.id), ""],
+            "message": "hi",
+        }
+
+        resp = self.client.post(url, data)
+        # redirect / json response from form handling
+        self.assertIn(resp.status_code, (200, 302))
+
+        # Ing_Store should have been created for store2
+        self.assertTrue(Ing_Store.objects.filter(ingredient=ing, store=store2).exists())
+
+    def test_ing_create_update_delete_requires_login_and_works(self):
+        # create (login required)
+        self.client.login(username="tester", password="pass")
+        url = reverse("ingredients-create")
+        resp = self.client.post(url, {"name": "NewIng", "aisle": "4.2", "auto_add": True})
+        self.assertIn(resp.status_code, (302, 303))
+        new = Ingredient.objects.get(name="NewIng")
+
+        # update
+        url_up = reverse("ingredients-update", kwargs={"pk": new.pk})
+        resp = self.client.post(url_up, {"name": "NewIng2", "aisle": "4.2", "auto_add": False})
+        self.assertIn(resp.status_code, (302, 303))
+        new.refresh_from_db()
+        self.assertEqual(new.name, "NewIng2")
+
+        # delete
+        url_del = reverse("ingredients-delete", kwargs={"pk": new.pk})
+        resp = self.client.post(url_del)
+        self.assertIn(resp.status_code, (302, 303))
+        self.assertFalse(Ingredient.objects.filter(pk=new.pk).exists())
+
 
 
 class IngredientModelTest(TestCase):

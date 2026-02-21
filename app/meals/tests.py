@@ -388,10 +388,14 @@ class MealsViewsTests(TestCase):
 
     def test_book_create_returns_json_and_creates_meal(self):
         data = {"name": "Booked", "notes": "n"}
-        resp = self.client.post(reverse("book_create"), data)
-        # save_book_form returns JsonResponse
+        url = reverse("meal-create")
+        # Must be logged in because MealCreateView uses LoginRequiredMixin
+        self.client.login(username="tester", password="pass")
+        # simulate AJAX request (X-Requested-With header)
+        resp = self.client.post(url, data, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+        # save_book_form / MealCreateView returns JsonResponse for AJAX
         self.assertEqual(resp.status_code, 200)
-        js = resp.json()
+        js = json.loads(resp.content.decode())
         self.assertTrue(js.get("form_is_valid"))
         self.assertTrue(Meal.objects.filter(name="Booked").exists())
 

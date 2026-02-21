@@ -209,8 +209,33 @@ class MealCreateView(LoginRequiredMixin, CreateView):
     fields = ["name", "notes", "image"]
 
     def form_valid(self, form):
-        # form.instance.author = self.request.user
+        # Save the object first
+        self.object = form.save()
+        # If this is an AJAX request, respond with JSON containing
+        # the rendered partials expected by the frontend.
+        if self.request.headers.get("x-requested-with") == "XMLHttpRequest":
+            data = {"form_is_valid": True}
+            data["html_book_list"] = render_to_string(
+                "meals/includes/partial_meal_list.html",
+                {"books": Meal.objects.all()},
+                request=self.request,
+            )
+            return JsonResponse(data)
+
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        # Return JSON for AJAX requests so the frontend can update the modal/form
+        if self.request.headers.get("x-requested-with") == "XMLHttpRequest":
+            context = {"form": form}
+            html_form = render_to_string(
+                "meals/includes/partial_meal_create.html",
+                context,
+                request=self.request,
+            )
+            return JsonResponse({"form_is_valid": False, "html_form": html_form})
+
+        return super().form_invalid(form)
 
 
 class MealUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -233,39 +258,15 @@ class MealDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return True
 
 
-def save_book_form(request, form, template_name):
-    data = dict()
-    if request.method == "POST":
-        if form.is_valid():
-            form.save()
-            data["form_is_valid"] = True
-            books = Meal.objects.all()
-            data["html_book_list"] = render_to_string(
-                "meals/includes/partial_meal_list.html", {"books": books}
-            )
-        else:
-            data["form_is_valid"] = False
-    context = {"form": form}
-    #print(context)
-    data["html_form"] = render_to_string(
-        template_name, context, request=request)
-    #print(data)
-    return JsonResponse(data)
-
-
 def about(request):
     return render(request, "meals/about.html", {"title": "About"})
 
 
-def book_create(request):
-    if request.method == "POST":
-        form = BookForm(request.POST)
-    else:
-        form = BookForm()
-    return save_book_form(request, form, "meals/includes/partial_meal_create.html")
+# `book_create` and `save_book_form` logic has been consolidated into
+# `MealCreateView`. `meal_update` implements the partial-update JSON
+# response inline below.
 
-
-def book_update(request, **kwargs):
+def meal_update(request, **kwargs):
     meal = get_object_or_404(Meal, pk=kwargs.get("pk", ""))
 
     if request.method == "POST":
@@ -273,4 +274,20 @@ def book_update(request, **kwargs):
     else:
         form = BookForm(instance=meal)
 
-    return save_book_form(request, form, "meals/includes/partial_meal_update.html")
+    data = dict()
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            data["form_is_valid"] = True
+            books = Meal.objects.all()
+            data["html_book_list"] = render_to_string(
+                "meals/includes/partial_meal_list.html", {"books": books}, request=request
+            )
+        else:
+            data["form_is_valid"] = False
+
+    context = {"form": form}
+    data["html_form"] = render_to_string(
+        "meals/includes/partial_meal_update.html", context, request=request
+    )
+    return JsonResponse(data)
