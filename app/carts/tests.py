@@ -12,10 +12,9 @@ from django.urls import reverse
 
 from app.carts import views
 from app.carts.models import Cart, Cart_Details
-from app.ingredients.models import Ingredient, Ing_Store
+from app.ingredients.models import Ingredient
 from app.meals.models import Meal
 from app.stores.models import Store
-from app.users.models import Profile
 
 
 def make_request(method='get', path='/', data=None):
@@ -373,7 +372,7 @@ class RemoveIngredientCartTests(CartSetupTestCase):
     
     def test_remove_ing_cart_updates_session_items_total(self):
         """Test that removing ingredient updates session items total"""
-        initial_total = self.cart.items_total
+        # initial_total = self.cart.items_total
         
         # Remove ingredient
         self.client.get(

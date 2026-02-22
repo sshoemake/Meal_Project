@@ -1,5 +1,4 @@
 from django.urls import path
-from .views import cart_list, update_ing_cart, update_meal_cart, select_cart
 from . import views
 
 urlpatterns = [

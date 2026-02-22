@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from django import forms
 # removed unused import: modelformset_factory
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -19,8 +19,8 @@ from django.views.generic import (
 from django.views.generic.detail import SingleObjectMixin
 from .models import Meal, Ingredient, Meal_Details
 from .forms import BookForm
-from app.carts.views import update_meal_cart, add_ings_cart, get_cart, cart_header_lists, ing_exists_cart
-from app.carts.models import Cart, Cart_Details
+from app.carts.views import update_meal_cart, add_ings_cart, cart_header_lists
+from app.carts.models import Cart
 import datetime
 
 

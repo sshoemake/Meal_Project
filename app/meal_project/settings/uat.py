@@ -1,6 +1,5 @@
 import os 
 from .base import *
-from .base import BASE_DIR
 
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')

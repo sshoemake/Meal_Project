@@ -21,7 +21,6 @@ from django.conf.urls.static import static
 from app.users import views as user_views
 from django.views.decorators.http import require_POST
 from django.views.generic import TemplateView
-from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path("admin/", admin.site.urls),

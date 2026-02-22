@@ -6,7 +6,6 @@ from app.metrics import views
 from app.carts.models import Cart
 from app.meals.models import Meal
 from django.contrib.auth.models import User
-from app.users.models import Profile
 
 
 class MetricsViewsTests(TestCase):

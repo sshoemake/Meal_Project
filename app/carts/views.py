@@ -1,14 +1,12 @@
 from django.shortcuts import render, redirect
 from .models import Cart, Cart_Details
-from django.views.generic import DetailView
 from app.meals.models import Meal
 from app.ingredients.models import Ing_Store, Ingredient
-from django.db.models import F, Sum
+from django.db.models import F
 from django.http import HttpResponse
 import datetime
 from django.db.models.expressions import OuterRef, Subquery
 from app.stores.models import Store
-from app.users.models import Profile
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 
@@ -114,7 +112,7 @@ def update_ing_cart(request, **kwargs):
     cart_items = Cart_Details.objects.filter(cart=cart)
     my_ing_ids = cart_items.values_list("ingredient_id", flat=True)
 
-    if not ingredient.id in my_ing_ids:
+    if ingredient.id not in my_ing_ids:
         add_CD = Cart_Details(cart=cart, ingredient=ingredient, quantity="1")
         add_CD.save()
     else:
@@ -139,7 +137,7 @@ def update_meal_cart(request, **kwargs):
     except:
         pass
 
-    if not meal in cart.meals.all():
+    if meal not in cart.meals.all():
         cart.meals.add(meal)
     else:
         cart.meals.remove(meal)
@@ -224,7 +222,7 @@ def add_ings_cart(request, **kwargs):
 
     for ing_id in ing_ids:
         ingredient = Ingredient.objects.get(id=ing_id)
-        if not ingredient.id in my_ing_ids:
+        if ingredient.id not in my_ing_ids:
             add_CD = Cart_Details(
                 cart=cart, ingredient=ingredient, quantity="1")
             add_CD.save()
