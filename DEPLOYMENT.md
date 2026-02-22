@@ -112,6 +112,7 @@ docker compose -f compose/docker-compose.yml \
 
   ```bash
   docker build -t meal_project:latest .
+  [./compose/down.sh dev -v] - if dev testing
   ./compose/up.sh uat
   ./compose/manage.sh uat migrate
   docker cp ../backup_meal_project_12242025.json compose-web-1:/tmp/

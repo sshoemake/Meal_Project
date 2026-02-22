@@ -34,7 +34,7 @@ Django based application for shopping and meal planning.
 
   ```bash
   python -m pip install --upgrade pip
-  pip install -r requirements.txt
+  pip install -r requirements-dev.txt
   ```
 
 5. Startup/Create database in docker
@@ -94,4 +94,13 @@ Django based application for shopping and meal planning.
   python manage.py test
   python manage.py check
   python manage.py shell
+  ```
+
+# Test Coverage
+
+  ```bash
+  pip install coverage
+  coverage run manage.py test
+  coverage report -or- coverage html
+  Open: htmlcov/index.html
   ```

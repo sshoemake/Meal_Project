@@ -6,7 +6,6 @@ from .views import (
     StoreUpdateView,
     StoreDeleteView,
 )
-from . import views
 
 urlpatterns = [
     path("store/", StoreListView.as_view(), name="store-list"),

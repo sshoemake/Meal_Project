@@ -1,4 +1,4 @@
-from django.test import TestCase, Client
+from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
 
@@ -64,4 +64,11 @@ class LoginTest(BaseTest):
         response=self.client.post(self.login_url,self.user,format='text/html')
         self.assertEqual(response.status_code, 200)
         # self.assertTemplateUsed(response, 'users/login.html')
-        print(response)
+        # print(response)
+
+    def test_str_returns_username(self):
+        self.user1 = User.objects.create_user(username="tester", password="pass")
+        self.profile = self.user1.profile
+    
+        self.assertEqual(str(self.profile), "tester Profile")
+        

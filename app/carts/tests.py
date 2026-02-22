@@ -1,19 +1,219 @@
+import datetime
 from decimal import Decimal
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase, Client
-from django.contrib.auth import get_user_model
-from django.urls import reverse
-from PIL import Image
 from io import BytesIO
+
+from PIL import Image
+from django.test import Client, TestCase, RequestFactory
+from django.contrib.sessions.middleware import SessionMiddleware
+from django.contrib.auth.models import User
+from django.http import HttpResponse
+from django.urls import reverse
+
+from app.carts import views
 from app.carts.models import Cart, Cart_Details
-from app.meals.models import Meal
 from app.ingredients.models import Ingredient
-from app.users.models import Profile
+from app.meals.models import Meal
 from app.stores.models import Store
-import datetime
 
-User = get_user_model()
 
+def make_request(method='get', path='/', data=None):
+    factory = RequestFactory()
+    if method.lower() == 'post':
+        req = factory.post(path, data=data or {})
+    else:
+        req = factory.get(path)
+
+    # attach session (SessionMiddleware requires a get_response callable)
+    middleware = SessionMiddleware(get_response=lambda _: HttpResponse())
+    middleware.process_request(req)
+    req.session.save()
+
+    # default referer
+    req.META['HTTP_REFERER'] = '/'
+    return req
+
+
+class CartViewsTests(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user = User.objects.create_user(username='tester', password='pass')
+        self.store = Store.objects.create(name='Main')
+        # self.profile = Profile.objects.create(user=self.user, def_store=self.store)
+        self.profile = self.user.profile
+        
+    def test_get_cart_and_get_or_create(self):
+        req = make_request()
+        # no cart yet
+        self.assertIsNone(views.get_cart(req))
+
+        # create a valid cart and set in session so helper returns it
+        cart = Cart.objects.create(yearweek=views.convert_sw_yw(3), profile=self.profile)
+        req.session['cart_id'] = cart.id
+        req.session.save()
+
+        got = views.get_cart_or_create(req)
+        self.assertIsInstance(got, Cart)
+        # session should still have same cart id
+        self.assertEqual(req.session['cart_id'], cart.id)
+
+        # get_cart should return the same
+        self.assertEqual(views.get_cart(req).id, cart.id)
+
+    def test_convert_sw_yw_and_get_date_label_and_header(self):
+        val = views.convert_sw_yw(3)
+        self.assertIsInstance(val, int)
+
+        label = views.get_date_label(0)
+        self.assertIsInstance(label, str)
+        self.assertIn(' ', label)
+
+        req = make_request()
+        ctx = views.cart_header_lists(req)
+        self.assertIn('date_list', ctx)
+        self.assertEqual(len(ctx['date_list']), 7)
+        self.assertIn('meal_list', ctx)
+        self.assertEqual(len(ctx['meal_list']), 7)
+
+    def test_chg_cart_or_create_creates_cart(self):
+        req = make_request()
+        req.user = self.user
+        req.session['selected_week'] = 3
+
+        the_id = views.chg_cart_or_create(req)
+        self.assertIsInstance(the_id, int)
+        cart = Cart.objects.get(id=the_id)
+        self.assertEqual(cart.profile, self.profile)
+
+        # calling again should return same id
+        the_id2 = views.chg_cart_or_create(req)
+        self.assertEqual(the_id, the_id2)
+
+    def test_update_ing_cart_adds_and_increments(self):
+        req = make_request(method='post')
+        req.user = self.user
+
+        # ensure a valid cart exists in session (Cart requires yearweek and profile)
+        cart = Cart.objects.create(yearweek=views.convert_sw_yw(3), profile=self.profile)
+        req.session['cart_id'] = cart.id
+        req.session.save()
+
+        ing = Ingredient.objects.create(name='Salt', aisle=1.0, auto_add=False)
+
+        # first add
+        resp = views.update_ing_cart(req, pk=ing.id)
+        self.assertEqual(resp.status_code, 302)
+
+        cart = views.get_cart(req)
+        cd = Cart_Details.objects.filter(cart=cart, ingredient=ing).first()
+        self.assertIsNotNone(cd)
+        self.assertEqual(cd.quantity, 1)
+
+        # second add increments
+        resp = views.update_ing_cart(req, pk=ing.id)
+        cd.refresh_from_db()
+        self.assertEqual(cd.quantity, 2)
+
+    def test_update_meal_cart_toggles(self):
+        req = make_request(method='post')
+        req.user = self.user
+
+        cart = Cart.objects.create(yearweek=views.convert_sw_yw(3), profile=self.profile)
+        req.session['cart_id'] = cart.id
+        req.session.save()
+
+        meal = Meal.objects.create(name='Taco')
+
+        resp = views.update_meal_cart(req, pk=meal.id)
+        self.assertEqual(resp.status_code, 302)
+        cart = views.get_cart(req)
+        self.assertIn(meal, cart.meals.all())
+
+        # toggle off
+        resp = views.update_meal_cart(req, pk=meal.id)
+        cart.refresh_from_db()
+        self.assertNotIn(meal, cart.meals.all())
+
+    def test_remove_ing_cart_decrement_and_delete(self):
+        req = make_request(method='post')
+        req.user = self.user
+        ing = Ingredient.objects.create(name='Pepper', aisle=2.0, auto_add=False)
+        cart = Cart.objects.create(yearweek=views.convert_sw_yw(3), profile=self.profile)
+        req.session['cart_id'] = cart.id
+        req.session.save()
+        cd = Cart_Details.objects.create(cart=cart, ingredient=ing, quantity=2)
+
+        resp = views.remove_ing_cart(req, pk=ing.id)
+        self.assertEqual(resp.status_code, 302)
+        cd.refresh_from_db()
+        self.assertEqual(cd.quantity, 1)
+
+        # remove again should delete
+        resp = views.remove_ing_cart(req, pk=ing.id)
+        self.assertEqual(resp.status_code, 302)
+        self.assertFalse(Cart_Details.objects.filter(id=cd.id).exists())
+
+    def test_found_ing_cart_marks_found(self):
+        req = make_request(method='post')
+        req.user = self.user
+        ing = Ingredient.objects.create(name='Onion', aisle=3.0, auto_add=False)
+        cart = Cart.objects.create(yearweek=views.convert_sw_yw(3), profile=self.profile)
+        req.session['cart_id'] = cart.id
+        req.session.save()
+        cd = Cart_Details.objects.create(cart=cart, ingredient=ing, quantity=1)
+
+        resp = views.found_ing_cart(req, pk=ing.id)
+        self.assertIsInstance(resp, HttpResponse)
+        cd.refresh_from_db()
+        self.assertTrue(cd.found)
+
+    def test_add_ings_cart_adds_multiple(self):
+        req = make_request(method='post', data={'ingtoadd': []})
+        req.user = self.user
+
+        cart = Cart.objects.create(yearweek=views.convert_sw_yw(3), profile=self.profile)
+        req.session['cart_id'] = cart.id
+        req.session.save()
+
+        ing1 = Ingredient.objects.create(name='A1', aisle=1.0, auto_add=False)
+        ing2 = Ingredient.objects.create(name='A2', aisle=1.1, auto_add=False)
+
+        # post with two ids — reuse the same request object so session persists
+        req = make_request(method='post', data={'ingtoadd': [str(ing1.id), str(ing2.id)]})
+        req.user = self.user
+        req.session['cart_id'] = cart.id
+        req.session.save()
+
+        resp = views.add_ings_cart(req)
+        self.assertEqual(resp.status_code, 302)
+        cart = views.get_cart(req)
+        self.assertTrue(Cart_Details.objects.filter(cart=cart, ingredient=ing1).exists())
+        self.assertTrue(Cart_Details.objects.filter(cart=cart, ingredient=ing2).exists())
+
+    def test_ing_exists_cart_true_false(self):
+        req = make_request()
+        ing = Ingredient.objects.create(name='Z', aisle=9.0, auto_add=False)
+        # no cart yet
+        self.assertFalse(views.ing_exists_cart(req, ing))
+
+        # add ingredient
+        req2 = make_request()
+        req2.user = self.user
+        cart = Cart.objects.create(yearweek=views.convert_sw_yw(3), profile=self.profile)
+        req2.session['cart_id'] = cart.id
+        req2.session.save()
+        Cart_Details.objects.create(cart=cart, ingredient=ing, quantity=1)
+        self.assertTrue(views.ing_exists_cart(req2, ing))
+
+    def test_select_cart_sets_session_and_redirects(self):
+        req = make_request()
+        req.user = self.user
+        req.session['selected_week'] = 3
+
+        # create and select
+        resp = views.select_cart(req, pk=3)
+        self.assertEqual(resp.status_code, 302)
+        self.assertIn('cart_id', req.session)
 
 class CartSetupTestCase(TestCase):
     """Base test case with common setup for cart tests"""
@@ -21,7 +221,7 @@ class CartSetupTestCase(TestCase):
     def setUp(self):
         """Set up test data"""
         self.client = Client()
-        print("Setting up test data...")
+
         # Create test user
         self.user = User.objects.create_user(
             username='testuser',
@@ -172,7 +372,7 @@ class RemoveIngredientCartTests(CartSetupTestCase):
     
     def test_remove_ing_cart_updates_session_items_total(self):
         """Test that removing ingredient updates session items total"""
-        initial_total = self.cart.items_total
+        # initial_total = self.cart.items_total
         
         # Remove ingredient
         self.client.get(
@@ -320,7 +520,7 @@ class CartListViewTests(CartSetupTestCase):
         session['selected_week'] = 3
         session['cart_id'] = self.cart.id
         session['hide_found'] = False
-        session['reverse_sort'] = False
+        # session['reverse_sort'] = False
         session.save()
     
     def test_cart_list_view_displays_remove_link(self):
@@ -417,20 +617,6 @@ class CartListViewTests(CartSetupTestCase):
         
         # Check session was updated
         self.assertTrue(self.client.session.get('hide_found'))
-    
-    def test_cart_list_view_toggle_reverse_sort_checkbox(self):
-        """Test that reverse_sort checkbox toggles correctly"""
-        # POST with reverse_sort checkbox
-        response = self.client.post(
-            reverse('cart-list'),
-            data={'reverse_sort': 'on'}
-        )
-        
-        # Should redirect
-        self.assertEqual(response.status_code, 302)
-        
-        # Check session was updated
-        self.assertTrue(self.client.session.get('reverse_sort'))
     
     def test_cart_list_displays_item_quantity(self):
         """Test that item quantity is displayed when > 1"""

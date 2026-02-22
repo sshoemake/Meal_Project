@@ -1,13 +1,13 @@
 from django.http import JsonResponse
 from django import forms
-from django.forms import modelformset_factory
-from django.urls import reverse_lazy, reverse
+# removed unused import: modelformset_factory
+from django.urls import reverse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.template.loader import render_to_string
 from django.views import View
-from django.views.generic.edit import FormMixin
+# removed unused import: FormMixin
 from django.views.generic import (
     ListView,
     DetailView,
@@ -19,8 +19,8 @@ from django.views.generic import (
 from django.views.generic.detail import SingleObjectMixin
 from .models import Meal, Ingredient, Meal_Details
 from .forms import BookForm
-from app.carts.views import update_meal_cart, add_ings_cart, get_cart, cart_header_lists, ing_exists_cart
-from app.carts.models import Cart, Cart_Details
+from app.carts.views import update_meal_cart, add_ings_cart, cart_header_lists
+from app.carts.models import Cart
 import datetime
 
 
@@ -44,11 +44,6 @@ class JSONResponseMixin:
         # objects -- such as Django model instances or querysets
         # -- can be serialized as JSON.
         return context
-
-
-def home(request):
-    context = {"meals": Meal.objects.all()}
-    return render(request, "meals/home.html", context)
 
 
 class MealListView(ListView):
@@ -80,9 +75,6 @@ def get_date_label(int_wk):
         f"{year}-W{int(week_num )- 1}-1", "%Y-W%W-%w"
     ).date()
 
-    # return firstdayofweek.strftime("%-m/%-d%<br>%a")
-    # return firstdayofweek.strftime("%b %-d%<br>%a")
-
     return firstdayofweek.strftime("%b %-d")
 
 
@@ -102,10 +94,6 @@ class MealAddCartView(LoginRequiredMixin, View):
         return view(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        # view = MealCartUpdate.as_view()
-        # return view(request, *args, **kwargs)
-        # meal = get_object_or_404(Meal, pk=kwargs.get("pk", ""))
-        # add_meal_cart(meal.pk)
         update_meal_cart(request, **kwargs)
         add_ings_cart(request, **kwargs)
 
@@ -115,20 +103,11 @@ class MealAddCartView(LoginRequiredMixin, View):
 
 class AuthorInterestForm(forms.Form):
     message = forms.CharField()
-    # ingredients = Ingredient.objects.all()
-    # my_MD = Meal_Details.objects.filter(meal=self.object)
-    # curr_ing_ids = my_MD.values_list("ingredient_id", flat=True)
 
 
 class MealCartDisplay(DetailView):
     model = Meal
     template_name = "meals/addtocart.html"
-    # .objects.filter(id=kwargs.get("pk", "")).first()
-    # context = {"meal": model}
-    # return render(request, "meals/meal_detail.html", context)
-
-    # def render_to_response(self, context, **response_kwargs):
-    #    return self.render_to_json_response(context, **response_kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -157,14 +136,6 @@ class MealCartUpdate(SingleObjectMixin, FormView):
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         form = self.get_form()
-
-        # my_MD = Meal_Details.objects.filter(meal=self.object)
-        # my_MD.delete()
-
-        # dd_post = request.POST.getlist("dd_ing_list", None)
-        # for ing_id in dd_post:
-        #     MD_1 = Meal_Details(ingredient_id=ing_id, meal=self.object, quantity="1")
-        #     MD_1.save()
 
         if form.is_valid():
             # Update Meal_Details data (i.e. remove existing and add from page)
@@ -215,12 +186,6 @@ class MealIngUpdate(LoginRequiredMixin, SingleObjectMixin, FormView):
 
 class MealDisplay(JSONResponseMixin, DetailView):
     model = Meal
-    # .objects.filter(id=kwargs.get("pk", "")).first()
-    # context = {"meal": model}
-    # return render(request, "meals/meal_detail.html", context)
-
-    # def render_to_response(self, context, **response_kwargs):
-    #    return self.render_to_json_response(context, **response_kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -233,14 +198,6 @@ class MealDisplay(JSONResponseMixin, DetailView):
         # Find all the carts this meal exists in
         carts = Cart.objects.filter(
             meals__in=[self.object])
-        # .order_by('-yearweek')
-
-        # if carts:
-        #    sorted_carts = sorted(
-        #        carts, key=lambda x: (-int(str(x.yearweek)
-        #                                   [:4]), -int(str(x.yearweek)[5:6])))
-        # else:
-        #    sorted_carts = carts
 
         context["carts"] = carts
 
@@ -252,8 +209,33 @@ class MealCreateView(LoginRequiredMixin, CreateView):
     fields = ["name", "notes", "image"]
 
     def form_valid(self, form):
-        # form.instance.author = self.request.user
+        # Save the object first
+        self.object = form.save()
+        # If this is an AJAX request, respond with JSON containing
+        # the rendered partials expected by the frontend.
+        if self.request.headers.get("x-requested-with") == "XMLHttpRequest":
+            data = {"form_is_valid": True}
+            data["html_book_list"] = render_to_string(
+                "meals/includes/partial_meal_list.html",
+                {"books": Meal.objects.all()},
+                request=self.request,
+            )
+            return JsonResponse(data)
+
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        # Return JSON for AJAX requests so the frontend can update the modal/form
+        if self.request.headers.get("x-requested-with") == "XMLHttpRequest":
+            context = {"form": form}
+            html_form = render_to_string(
+                "meals/includes/partial_meal_create.html",
+                context,
+                request=self.request,
+            )
+            return JsonResponse({"form_is_valid": False, "html_form": html_form})
+
+        return super().form_invalid(form)
 
 
 class MealUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -265,10 +247,6 @@ class MealUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return super().form_valid(form)
 
     def test_func(self):
-        # meal = self.get_object()
-        # if self.request.user == meal.author:
-        #    return True
-        # return False
         return True
 
 
@@ -277,14 +255,25 @@ class MealDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     success_url = "/"
 
     def test_func(self):
-        # meal = self.get_object()
-        # if self.request.user == meal.author:
-        #    return True
-        # return False
         return True
 
 
-def save_book_form(request, form, template_name):
+def about(request):
+    return render(request, "meals/about.html", {"title": "About"})
+
+
+# `book_create` and `save_book_form` logic has been consolidated into
+# `MealCreateView`. `meal_update` implements the partial-update JSON
+# response inline below.
+
+def meal_update(request, **kwargs):
+    meal = get_object_or_404(Meal, pk=kwargs.get("pk", ""))
+
+    if request.method == "POST":
+        form = BookForm(request.POST, instance=meal)
+    else:
+        form = BookForm(instance=meal)
+
     data = dict()
     if request.method == "POST":
         if form.is_valid():
@@ -292,39 +281,13 @@ def save_book_form(request, form, template_name):
             data["form_is_valid"] = True
             books = Meal.objects.all()
             data["html_book_list"] = render_to_string(
-                "meals/includes/partial_meal_list.html", {"books": books}
+                "meals/includes/partial_meal_list.html", {"books": books}, request=request
             )
         else:
             data["form_is_valid"] = False
+
     context = {"form": form}
-    print(context)
     data["html_form"] = render_to_string(
-        template_name, context, request=request)
-    print(data)
+        "meals/includes/partial_meal_update.html", context, request=request
+    )
     return JsonResponse(data)
-
-
-def about(request):
-    return render(request, "meals/about.html", {"title": "About"})
-
-
-def book_create(request):
-    if request.method == "POST":
-        form = BookForm(request.POST)
-    else:
-        form = BookForm()
-    return save_book_form(request, form, "meals/includes/partial_meal_create.html")
-
-
-def book_update(request, **kwargs):
-    meal = get_object_or_404(Meal, pk=kwargs.get("pk", ""))
-
-    if request.method == "POST":
-        form = BookForm(request.POST, instance=meal)
-    else:
-        form = BookForm(instance=meal)
-    # MD_formset = BookFormset(instance=meal, prefix="ingredients")
-    # form = MD_formset
-    # form = {"instance": meal}
-    # print(context)
-    return save_book_form(request, form, "meals/includes/partial_meal_update.html")

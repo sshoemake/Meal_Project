@@ -6,7 +6,6 @@ from .views import (
     IngUpdateView,
     IngDeleteView,
 )
-from . import views
 
 urlpatterns = [
     path("ingredients/", IngListView.as_view(), name="ingredients-home"),

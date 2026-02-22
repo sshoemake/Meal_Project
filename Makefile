@@ -13,7 +13,7 @@ venv:
 install:
 	source $(VENV)/bin/activate && \
 	pip install --upgrade pip && \
-	pip install -r requirements.txt
+	pip install -r requirements-dev.txt
 
 up:
 	./compose/up.sh dev
