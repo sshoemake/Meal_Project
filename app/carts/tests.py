@@ -26,7 +26,7 @@ def make_request(method='get', path='/', data=None):
         req = factory.get(path)
 
     # attach session (SessionMiddleware requires a get_response callable)
-    middleware = SessionMiddleware(get_response=lambda r: HttpResponse())
+    middleware = SessionMiddleware(get_response=lambda _: HttpResponse())
     middleware.process_request(req)
     req.session.save()
 
