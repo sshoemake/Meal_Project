@@ -9,6 +9,8 @@ from django.db.models.expressions import OuterRef, Subquery
 from app.stores.models import Store
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
+from django.shortcuts import get_object_or_404
+
 
 def cart_list(request):
     #request.session["hide_found"] = False
@@ -102,27 +104,25 @@ def get_date_label(int_wk):
 def update_ing_cart(request, **kwargs):
     cart = get_cart_or_create(request)
 
-    try:
-        ingredient = Ingredient.objects.filter(id=kwargs.get("pk", "")).first()
-    except Ingredient.DoesNotExist:
-        pass
-    except:
-        pass
+    ingredient = get_object_or_404(Ingredient, id=kwargs.get("pk"))
 
     cart_items = Cart_Details.objects.filter(cart=cart)
     my_ing_ids = cart_items.values_list("ingredient_id", flat=True)
 
     if ingredient.id not in my_ing_ids:
-        add_CD = Cart_Details(cart=cart, ingredient=ingredient, quantity="1")
-        add_CD.save()
+        Cart_Details.objects.create(
+            cart=cart,
+            ingredient=ingredient,
+            quantity=1,
+        )
     else:
-        update_CD = Cart_Details.objects.get(cart=cart, ingredient=ingredient)
-        update_CD.quantity = F("quantity") + 1
-        update_CD.save()
+        Cart_Details.objects.filter(
+            cart=cart,
+            ingredient=ingredient,
+        ).update(quantity=F("quantity") + 1)
 
     request.session["items_total"] = cart.items_total
 
-    # return redirect("ingredients-home")
     return redirect(request.META.get("HTTP_REFERER", "/"))
 
 
@@ -130,17 +130,12 @@ def update_ing_cart(request, **kwargs):
 def update_meal_cart(request, **kwargs):
     cart = get_cart_or_create(request)
 
-    try:
-        meal = Meal.objects.filter(id=kwargs.get("pk", "")).first()
-    except Meal.DoesNotExist:
-        pass
-    except:
-        pass
+    meal = get_object_or_404(Meal, id=kwargs.get("pk"))
 
-    if meal not in cart.meals.all():
-        cart.meals.add(meal)
-    else:
+    if cart.meals.filter(id=meal.id).exists():
         cart.meals.remove(meal)
+    else:
+        cart.meals.add(meal)
 
     request.session["items_total"] = cart.items_total
 
@@ -207,30 +202,25 @@ def found_ing_cart(request, **kwargs):
     return HttpResponse("OK")
 
 
+@login_required
 def add_ings_cart(request, **kwargs):
     cart = get_cart_or_create(request)
 
-    cart_items = Cart_Details.objects.filter(cart=cart)
-    my_ing_ids = cart_items.values_list("ingredient_id", flat=True)
+    ing_ids = request.POST.getlist("ingtoadd", [])
 
-    try:
-        ing_ids = request.POST.getlist("ingtoadd")
-    # except Ingredient.DoesNotExist:
-    #    pass
-    except:
-        pass
+    # Fetch all ingredients in one query
+    ingredients = Ingredient.objects.filter(id__in=ing_ids)
 
-    for ing_id in ing_ids:
-        ingredient = Ingredient.objects.get(id=ing_id)
-        if ingredient.id not in my_ing_ids:
-            add_CD = Cart_Details(
-                cart=cart, ingredient=ingredient, quantity="1")
-            add_CD.save()
-        else:
-            update_CD = Cart_Details.objects.get(
-                cart=cart, ingredient=ingredient)
-            update_CD.quantity = F("quantity") + 1
-            update_CD.save()
+    for ingredient in ingredients:
+        cart_detail, created = Cart_Details.objects.get_or_create(
+            cart=cart,
+            ingredient=ingredient,
+            defaults={"quantity": 1},
+        )
+
+        if not created:
+            cart_detail.quantity = F("quantity") + 1
+            cart_detail.save()
 
     request.session["items_total"] = cart.items_total
 
@@ -251,46 +241,45 @@ def ing_exists_cart(request, ing):
     return found
 
 
-def get_cart(request):
-    try:
-        the_id = request.session["cart_id"]
-    except:
-        the_id = None
 
-    if the_id:
-        return Cart.objects.get(id=the_id)
-    else:
+def get_cart(request):
+    cart_id = request.session.get("cart_id")
+
+    if not cart_id:
         return None
+
+    return Cart.objects.filter(id=cart_id).first()
 
 
 def get_cart_or_create(request):
-    try:
-        the_id = request.session["cart_id"]
-    except:
-        new_cart = Cart()
-        new_cart.save()
-        request.session["cart_id"] = new_cart.id
-        the_id = new_cart.id
+    cart = get_cart(request)
 
-    return Cart.objects.get(id=the_id)
+    if cart:
+        return cart
+
+    cart = Cart.objects.create()
+    request.session["cart_id"] = cart.id
+    return cart
 
 
 def chg_cart_or_create(request):
-    selected_week = request.session["selected_week"]
+    selected_week = request.session.get("selected_week")
+
+    if not selected_week:
+        return None  # or raise a controlled error
+
     yearweek = convert_sw_yw(selected_week)
-    profile = request.user.profile
 
-    try:
-        existing_cart = Cart.objects.get(yearweek=yearweek, profile=profile)
-        the_id = existing_cart.id
-    except:
-        new_cart = Cart()
-        new_cart.yearweek = yearweek
-        new_cart.profile = profile
-        new_cart.save()
-        the_id = new_cart.id
+    profile = getattr(request.user, "profile", None)
+    if not profile:
+        return None  # or raise
 
-    return the_id
+    cart, _ = Cart.objects.get_or_create(
+        yearweek=yearweek,
+        profile=profile,
+    )
+
+    return cart.id
 
 
 def convert_sw_yw(selected_week):

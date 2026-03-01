@@ -23,8 +23,8 @@ jobs:
 
       - name: Validate version format
         run: |
-          if [[ ! "${{ github.event.inputs.version }}" =~ ^v[0-9]+\.[0-9]+(\.[0-9]+)?$ ]]; then
-            echo "Version must look like v1.2 or v1.2.3"
+          if [[ ! "${{ github.event.inputs.version }}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Version must look like vX.Y.Z (e.g., v2.2.0)"
             exit 1
           fi
 
@@ -45,11 +45,47 @@ jobs:
           git tag ${{ github.event.inputs.version }}
           git push origin ${{ github.event.inputs.version }}
 
+      - name: Get latest merged PR description
+        id: pr_desc
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prs = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: "closed",
+              base: "main",
+              sort: "updated",
+              direction: "desc",
+              per_page: 1,
+            });
+
+            if (prs.data.length === 0) {
+              core.setOutput("body", "No merged PRs found");
+            } else {
+              core.setOutput("body", prs.data[0].body || "No description");
+            }
+
+      - name: Set release notes
+        run: |
+          echo "RELEASE_BODY<<EOF" >> $GITHUB_ENV
+          echo "Release ${{ github.event.inputs.version }}" >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
+          echo "## Latest Merged PR" >> $GITHUB_ENV
+          echo "${{ steps.pr_desc.outputs.body }}" >> $GITHUB_ENV
+          echo "" >> $GITHUB_ENV
+          echo "## Pre-built Docker image" >> $GITHUB_ENV
+          echo '```bash' >> $GITHUB_ENV
+          echo "docker pull ghcr.io/${{ github.repository_owner }}/meal_project:${{ github.event.inputs.version }}" >> $GITHUB_ENV
+          echo '```' >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.event.inputs.version }}
-          generate_release_notes: true
+          body: ${{ env.RELEASE_BODY }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3

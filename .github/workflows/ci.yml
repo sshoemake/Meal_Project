@@ -53,8 +53,8 @@ jobs:
       - name: Check for missing migrations
         run: python manage.py makemigrations --check --dry-run
 
-      # - name: Lint
-      #   run: ruff check .
+      - name: Lint
+        run: ruff check .
 
       - name: Run tests
         run: python manage.py test

@@ -36,7 +36,7 @@ class IngredientsViewsTests(TestCase):
 
         # create cart and a cart detail for i2 to appear in cart_item_list
         cart = Cart.objects.create(yearweek=202201, profile=self.profile)
-        cd = Cart_Details.objects.create(cart=cart, ingredient=i2, quantity=1)
+        Cart_Details.objects.create(cart=cart, ingredient=i2, quantity=1)
 
         # set session keys
         session = self.client.session
@@ -241,7 +241,7 @@ class IngStoreModelTest(TestCase):
 
     def test_ing_store_cascade_delete_ingredient(self):
         """Test that Ing_Store is deleted when ingredient is deleted"""
-        ingredient_id = self.ingredient.pk
+        # ingredient_id = self.ingredient.pk
         ing_store_id = self.ing_store.pk
         
         self.ingredient.delete()
@@ -267,7 +267,7 @@ class IngStoreModelTest(TestCase):
             state="FL",
             zip_code="33101"
         )
-        ing_store2 = Ing_Store.objects.create(
+        Ing_Store.objects.create(
             ingredient=self.ingredient,
             store=store2,
             aisle=Decimal("2.0")
@@ -283,7 +283,7 @@ class IngStoreModelTest(TestCase):
             aisle=Decimal("3.0"),
             auto_add=False
         )
-        ing_store2 = Ing_Store.objects.create(
+        Ing_Store.objects.create(
             ingredient=ingredient2,
             store=self.store,
             aisle=Decimal("4.0")
