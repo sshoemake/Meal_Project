@@ -148,15 +148,3 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 LOGIN_REDIRECT_URL = "meals-home"
 LOGIN_URL = "login"
-
-def parse_trusted_origins(raw_origins, default_scheme="http://"):
-    """
-    Converts a comma-separated string into a list of origins with schemes.
-    Adds default_scheme if missing.
-    Filters out empty strings.
-    """
-    return [
-        o if o.startswith(("http://", "https://")) else f"{default_scheme}{o}"
-        for o in (origin.strip() for origin in raw_origins.split(","))
-        if o
-    ]

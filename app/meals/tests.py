@@ -230,7 +230,7 @@ class MealDetailsModelTest(TestCase):
 
     def test_multiple_meal_details_same_meal(self):
         """Test that a meal can have multiple ingredients"""
-        meal_details2 = Meal_Details.objects.create(
+        Meal_Details.objects.create(
             ingredient=self.ingredient2,
             meal=self.meal,
             quantity=150
@@ -258,7 +258,7 @@ class MealDetailsModelTest(TestCase):
             image=image
         )
         
-        meal_details2 = Meal_Details.objects.create(
+        Meal_Details.objects.create(
             ingredient=self.ingredient1,
             meal=meal2,
             quantity=300
@@ -270,7 +270,7 @@ class MealDetailsModelTest(TestCase):
     def test_meal_details_ordering_by_ingredient_aisle(self):
         """Test that meal details are ordered by ingredient aisle"""
         # ingredient1 has aisle 1.0, ingredient2 has aisle 3.0
-        meal_details2 = Meal_Details.objects.create(
+        Meal_Details.objects.create(
             ingredient=self.ingredient2,
             meal=self.meal,
             quantity=150

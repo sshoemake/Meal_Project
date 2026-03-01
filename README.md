@@ -99,8 +99,14 @@ Django based application for shopping and meal planning.
 # Test Coverage
 
   ```bash
-  pip install coverage
   coverage run manage.py test
-  coverage report -or- coverage html
-  Open: htmlcov/index.html
+  coverage html
+  Open in Browser: htmlcov/index.html
   ```
+
+# Product Backlog
+
+Custom Store Walking Order
+Link weekly meals to days of the week
+API Token associated to registered User
+API to add ingredients to shopping list

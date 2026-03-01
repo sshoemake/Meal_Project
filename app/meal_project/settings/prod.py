@@ -1,5 +1,17 @@
 import os 
-from .base import *
+from .base import *  # noqa: F403,F405
+
+def parse_trusted_origins(raw_origins, default_scheme="http://"):
+    """
+    Converts a comma-separated string into a list of origins with schemes.
+    Adds default_scheme if missing.
+    Filters out empty strings.
+    """
+    return [
+        o if o.startswith(("http://", "https://")) else f"{default_scheme}{o}"
+        for o in (origin.strip() for origin in raw_origins.split(","))
+        if o
+    ]
 
 
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')

@@ -5,4 +5,5 @@ class UsersConfig(AppConfig):
     name = 'app.users'
 
     def ready(self):
-        import app.users.signals
+        # Import signals to register them
+        import app.users.signals  # noqa: F401
