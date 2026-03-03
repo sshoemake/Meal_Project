@@ -106,7 +106,6 @@ Django based application for shopping and meal planning.
 
 # Product Backlog
 
-Custom Store Walking Order
 Link weekly meals to days of the week
 API Token associated to registered User
 API to add ingredients to shopping list

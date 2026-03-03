@@ -148,3 +148,5 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 LOGIN_REDIRECT_URL = "meals-home"
 LOGIN_URL = "login"
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

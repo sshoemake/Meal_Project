@@ -2,6 +2,8 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import CreateView
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView
+
+from app.stores.forms import StoreAisleOrderFormSet
 from .models import Store
 
 
@@ -38,14 +40,43 @@ class StoreUpdateView(LoginRequiredMixin, UpdateView):
     model = Store
     fields = ["name", "address", "city", "state", "zip_code", "default", "walk_mode"]
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        if self.request.POST:
+            context["formset"] = StoreAisleOrderFormSet(
+                self.request.POST,
+                instance=self.object
+            )
+        else:
+            context["formset"] = StoreAisleOrderFormSet(
+                instance=self.object
+            )
+
+        return context
+
     def form_valid(self, form):
-        # check if default checkbox is checked
-        # if so clear all store defaults before updating
+        context = self.get_context_data()
+        formset = context["formset"]
+
         if form.instance.default:
             Store.objects.update(default=False)
+        # Only validate/save the formset if management form data was submitted.
+        post_has_management = any(k.endswith("-TOTAL_FORMS") for k in self.request.POST.keys())
 
-        return super().form_valid(form)
-
+        if post_has_management:
+            if formset.is_valid():
+                self.object = form.save()
+                formset.instance = self.object
+                formset.save()
+                return super().form_valid(form)
+            else:
+                return self.form_invalid(form)
+        else:
+            # No formset submitted; just save the main form.
+            self.object = form.save()
+            return super().form_valid(form)
+        
 
 class StoreDeleteView(LoginRequiredMixin, DeleteView):
     model = Store

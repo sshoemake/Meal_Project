@@ -2,11 +2,12 @@ from django.shortcuts import render, redirect
 from .models import Cart, Cart_Details
 from app.meals.models import Meal
 from app.ingredients.models import Ing_Store, Ingredient
+from django.db.models.functions import Floor
 from django.db.models import F
 from django.http import HttpResponse
 import datetime
 from django.db.models.expressions import OuterRef, Subquery
-from app.stores.models import Store
+from app.stores.models import Store, StoreAisleOrder
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
@@ -37,13 +38,33 @@ def cart_list(request):
         )[:1].values('aisle')
 
         cart_items = cart_items.annotate(
-            ing_store_aisle=Subquery(ing_store_aisles)
+            ing_store_aisle=Subquery(ing_store_aisles),
+            base_aisle=Floor(F("ing_store_aisle"))
         )
 
-        if def_store.walk_mode == Store.WALK_REVERSE:
+        if def_store.walk_mode == Store.WALK_CUSTOM:
+
+            custom_walk = StoreAisleOrder.objects.filter(
+                store=def_store,
+                aisle=OuterRef('base_aisle')
+            ).values('walk_order')[:1]
+
+            cart_items = cart_items.annotate(
+                walk_order=Subquery(custom_walk)
+            ).order_by('walk_order')
+
+        elif def_store.walk_mode == Store.WALK_REVERSE:
+
             cart_items = cart_items.order_by('-ing_store_aisle')
+
         else:
+
             cart_items = cart_items.order_by('ing_store_aisle')
+
+        # if def_store.walk_mode == Store.WALK_REVERSE:
+        #     cart_items = cart_items.order_by('-ing_store_aisle')
+        # else:
+        #     cart_items = cart_items.order_by('ing_store_aisle')
 
     empty = (cart.meals.count() == 0 and cart_items.count() == 0)
 
