@@ -1,16 +1,16 @@
 from django.db import models
 from django.urls import reverse
 
-# Create your models here.
-
 
 class Store(models.Model):
     WALK_STANDARD = "standard"
     WALK_REVERSE = "reverse"
+    WALK_CUSTOM = "custom"
 
     WALK_CHOICES = [
         (WALK_STANDARD, "Standard (1 → N)"),
         (WALK_REVERSE, "Reverse (N → 1)"),
+        (WALK_CUSTOM, "Custom Layout"),
     ]
 
     id = models.BigAutoField(primary_key=True)
@@ -35,3 +35,18 @@ class Store(models.Model):
 
     def get_absolute_url(self):
         return reverse("store-detail", kwargs={"pk": self.pk})
+
+class StoreAisleOrder(models.Model):
+    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name="aisle_orders")
+    aisle = models.DecimalField(max_digits=4, decimal_places=1)
+    walk_order = models.PositiveIntegerField()
+
+    class Meta:
+        unique_together = (
+            ("store", "aisle"),
+            ("store", "walk_order"),
+        )
+        indexes = [
+            models.Index(fields=["store", "walk_order"]),
+        ]
+        ordering = ["walk_order"]

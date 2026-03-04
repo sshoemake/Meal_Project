@@ -1,4 +1,4 @@
-name: Create Release and Publish Docker Image
+name: Django Release Workflow
 
 on:
   workflow_dispatch:

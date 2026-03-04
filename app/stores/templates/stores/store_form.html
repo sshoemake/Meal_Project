@@ -4,13 +4,42 @@
 <div class="content-section">
     <form method="POST">
         {% csrf_token %}
+        
         <fieldset>
             <legend class="border-bottom mb-4">Store Details</legend>
             {{ form|crispy }}
         </fieldset>
+        
+        <fieldset id="custom-walk-section" class="mt-4">
+            <legend class="border-bottom mb-3">Custom Aisle Walking Order</legend>
+
+            {{ formset.management_form }}
+
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>Aisle</th>
+                        <th>Walk Order</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for f in formset %}
+                    <tr>
+                        {{ f.id }}
+                        <td>{{ f.aisle }}</td>
+                        <td>{{ f.walk_order }}</td>
+                        <td>{{ f.DELETE }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </fieldset>
+
         <div>
             <button class="btn btn-outline-primary" type="submit">Save</button>
         </div>
+
     </form>
 </div>
 {% endblock content %}
@@ -22,6 +51,41 @@ document.addEventListener("DOMContentLoaded", function() {
     if (nameInput) {
         nameInput.focus();
     }
+
+    // Optional enhancement: show/hide custom section dynamically
+    const walkModeSelect = document.getElementById("id_walk_mode");
+    const customSection = document.querySelector("fieldset.mt-4");
+
+    if (walkModeSelect && customSection) {
+        function toggleCustomSection() {
+            if (walkModeSelect.value === "custom") {
+                customSection.style.display = "block";
+            } else {
+                customSection.style.display = "none";
+            }
+        }
+
+        toggleCustomSection();
+        walkModeSelect.addEventListener("change", toggleCustomSection);
+    }
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const walkModeSelect = document.getElementById("id_walk_mode");
+    const customSection = document.getElementById("custom-walk-section");
+
+    function toggleCustomSection() {
+        if (walkModeSelect.value === "custom") {
+            customSection.style.display = "block";
+        } else {
+            customSection.style.display = "none";
+        }
+    }
+
+    toggleCustomSection();  // run on page load
+    walkModeSelect.addEventListener("change", toggleCustomSection);
 });
 </script>
 {% endblock javascript %}
