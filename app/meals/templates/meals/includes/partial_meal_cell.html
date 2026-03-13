@@ -1,0 +1,15 @@
+<td>
+
+<div
+hx-get="{% url 'meal-picker' slot.cart.id slot.weekday slot.slot_type %}"
+hx-target="#mealModalBody"
+data-bs-toggle="modal"
+data-bs-target="#mealModal"
+style="cursor:pointer"
+>
+
+{{ slot.meal.name }}
+
+</div>
+
+</td>

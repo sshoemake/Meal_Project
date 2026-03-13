@@ -16,7 +16,7 @@ from django.views.generic import (
 from django.views.generic.detail import SingleObjectMixin
 from app.meals.models import Meal, Meal_Details
 from .models import Ing_Store, Ingredient
-from app.carts.views import get_cart, cart_header_lists, ing_exists_cart
+from app.carts.views import get_cart_for_request, cart_header_lists, ing_exists_cart
 from app.carts.models import Cart_Details
 from app.stores.models import Store
 from django.db.models.expressions import OuterRef, Subquery
@@ -67,7 +67,7 @@ class IngListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        cart = get_cart(self.request)
+        cart = get_cart_for_request(self.request)
 
         if cart:
             cart_details = Cart_Details.objects.filter(cart=cart)

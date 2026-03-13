@@ -12,6 +12,10 @@
 
 <form action="" method="post">
     {% csrf_token %}
+
+    <!-- <input type="hidden" name="weekday" value="{{ weekday }}">
+    <input type="hidden" name="slot_type" value="dinner"> -->
+
     <div class="form-check mb-2">
         <input
             class="form-check-input"
@@ -26,34 +30,21 @@
         </label>
     </div>
 
-    <!-- <div class="form-check mb-2">
-        <input
-            class="form-check-input"
-            type="checkbox"
-            id="reverse_sort"
-            name="reverse_sort"
-            onChange="this.form.submit()"
-            {% if request.session.reverse_sort %}checked{% endif %}
-        >
-        <label class="form-check-label" for="reverse_sort">
-            Reverse Sort
-        </label>
-    </div> -->
 
-    {% if cart.meals.count > 0 %}
+    {% if cart_meals.count > 0 %}
     <div class="surface">
         <table class="table">
             <thead>
-                <th>Meals ({{ cart.meals.count }})</th>
+                <th>Meals ({{ cart_meals.count }})</th>
                 <th></th>
                 <th></th>
             </thead>
             <tbody>
-            {% for meal in cart.meals.all %}
+            {% for slot in cart_meals %}
             <tr>
-                <td>{{ meal.name }}</td>
+                <td>{{ slot.meal.name }}</td>
                 <td></td>
-                <td><a class="float-end" href="{% url 'update-meal-cart' meal.id %}">Remove</a></td>
+                <td><a class="float-end" href="{% url 'meal-remove-from-cart' slot.meal.id %}">Remove</a></td>
             </tr>
             {% endfor %}
             </tbody>
@@ -82,7 +73,7 @@
                             data-url="{{ the_url }}"
                             data-target="ing{{ item.ingredient.id }}">Hide</a>
                         {% else %}
-                            <a class="float-end" href="{% url 'remove-ing-cart' item.ingredient.id %}">Remove</a>
+                            <a class="float-end" href="{% url 'cart-ingredient-remove' item.ingredient.id %}">Remove</a>
                         {% endif %}
                     </td>
                 </tr>

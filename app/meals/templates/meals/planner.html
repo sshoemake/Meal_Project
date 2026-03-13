@@ -1,0 +1,73 @@
+{% extends "meals/base.html" %}
+{% load static %}
+
+{% block content %}
+
+{% include "meals/includes/partial_cart_selector.html" %}
+
+<br>
+<h2>Weekly Meal Planner</h2>
+
+<!-- PART 2: GRID -->
+<div class="surface">
+    <table class="table table-bordered text-center">
+
+        <thead>
+            <tr>
+                <th>Day</th>
+                <th>Breakfast</th>
+                <th>Lunch</th>
+                <th>Dinner</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for day in weekdays %}
+            <tr>
+
+                <th>{{ day.1 }}</th>
+
+                {% for slot in slot_types %}
+                <td>
+
+                    <div hx-get="{% url 'meal-picker' cart.id day.0 slot.0 %}" hx-target="#mealModalBody"
+                        hx-trigger="click" data-bs-toggle="modal" data-bs-target="#mealModal" style="cursor:pointer">
+
+                        +
+
+                    </div>
+
+                </td>
+
+                {% endfor %}
+
+            </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+</div>
+
+<!-- PART 3: MODAL -->
+<div class="modal fade" id="mealModal" tabindex="-1">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5>Select Meal</h5>
+            </div>
+
+            <div class="modal-body" id="mealModalBody">
+                Loading...
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

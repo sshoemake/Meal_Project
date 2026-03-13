@@ -5,6 +5,9 @@
 <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
 
+    <!-- <input type="hidden" name="weekday" value="{{ weekday }}">
+    <input type="hidden" name="slot_type" value="dinner"> -->
+
     <article class="content-section d-flex">
         <img class="rounded-circle article-img" src="{{ object.image.url }}">
         <div class="media-body">

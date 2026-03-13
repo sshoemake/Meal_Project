@@ -17,10 +17,12 @@ from django.views.generic import (
     FormView,
 )
 from django.views.generic.detail import SingleObjectMixin
+
+from app.carts.services.cart_service import add_meal_to_cart
 from .models import Meal, Ingredient, Meal_Details
 from .forms import BookForm
-from app.carts.views import update_meal_cart, add_ings_cart, cart_header_lists
-from app.carts.models import Cart
+from app.carts.views import get_cart_for_request, cart_header_lists
+from app.carts.models import Cart, MealSlot
 import datetime
 
 
@@ -89,15 +91,25 @@ class MealDetailView(View):
 
 
 class MealAddCartView(LoginRequiredMixin, View):
+
     def get(self, request, *args, **kwargs):
         view = MealCartDisplay.as_view()
         return view(request, *args, **kwargs)
 
-    def post(self, request, *args, **kwargs):
-        update_meal_cart(request, **kwargs)
-        add_ings_cart(request, **kwargs)
+    def post(self, request, pk):
+
+        weekday = request.POST.get("weekday")
+        slot_type = request.POST.get("slot_type")
+
+        add_meal_to_cart(
+            request,
+            pk=pk,
+            weekday=weekday,
+            slot_type=slot_type
+        )
 
         messages.success(request, "Your item(s) have been added to the Cart!")
+
         return redirect("meals-home")
 
 
@@ -291,3 +303,74 @@ def meal_update(request, **kwargs):
         "meals/includes/partial_meal_update.html", context, request=request
     )
     return JsonResponse(data)
+
+
+def planner(request):
+
+    # cart = Cart.objects.get(profile=request.user.profile)
+    cart = get_cart_for_request(request)
+
+    weekdays = [
+        (1, "Mon"),
+        (2, "Tue"),
+        (3, "Wed"),
+        (4, "Thu"),
+        (5, "Fri"),
+        (6, "Sat"),
+        (7, "Sun"),
+    ]
+
+    slot_types = [
+        ("breakfast", "Breakfast"),
+        ("lunch", "Lunch"),
+        ("dinner", "Dinner"),
+    ]
+
+    context = {
+        "cart": cart,
+        "weekdays": weekdays,
+        "slot_types": slot_types,
+    }
+
+    return render(request, "meals/planner.html", context)
+
+
+def meal_picker(request, cart_id, weekday, slot_type):
+
+    meals = Meal.objects.all()
+
+    context = {
+        "meals": meals,
+        "cart_id": cart_id,
+        "weekday": weekday,
+        "slot_type": slot_type,
+    }
+
+    return render(request, "meals/meal_picker.html", context)
+
+
+def assign_meal_slot(request):
+
+    # cart = get_object_or_404(Cart, id=request.POST["cart_id"])
+    cart = get_cart_for_request(request)
+
+    weekday = int(request.POST["weekday"])
+    slot_type = request.POST["slot_type"]
+    meal_id = request.POST["meal_id"]
+
+    meal = get_object_or_404(Meal, id=meal_id)
+
+    slot, created = MealSlot.objects.get_or_create(
+        cart=cart,
+        weekday=weekday,
+        slot_type=slot_type
+    )
+
+    slot.meal = meal
+    slot.save()
+
+    return render(
+        request,
+        "meals/partials/meal_cell.html",
+        {"slot": slot}
+    )

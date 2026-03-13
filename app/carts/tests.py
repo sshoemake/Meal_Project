@@ -325,7 +325,7 @@ class RemoveIngredientCartTests(CartSetupTestCase):
         
         # Remove ingredient once
         response = self.client.get(
-            reverse('remove-ing-cart', kwargs={'pk': self.ingredient1.id})
+            reverse('cart-ingredient-remove', kwargs={'pk': self.ingredient1.id})
         )
         
         # Check redirect
@@ -344,7 +344,7 @@ class RemoveIngredientCartTests(CartSetupTestCase):
         
         # Remove ingredient
         response = self.client.get(
-            reverse('remove-ing-cart', kwargs={'pk': ingredient_id})
+            reverse('cart-ingredient-remove', kwargs={'pk': ingredient_id})
         )
         
         # Check redirect
@@ -361,7 +361,7 @@ class RemoveIngredientCartTests(CartSetupTestCase):
     def test_remove_ing_cart_non_existent_ingredient(self):
         """Test removing a non-existent ingredient doesn't cause error"""
         response = self.client.get(
-            reverse('remove-ing-cart', kwargs={'pk': 9999})
+            reverse('cart-ingredient-remove', kwargs={'pk': 9999})
         )
         
         # Should still return a redirect
@@ -376,7 +376,7 @@ class RemoveIngredientCartTests(CartSetupTestCase):
         
         # Remove ingredient
         self.client.get(
-            reverse('remove-ing-cart', kwargs={'pk': self.ingredient1.id})
+            reverse('cart-ingredient-remove', kwargs={'pk': self.ingredient1.id})
         )
         
         # Session should be updated (we check after request)
@@ -688,14 +688,14 @@ class CartIntegrationTests(CartSetupTestCase):
         
         # Remove once
         self.client.get(
-            reverse('remove-ing-cart', kwargs={'pk': self.ingredient1.id})
+            reverse('cart-ingredient-remove', kwargs={'pk': self.ingredient1.id})
         )
         self.cart_detail1.refresh_from_db()
         self.assertEqual(self.cart_detail1.quantity, 1)
         
         # Remove again
         self.client.get(
-            reverse('remove-ing-cart', kwargs={'pk': self.ingredient1.id})
+            reverse('cart-ingredient-remove', kwargs={'pk': self.ingredient1.id})
         )
         
         # Should be deleted
