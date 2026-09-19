@@ -1,4 +1,5 @@
 -r requirements.txt
-ruff
-black
-coverage
+debugpy==1.8.21
+ruff==0.16.7
+black==26.5.1
+coverage==7.16.1
