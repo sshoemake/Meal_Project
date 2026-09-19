@@ -1,9 +1,11 @@
+import datetime
+
 from django.db import models
 from django.db.models import Sum
-from app.meals.models import Meal
+
 from app.ingredients.models import Ingredient
+from app.meals.models import Meal
 from app.users.models import Profile
-import datetime
 
 
 class Cart(models.Model):

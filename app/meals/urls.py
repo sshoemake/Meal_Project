@@ -1,13 +1,14 @@
 from django.urls import path
-from .views import (
-    MealListView,
-    MealDetailView,
-    MealCreateView,
-    MealUpdateView,
-    MealDeleteView,
-    MealAddCartView,
-)
+
 from . import views
+from .views import (
+    MealAddCartView,
+    MealCreateView,
+    MealDeleteView,
+    MealDetailView,
+    MealListView,
+    MealUpdateView,
+)
 
 urlpatterns = [
     path("", MealListView.as_view(), name="meals-home"),

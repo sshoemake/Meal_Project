@@ -1,6 +1,8 @@
-from app.stores.models import Store
 from datetime import datetime
+
 from django.core.exceptions import ObjectDoesNotExist
+
+from app.stores.models import Store
 
 
 def store_renderer(request):

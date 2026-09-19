@@ -1,14 +1,14 @@
 import datetime
 from decimal import Decimal
-from django.core.files.uploadedfile import SimpleUploadedFile
 from io import BytesIO
 
-from PIL import Image
-from django.test import Client, TestCase, RequestFactory
-from django.contrib.sessions.middleware import SessionMiddleware
 from django.contrib.auth.models import User
+from django.contrib.sessions.middleware import SessionMiddleware
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.http import HttpResponse
+from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
+from PIL import Image
 
 from app.carts import views
 from app.carts.models import Cart, Cart_Details

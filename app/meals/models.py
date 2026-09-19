@@ -1,8 +1,9 @@
 from django.core.validators import MinLengthValidator
 from django.db import models
 from django.urls import reverse
-from app.ingredients.models import Ingredient
 from PIL import Image
+
+from app.ingredients.models import Ingredient
 
 
 class Meal(models.Model):

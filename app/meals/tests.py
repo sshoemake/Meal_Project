@@ -1,17 +1,17 @@
 import json
+from io import BytesIO
 
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.http import JsonResponse
 from django.test import TestCase
 from django.urls import reverse
-from django.contrib.auth.models import User
 from PIL import Image
-from io import BytesIO
 
-from app.meals.models import Meal, Meal_Details
-from app.ingredients.models import Ingredient
 from app.carts.models import Cart
+from app.ingredients.models import Ingredient
+from app.meals.models import Meal, Meal_Details
 from app.meals.views import JSONResponseMixin, get_date_label
 
 

@@ -1,15 +1,16 @@
+import json
+from decimal import Decimal
+
+from django.contrib.auth.models import User
+from django.http import JsonResponse
 from django.test import TestCase
 from django.urls import reverse
-from decimal import Decimal
-from django.contrib.auth.models import User
 
-from app.ingredients.models import Ingredient, Ing_Store
-from app.stores.models import Store
-from app.meals.models import Meal, Meal_Details
 from app.carts.models import Cart, Cart_Details
+from app.ingredients.models import Ing_Store, Ingredient
 from app.ingredients.views import JSONResponseMixin
-from django.http import JsonResponse
-import json
+from app.meals.models import Meal, Meal_Details
+from app.stores.models import Store
 
 
 class IngredientsViewsTests(TestCase):

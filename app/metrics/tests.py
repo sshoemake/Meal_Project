@@ -1,11 +1,12 @@
-from django.test import TestCase, RequestFactory
-from django.http import HttpResponse
 from unittest.mock import patch
 
-from app.metrics import views
+from django.contrib.auth.models import User
+from django.http import HttpResponse
+from django.test import RequestFactory, TestCase
+
 from app.carts.models import Cart
 from app.meals.models import Meal
-from django.contrib.auth.models import User
+from app.metrics import views
 
 
 class MetricsViewsTests(TestCase):
