@@ -1,9 +1,10 @@
-from django.shortcuts import render
 from django.db.models import Count
-from app.carts.models import Cart
+from django.shortcuts import render
 from django.views.generic import (
     ListView,
 )
+
+from app.carts.models import Cart
 
 
 def home(request):

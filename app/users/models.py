@@ -1,7 +1,8 @@
-from django.db import models
 from django.contrib.auth.models import User
 from django.core.files.storage import default_storage
+from django.db import models
 from PIL import Image
+
 from app.stores.models import Store
 
 

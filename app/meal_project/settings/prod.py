@@ -1,5 +1,7 @@
-import os 
-from .base import *  # noqa: F403,F405
+import os
+
+from .base import *
+
 
 def parse_trusted_origins(raw_origins, default_scheme="http://"):
     """

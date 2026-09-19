@@ -1,9 +1,10 @@
-from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse_lazy
+from django.views.generic import DeleteView, DetailView, ListView, UpdateView
 from django.views.generic.edit import CreateView
-from django.views.generic import ListView, DetailView, UpdateView, DeleteView
 
 from app.stores.forms import StoreAisleOrderFormSet
+
 from .models import Store
 
 

@@ -1,16 +1,18 @@
-from django.shortcuts import render, redirect
-from .models import Cart, Cart_Details
-from app.meals.models import Meal
-from app.ingredients.models import Ing_Store, Ingredient
-from django.db.models.functions import Floor
-from django.db.models import F
-from django.http import HttpResponse
 import datetime
-from django.db.models.expressions import OuterRef, Subquery
-from app.stores.models import Store, StoreAisleOrder
+
 from django.contrib.auth.decorators import login_required
+from django.db.models import F
+from django.db.models.expressions import OuterRef, Subquery
+from django.db.models.functions import Floor
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.shortcuts import get_object_or_404
+
+from app.ingredients.models import Ing_Store, Ingredient
+from app.meals.models import Meal
+from app.stores.models import Store, StoreAisleOrder
+
+from .models import Cart, Cart_Details
 
 
 def cart_list(request):

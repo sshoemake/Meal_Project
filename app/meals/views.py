@@ -1,27 +1,32 @@
-from django.http import JsonResponse
+import datetime
+
 from django import forms
-# removed unused import: modelformset_factory
-from django.urls import reverse
-from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
+
+# removed unused import: modelformset_factory
+from django.urls import reverse
 from django.views import View
+
 # removed unused import: FormMixin
 from django.views.generic import (
-    ListView,
-    DetailView,
     CreateView,
-    UpdateView,
     DeleteView,
+    DetailView,
     FormView,
+    ListView,
+    UpdateView,
 )
 from django.views.generic.detail import SingleObjectMixin
-from .models import Meal, Ingredient, Meal_Details
-from .forms import BookForm
-from app.carts.views import update_meal_cart, add_ings_cart, cart_header_lists
+
 from app.carts.models import Cart
-import datetime
+from app.carts.views import add_ings_cart, cart_header_lists, update_meal_cart
+
+from .forms import BookForm
+from .models import Ingredient, Meal, Meal_Details
 
 
 class JSONResponseMixin:

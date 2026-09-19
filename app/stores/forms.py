@@ -1,4 +1,5 @@
 from django.forms import inlineformset_factory
+
 from .models import Store, StoreAisleOrder
 
 StoreAisleOrderFormSet = inlineformset_factory(
