@@ -7,25 +7,44 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('meals', '0006_auto_20200120_2101'),
-        ('carts', '0003_auto_20190901_1728'),
+        ("meals", "0006_auto_20200120_2101"),
+        ("carts", "0003_auto_20190901_1728"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='cart',
-            name='ingredients',
+            model_name="cart",
+            name="ingredients",
         ),
         migrations.CreateModel(
-            name='Cart_Details',
+            name="Cart_Details",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('quantity', models.PositiveSmallIntegerField(default=1)),
-                ('cart', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='carts.Cart')),
-                ('ingredient', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='meals.Ingredient')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("quantity", models.PositiveSmallIntegerField(default=1)),
+                (
+                    "cart",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="carts.Cart"
+                    ),
+                ),
+                (
+                    "ingredient",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="meals.Ingredient",
+                    ),
+                ),
             ],
             options={
-                'ordering': ['ingredient__aisle'],
+                "ordering": ["ingredient__aisle"],
             },
         ),
     ]

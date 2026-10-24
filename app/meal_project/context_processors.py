@@ -35,17 +35,15 @@ def store_renderer(request):
 
 
 def user_theme(request):
-    theme = 'light'
+    theme = "light"
 
     if request.user.is_authenticated:
         pref = request.user.profile.theme
 
-        if pref == 'auto':
+        if pref == "auto":
             hour = datetime.now().hour
-            theme = 'dark' if hour >= 18 or hour < 7 else 'light'
+            theme = "dark" if hour >= 18 or hour < 7 else "light"
         else:
             theme = pref
 
-    return {
-        'theme': f'{theme}'
-    }
+    return {"theme": f"{theme}"}

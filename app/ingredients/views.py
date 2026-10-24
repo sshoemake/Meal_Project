@@ -48,22 +48,20 @@ class JSONResponseMixin:
 
 
 class IngListView(ListView):
-    #model = Ingredient
-    #ordering = ["name"]
+    # model = Ingredient
+    # ordering = ["name"]
 
     def get_queryset(self):
-        queryset = Ingredient.objects.all().order_by('name')
-        #user = self.request.user
-        #profile = self.request.user.profile
+        queryset = Ingredient.objects.all().order_by("name")
+        # user = self.request.user
+        # profile = self.request.user.profile
         def_store = Store.objects.get(id=self.request.session["def_store"])
 
         ing_store_aisles = Ing_Store.objects.filter(
-            store=def_store,
-            ingredient_id=OuterRef('id')
-        )[:1].values('aisle')
+            store=def_store, ingredient_id=OuterRef("id")
+        )[:1].values("aisle")
 
-        queryset = queryset.annotate(
-            ing_store_aisle=Subquery(ing_store_aisles))
+        queryset = queryset.annotate(ing_store_aisle=Subquery(ing_store_aisles))
 
         return queryset
 
@@ -104,7 +102,8 @@ class IngredientDisplay(JSONResponseMixin, DetailView):
         context = super().get_context_data(**kwargs)
 
         meals = Meal.objects.filter(
-            meal_details__in=Meal_Details.objects.filter(ingredient=self.object).all())
+            meal_details__in=Meal_Details.objects.filter(ingredient=self.object).all()
+        )
         context["meals"] = meals
 
         ing_in_cart = ing_exists_cart(self.request, self.object)
@@ -113,12 +112,10 @@ class IngredientDisplay(JSONResponseMixin, DetailView):
         store_aisles = Store.objects.all()
 
         ing_store_aisles = Ing_Store.objects.filter(
-            ingredient=self.object,
-            store_id=OuterRef('id')
-        )[:1].values('aisle')
+            ingredient=self.object, store_id=OuterRef("id")
+        )[:1].values("aisle")
 
-        store_aisles = store_aisles.annotate(
-            ing_store_aisle=Subquery(ing_store_aisles))
+        store_aisles = store_aisles.annotate(ing_store_aisle=Subquery(ing_store_aisles))
         context["store_aisles"] = store_aisles
 
         return context
@@ -137,7 +134,8 @@ class IngAisleUpdate(LoginRequiredMixin, SingleObjectMixin, FormView):
         context = super().get_context_data(**kwargs)
 
         meals = Meal.objects.filter(
-            meal_details__in=Meal_Details.objects.filter(ingredient=self.object).all())
+            meal_details__in=Meal_Details.objects.filter(ingredient=self.object).all()
+        )
         context["meals"] = meals
 
         ing_in_cart = ing_exists_cart(self.request, self.object)
@@ -146,12 +144,10 @@ class IngAisleUpdate(LoginRequiredMixin, SingleObjectMixin, FormView):
         store_aisles = Store.objects.all()
 
         ing_store_aisles = Ing_Store.objects.filter(
-            ingredient=self.object,
-            store_id=OuterRef('id')
-        )[:1].values('aisle')
+            ingredient=self.object, store_id=OuterRef("id")
+        )[:1].values("aisle")
 
-        store_aisles = store_aisles.annotate(
-            ing_store_aisle=Subquery(ing_store_aisles))
+        store_aisles = store_aisles.annotate(ing_store_aisle=Subquery(ing_store_aisles))
         context["store_aisles"] = store_aisles
 
         return context
@@ -163,16 +159,20 @@ class IngAisleUpdate(LoginRequiredMixin, SingleObjectMixin, FormView):
         my_IS = Ing_Store.objects.filter(ingredient=self.object)
         my_IS.delete()
 
-        for aisle, store_id in zip(request.POST.getlist('Aisles'), request.POST.getlist('Store_ids')):
-            if aisle != 'None' and aisle != '':
+        for aisle, store_id in zip(
+            request.POST.getlist("Aisles"), request.POST.getlist("Store_ids")
+        ):
+            if aisle != "None" and aisle != "":
                 try:
-                    float(aisle)    # ensure aisle is a float datatype
-                    IS_1 = Ing_Store(store_id=store_id,
-                                     ingredient=self.object, aisle=aisle)
+                    float(aisle)  # ensure aisle is a float datatype
+                    IS_1 = Ing_Store(
+                        store_id=store_id, ingredient=self.object, aisle=aisle
+                    )
                     IS_1.save()
                 except ValueError:
-                    messages.warning(request, "Aisle: '" +
-                                     aisle + "' is not a number, skipping!")
+                    messages.warning(
+                        request, "Aisle: '" + aisle + "' is not a number, skipping!"
+                    )
 
         if form.is_valid():
             # Update Meal_Details data (i.e. remove existing and add from page)

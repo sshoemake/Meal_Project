@@ -2,7 +2,7 @@ import os
 
 from .base import *
 
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 

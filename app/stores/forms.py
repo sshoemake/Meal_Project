@@ -6,6 +6,6 @@ StoreAisleOrderFormSet = inlineformset_factory(
     Store,
     StoreAisleOrder,
     fields=("aisle", "walk_order"),
-    extra=3,   # allow adding new rows
-    can_delete=True
+    extra=3,  # allow adding new rows
+    can_delete=True,
 )

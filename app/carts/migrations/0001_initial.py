@@ -8,15 +8,28 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('meals', '0002_meal_image'),
+        ("meals", "0002_meal_image"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Cart',
+            name="Cart",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('ingredients', models.ManyToManyField(blank=True, null=True, to='meals.Ingredient')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "ingredients",
+                    models.ManyToManyField(
+                        blank=True, null=True, to="meals.Ingredient"
+                    ),
+                ),
             ],
         ),
     ]

@@ -15,4 +15,3 @@ class BookForm(forms.ModelForm):
             existing = field.widget.attrs.get("class", "")
             classes = f"{existing} form-control".strip()
             field.widget.attrs.update({"class": classes})
-

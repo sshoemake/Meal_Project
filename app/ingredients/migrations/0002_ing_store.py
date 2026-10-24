@@ -7,18 +7,37 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('stores', '0001_initial'),
-        ('ingredients', '0001_initial'),
+        ("stores", "0001_initial"),
+        ("ingredients", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Ing_Store',
+            name="Ing_Store",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('aisle', models.DecimalField(decimal_places=1, max_digits=4)),
-                ('ingredient', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='ingredients.Ingredient')),
-                ('store', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='stores.Store')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("aisle", models.DecimalField(decimal_places=1, max_digits=4)),
+                (
+                    "ingredient",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="ingredients.Ingredient",
+                    ),
+                ),
+                (
+                    "store",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="stores.Store"
+                    ),
+                ),
             ],
         ),
     ]

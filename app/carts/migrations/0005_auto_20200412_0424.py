@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('carts', '0004_auto_20200120_2101'),
+        ("carts", "0004_auto_20200120_2101"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='cart',
+            name="cart",
             options={},
         ),
     ]

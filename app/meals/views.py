@@ -175,8 +175,7 @@ class MealIngUpdate(LoginRequiredMixin, SingleObjectMixin, FormView):
 
         dd_post = request.POST.getlist("dd_ing_list", None)
         for ing_id in dd_post:
-            MD_1 = Meal_Details(ingredient_id=ing_id,
-                                meal=self.object, quantity="1")
+            MD_1 = Meal_Details(ingredient_id=ing_id, meal=self.object, quantity="1")
             MD_1.save()
 
         if form.is_valid():
@@ -201,8 +200,7 @@ class MealDisplay(JSONResponseMixin, DetailView):
         context["curr_ing_ids"] = my_MD.values_list("ingredient_id", flat=True)
 
         # Find all the carts this meal exists in
-        carts = Cart.objects.filter(
-            meals__in=[self.object])
+        carts = Cart.objects.filter(meals__in=[self.object])
 
         context["carts"] = carts
 
@@ -271,6 +269,7 @@ def about(request):
 # `MealCreateView`. `meal_update` implements the partial-update JSON
 # response inline below.
 
+
 def meal_update(request, **kwargs):
     meal = get_object_or_404(Meal, pk=kwargs.get("pk", ""))
 
@@ -286,7 +285,9 @@ def meal_update(request, **kwargs):
             data["form_is_valid"] = True
             books = Meal.objects.all()
             data["html_book_list"] = render_to_string(
-                "meals/includes/partial_meal_list.html", {"books": books}, request=request
+                "meals/includes/partial_meal_list.html",
+                {"books": books},
+                request=request,
             )
         else:
             data["form_is_valid"] = False

@@ -8,7 +8,9 @@ from app.ingredients.models import Ingredient
 
 class Meal(models.Model):
     id = models.BigAutoField(primary_key=True)
-    name = models.CharField(max_length=50, unique=True, validators=[MinLengthValidator(1)])
+    name = models.CharField(
+        max_length=50, unique=True, validators=[MinLengthValidator(1)]
+    )
     notes = models.TextField(null=True, blank=True)
     image = models.ImageField(default="default.jpg", upload_to="meal_pics")
 
@@ -17,6 +19,7 @@ class Meal(models.Model):
 
     def get_absolute_url(self):
         return reverse("meal-detail", kwargs={"pk": self.pk})
+
 
 def save(self, *args, **kwargs):
     super().save(*args, **kwargs)

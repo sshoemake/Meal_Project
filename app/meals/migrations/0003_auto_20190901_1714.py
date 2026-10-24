@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('meals', '0002_meal_image'),
+        ("meals", "0002_meal_image"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='meal_details',
-            options={'ordering': ['ingredient__aisle']},
+            name="meal_details",
+            options={"ordering": ["ingredient__aisle"]},
         ),
     ]

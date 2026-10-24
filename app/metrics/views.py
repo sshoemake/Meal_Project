@@ -15,6 +15,10 @@ class MetricsListView(ListView):
     template_name = "metrics/home.html"
 
     def get_queryset(self):
-        queryset = Cart.objects.all().values(
-            'meals__name').annotate(total=Count('meals')).order_by('-total')[:10]
+        queryset = (
+            Cart.objects.all()
+            .values("meals__name")
+            .annotate(total=Count("meals"))
+            .order_by("-total")[:10]
+        )
         return queryset

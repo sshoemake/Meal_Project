@@ -16,71 +16,69 @@ from .models import Cart, Cart_Details
 
 
 def cart_list(request):
-    #request.session["hide_found"] = False
+    # request.session["hide_found"] = False
 
     if request.method == "POST":
         # handle checkbox toggles in session
-        request.session['hide_found'] = 'hide_found' in request.POST
+        request.session["hide_found"] = "hide_found" in request.POST
         # request.session['reverse_sort'] = 'reverse_sort' in request.POST
         # redirect to GET to render full context
-        return redirect(reverse('cart-list'))
-    
+        return redirect(reverse("cart-list"))
+
     cart = get_cart(request)
-    hide_found = request.session.get('hide_found', False)
+    hide_found = request.session.get("hide_found", False)
 
     if cart:
         cart_items = Cart_Details.objects.filter(cart=cart)
         # join aisle detail from store linked to user's profile
-        #profile = request.user.profile
+        # profile = request.user.profile
         def_store = Store.objects.get(id=request.session["def_store"])
 
         ing_store_aisles = Ing_Store.objects.filter(
-            store=def_store,
-            ingredient_id=OuterRef('ingredient__id')
-        )[:1].values('aisle')
+            store=def_store, ingredient_id=OuterRef("ingredient__id")
+        )[:1].values("aisle")
 
         cart_items = cart_items.annotate(
             ing_store_aisle=Subquery(ing_store_aisles),
-            base_aisle=Floor(F("ing_store_aisle"))
+            base_aisle=Floor(F("ing_store_aisle")),
         )
 
         if def_store.walk_mode == Store.WALK_CUSTOM:
 
             custom_walk = StoreAisleOrder.objects.filter(
-                store=def_store,
-                aisle=OuterRef('base_aisle')
-            ).values('walk_order')[:1]
+                store=def_store, aisle=OuterRef("base_aisle")
+            ).values("walk_order")[:1]
 
-            cart_items = cart_items.annotate(
-                walk_order=Subquery(custom_walk)
-            ).order_by('walk_order')
+            cart_items = cart_items.annotate(walk_order=Subquery(custom_walk)).order_by(
+                "walk_order"
+            )
 
         elif def_store.walk_mode == Store.WALK_REVERSE:
 
-            cart_items = cart_items.order_by('-ing_store_aisle')
+            cart_items = cart_items.order_by("-ing_store_aisle")
 
         else:
 
-            cart_items = cart_items.order_by('ing_store_aisle')
+            cart_items = cart_items.order_by("ing_store_aisle")
 
         # if def_store.walk_mode == Store.WALK_REVERSE:
         #     cart_items = cart_items.order_by('-ing_store_aisle')
         # else:
         #     cart_items = cart_items.order_by('ing_store_aisle')
 
-    empty = (cart.meals.count() == 0 and cart_items.count() == 0)
+    empty = cart.meals.count() == 0 and cart_items.count() == 0
 
     context = {
-        'cart': cart,
-        'cart_items': cart_items,
-        'hide_found': hide_found,
-        'empty': empty,
-        'empty_message': "Your shopping cart is empty.",
+        "cart": cart,
+        "cart_items": cart_items,
+        "hide_found": hide_found,
+        "empty": empty,
+        "empty_message": "Your shopping cart is empty.",
     }
 
     # add cart header partial details to context
     context.update(cart_header_lists(request))
-    
+
     return render(request, "carts/cart_list.html", context)
 
 
@@ -186,10 +184,7 @@ def remove_ing_cart(request, **kwargs):
     if not ingredient:
         return redirect(request.META.get("HTTP_REFERER", "/"))
 
-    cart_item = Cart_Details.objects.filter(
-        cart=cart,
-        ingredient=ingredient
-    ).first()
+    cart_item = Cart_Details.objects.filter(cart=cart, ingredient=ingredient).first()
 
     if not cart_item:
         return redirect(request.META.get("HTTP_REFERER", "/"))
@@ -213,10 +208,7 @@ def found_ing_cart(request, **kwargs):
     except Ingredient.DoesNotExist:
         return HttpResponse("OK")  # graceful exit
 
-    cart_item = Cart_Details.objects.filter(
-        cart=cart,
-        ingredient=ingredient
-    ).first()
+    cart_item = Cart_Details.objects.filter(cart=cart, ingredient=ingredient).first()
 
     if cart_item:
         cart_item.found = True
@@ -262,7 +254,6 @@ def ing_exists_cart(request, ing):
             found = True
 
     return found
-
 
 
 def get_cart(request):

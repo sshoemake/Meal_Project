@@ -15,7 +15,6 @@ class MetricsViewsTests(TestCase):
         self.user = User.objects.create_user(username="tester", password="pass")
         self.profile = self.user.profile
 
-
     def test_home_uses_render_with_correct_template(self):
         request = self.factory.get("/")
         with patch("app.metrics.views.render") as mock_render:
@@ -24,7 +23,6 @@ class MetricsViewsTests(TestCase):
 
             mock_render.assert_called_once_with(request, "metrics/home.html")
             self.assertEqual(response.status_code, 200)
-
 
     def test_metrics_list_view_get_queryset_counts_meals(self):
         # Create meals

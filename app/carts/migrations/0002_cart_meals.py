@@ -6,14 +6,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('meals', '0002_meal_image'),
-        ('carts', '0001_initial'),
+        ("meals", "0002_meal_image"),
+        ("carts", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='cart',
-            name='meals',
-            field=models.ManyToManyField(blank=True, null=True, to='meals.Meal'),
+            model_name="cart",
+            name="meals",
+            field=models.ManyToManyField(blank=True, null=True, to="meals.Meal"),
         ),
     ]

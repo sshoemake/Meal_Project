@@ -7,19 +7,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0003_alter_profile_id'),
-        ('carts', '0013_auto_20230715_1658'),
+        ("users", "0003_alter_profile_id"),
+        ("carts", "0013_auto_20230715_1658"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='cart',
-            name='profile',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='users.profile'),
+            model_name="cart",
+            name="profile",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="users.profile"
+            ),
         ),
         migrations.AlterField(
-            model_name='cart',
-            name='yearweek',
+            model_name="cart",
+            name="yearweek",
             field=models.IntegerField(),
         ),
     ]
