@@ -5,7 +5,7 @@ This document summarizes production deployment details for the Meal Project and 
 ## Project recap
 - Django-based shopping & meal-planning application.
 - Repo provides local dev instructions in `README.md` and a production compose file at `compose/docker-compose.prod.yml`.
-- Production uses Traefik v3 as reverse proxy and `postgres:15` as the database.
+- Production uses Traefik v3 as reverse proxy and `postgres:18` as the database.
 
 ## Files to check before deploy
 - `compose/docker-compose.prod.yml` — production compose configuration (services: `traefik`, `web`, `db`).
@@ -89,7 +89,7 @@ chmod 600 traefik/acme.json
 - `compose/docker-compose.prod.yml` routes the `web` service by host using `${DJANGO_ALLOWED_HOSTS}` — set that to your actual host.
 
 ## Database and persistence
-- Postgres data is persisted to Docker volume `postgres_data` defined in the compose file.
+- Postgres data is persisted to Docker volume `pg_data` defined in the compose file.
 - Healthcheck uses `pg_isready` with `${POSTGRES_USER}` and `${POSTGRES_DB}` to report readiness.
 
 ## Quick checklist before go-live

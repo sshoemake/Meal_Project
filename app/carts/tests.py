@@ -12,9 +12,9 @@ from PIL import Image
 
 from app.carts import views
 from app.carts.models import Cart, Cart_Details
-from app.ingredients.models import Ingredient
+from app.ingredients.models import Ing_Store, Ingredient
 from app.meals.models import Meal
-from app.stores.models import Store
+from app.stores.models import Store, StoreAisleOrder
 
 
 def make_request(method='get', path='/', data=None):
@@ -705,3 +705,76 @@ class CartIntegrationTests(CartSetupTestCase):
                 ingredient=self.ingredient1
             ).exists()
         )
+
+
+class CartListOrderingTests(TestCase):
+    """Tests for the aisle-ordering engine in cart_list (walk modes)"""
+
+    # aisle values assigned per ingredient in the store
+    ING_AISLES = {"A": "1.4", "B": "2.8", "C": "4.0"}
+
+    def setUp(self):
+        self.user = User.objects.create_user(username="tester", password="pass")
+        self.profile = self.user.profile
+        self.store = Store.objects.create(name="OrderStore")
+        self.cart = Cart.objects.create(
+            yearweek=views.convert_sw_yw(3),
+            profile=self.profile,
+        )
+
+        self.ings = {}
+        for name, aisle in self.ING_AISLES.items():
+            ing = Ingredient.objects.create(name=name, aisle=1.0, auto_add=False)
+            Ing_Store.objects.create(
+                ingredient=ing,
+                store=self.store,
+                aisle=aisle,
+            )
+            self.ings[name] = ing
+            Cart_Details.objects.create(cart=self.cart, ingredient=ing, quantity=1)
+
+    def _get_cart_list(self):
+        self.client.login(username="tester", password="pass")
+        session = self.client.session
+        session["def_store"] = self.store.id
+        session["cart_id"] = self.cart.id
+        session["hide_found"] = False
+        session.save()
+        return self.client.get(reverse("cart-list"))
+
+    def _ordered_names(self, resp):
+        return list(resp.context["cart_items"].values_list("ingredient__name", flat=True))
+
+    def test_standard_walk_mode_orders_ascending_by_store_aisle(self):
+        resp = self._get_cart_list()
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(self._ordered_names(resp), ["A", "B", "C"])
+
+    def test_reverse_walk_mode_orders_descending_by_store_aisle(self):
+        self.store.walk_mode = Store.WALK_REVERSE
+        self.store.save()
+        resp = self._get_cart_list()
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(self._ordered_names(resp), ["C", "B", "A"])
+
+    def test_custom_walk_mode_orders_by_walk_order(self):
+        self.store.walk_mode = Store.WALK_CUSTOM
+        self.store.save()
+        # base_aisle = floor of store aisle: A->1, B->2, C->4
+        StoreAisleOrder.objects.create(store=self.store, aisle="2.0", walk_order=1)
+        StoreAisleOrder.objects.create(store=self.store, aisle="1.0", walk_order=2)
+        StoreAisleOrder.objects.create(store=self.store, aisle="4.0", walk_order=3)
+
+        resp = self._get_cart_list()
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(self._ordered_names(resp), ["B", "A", "C"])
+
+        walk_orders = list(
+            resp.context["cart_items"].values_list("walk_order", flat=True)
+        )
+        self.assertEqual(walk_orders, [1, 2, 3])
+
+    def test_cart_list_annotates_store_aisle(self):
+        resp = self._get_cart_list()
+        aisles = list(resp.context["cart_items"].values_list("ing_store_aisle", flat=True))
+        self.assertEqual(aisles, [Decimal("1.4"), Decimal("2.8"), Decimal("4.0")])
