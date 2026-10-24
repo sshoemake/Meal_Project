@@ -7,18 +7,22 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0003_alter_profile_id'),
-        ('carts', '0012_alter_cart_details_id'),
+        ("users", "0003_alter_profile_id"),
+        ("carts", "0012_alter_cart_details_id"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='cart',
-            name='profile',
-            field=models.ForeignKey(default=3, on_delete=django.db.models.deletion.CASCADE, to='users.profile'),
+            model_name="cart",
+            name="profile",
+            field=models.ForeignKey(
+                default=3,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="users.profile",
+            ),
         ),
         migrations.AlterUniqueTogether(
-            name='cart',
-            unique_together={('yearweek', 'profile')},
+            name="cart",
+            unique_together={("yearweek", "profile")},
         ),
     ]

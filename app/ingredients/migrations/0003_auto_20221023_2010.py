@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ingredients', '0002_ing_store'),
+        ("ingredients", "0002_ing_store"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='ing_store',
-            name='id',
+            model_name="ing_store",
+            name="id",
             field=models.BigAutoField(primary_key=True, serialize=False),
         ),
         migrations.AlterField(
-            model_name='ingredient',
-            name='id',
+            model_name="ingredient",
+            name="id",
             field=models.BigAutoField(primary_key=True, serialize=False),
         ),
     ]

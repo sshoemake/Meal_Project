@@ -23,15 +23,12 @@ PROJECT_TITLE = "Project Title"
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = 'django-insecure-rj#-z^kx3j+1ay397otg6j8m_8#v^$^$jys6&41vy^&6le)ezc'
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', "change_me")
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "change_me")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DJANGO_DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = os.getenv(
-    "DJANGO_ALLOWED_HOSTS",
-    "localhost,127.0.0.1"
-).split(",")
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
 ALLOWED_HOSTS = [h for h in ALLOWED_HOSTS if h]
 
@@ -127,7 +124,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 # Directory where `collectstatic` will gather static files for production.
 # It must NOT be the same as any path listed in `STATICFILES_DIRS`.
 STATIC_ROOT = str(BASE_DIR / "staticfiles")
@@ -139,8 +136,8 @@ STATICFILES_DIRS = [
     str(BASE_DIR / "static"),
 ]
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media' 
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"

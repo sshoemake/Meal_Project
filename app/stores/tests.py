@@ -1,8 +1,9 @@
 from django.contrib.auth.models import User
+from django.db import IntegrityError
 from django.test import TestCase
 from django.urls import reverse
 
-from app.stores.models import Store
+from app.stores.models import Store, StoreAisleOrder
 
 
 class StoreViewsTests(TestCase):
@@ -88,3 +89,90 @@ class StoreViewsTests(TestCase):
     def test_str_returns_name(self):
         s1 = Store.objects.create(name="Test Name", default=True)
         self.assertEqual(str(s1), "Test Name")
+
+
+class StoreAisleOrderModelTest(TestCase):
+    def setUp(self):
+        self.store = Store.objects.create(name="WalkStore")
+
+    def test_order_by_walk_order(self):
+        StoreAisleOrder.objects.create(store=self.store, aisle="9.0", walk_order=2)
+        StoreAisleOrder.objects.create(store=self.store, aisle="3.0", walk_order=1)
+        StoreAisleOrder.objects.create(store=self.store, aisle="6.0", walk_order=3)
+
+        orders = list(StoreAisleOrder.objects.filter(store=self.store))
+        self.assertEqual([o.aisle for o in orders], [3, 9, 6])
+        self.assertEqual([o.walk_order for o in orders], [1, 2, 3])
+
+    def test_unique_aisle_per_store(self):
+        StoreAisleOrder.objects.create(store=self.store, aisle="5.0", walk_order=1)
+        with self.assertRaises(IntegrityError):
+            StoreAisleOrder.objects.create(store=self.store, aisle="5.0", walk_order=2)
+
+    def test_unique_walk_order_per_store(self):
+        StoreAisleOrder.objects.create(store=self.store, aisle="5.0", walk_order=1)
+        with self.assertRaises(IntegrityError):
+            StoreAisleOrder.objects.create(store=self.store, aisle="7.0", walk_order=1)
+
+    def test_same_aisle_allowed_across_stores(self):
+        store2 = Store.objects.create(name="OtherStore")
+        StoreAisleOrder.objects.create(store=self.store, aisle="5.0", walk_order=1)
+        StoreAisleOrder.objects.create(store=store2, aisle="5.0", walk_order=1)
+
+
+class StoreUpdateFormSetTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username="tester", password="pass")
+        self.store = Store.objects.create(name="CustomStore")
+        self.client.login(username="tester", password="pass")
+
+    def _formset_data(self):
+        return {
+            "aisle_orders-TOTAL_FORMS": "2",
+            "aisle_orders-INITIAL_FORMS": "0",
+            "aisle_orders-MIN_NUM_FORMS": "0",
+            "aisle_orders-MAX_NUM_FORMS": "1000",
+            "aisle_orders-0-aisle": "7.0",
+            "aisle_orders-0-walk_order": "1",
+            "aisle_orders-0-id": "",
+            "aisle_orders-1-aisle": "10.5",
+            "aisle_orders-1-walk_order": "2",
+            "aisle_orders-1-id": "",
+        }
+
+    def test_store_update_saves_aisle_order_rows(self):
+        url = reverse("store-update", kwargs={"pk": self.store.pk})
+        data = {
+            "name": self.store.name,
+            "address": "",
+            "city": "",
+            "state": "",
+            "zip_code": "",
+            "walk_mode": Store.WALK_CUSTOM,
+            **self._formset_data(),
+        }
+
+        resp = self.client.post(url, data)
+        self.assertIn(resp.status_code, (302, 303))
+
+        orders = list(self.store.aisle_orders.order_by("walk_order"))
+        self.assertEqual(len(orders), 2)
+        self.assertEqual(orders[0].aisle, 7)
+        self.assertEqual(orders[0].walk_order, 1)
+        self.assertEqual(orders[1].aisle, 10.5)
+        self.assertEqual(orders[1].walk_order, 2)
+
+    def test_store_update_without_formset_data_saves_no_rows(self):
+        url = reverse("store-update", kwargs={"pk": self.store.pk})
+        data = {
+            "name": self.store.name,
+            "address": "",
+            "city": "",
+            "state": "",
+            "zip_code": "",
+            "walk_mode": Store.WALK_CUSTOM,
+        }
+
+        resp = self.client.post(url, data)
+        self.assertIn(resp.status_code, (302, 303))
+        self.assertFalse(self.store.aisle_orders.exists())

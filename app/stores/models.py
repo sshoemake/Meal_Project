@@ -26,7 +26,7 @@ class Store(models.Model):
         choices=WALK_CHOICES,
         default=WALK_STANDARD,
     )
-    
+
     def __str__(self):
         return self.name
 
@@ -36,8 +36,11 @@ class Store(models.Model):
     def get_absolute_url(self):
         return reverse("store-detail", kwargs={"pk": self.pk})
 
+
 class StoreAisleOrder(models.Model):
-    store = models.ForeignKey(Store, on_delete=models.CASCADE, related_name="aisle_orders")
+    store = models.ForeignKey(
+        Store, on_delete=models.CASCADE, related_name="aisle_orders"
+    )
     aisle = models.DecimalField(max_digits=4, decimal_places=1)
     walk_order = models.PositiveIntegerField()
 

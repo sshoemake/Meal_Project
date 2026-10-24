@@ -94,13 +94,17 @@ class IngredientsViewsTests(TestCase):
         # create (login required)
         self.client.login(username="tester", password="pass")
         url = reverse("ingredients-create")
-        resp = self.client.post(url, {"name": "NewIng", "aisle": "4.2", "auto_add": True})
+        resp = self.client.post(
+            url, {"name": "NewIng", "aisle": "4.2", "auto_add": True}
+        )
         self.assertIn(resp.status_code, (302, 303))
         new = Ingredient.objects.get(name="NewIng")
 
         # update
         url_up = reverse("ingredients-update", kwargs={"pk": new.pk})
-        resp = self.client.post(url_up, {"name": "NewIng2", "aisle": "4.2", "auto_add": False})
+        resp = self.client.post(
+            url_up, {"name": "NewIng2", "aisle": "4.2", "auto_add": False}
+        )
         self.assertIn(resp.status_code, (302, 303))
         new.refresh_from_db()
         self.assertEqual(new.name, "NewIng2")
@@ -112,21 +116,16 @@ class IngredientsViewsTests(TestCase):
         self.assertFalse(Ingredient.objects.filter(pk=new.pk).exists())
 
 
-
 class IngredientModelTest(TestCase):
     """Test cases for the Ingredient model"""
 
     def setUp(self):
         """Create test ingredient instances"""
         self.ingredient1 = Ingredient.objects.create(
-            name="Tomato",
-            aisle=Decimal("1.5"),
-            auto_add=True
+            name="Tomato", aisle=Decimal("1.5"), auto_add=True
         )
         self.ingredient2 = Ingredient.objects.create(
-            name="Basil",
-            aisle=Decimal("2.0"),
-            auto_add=False
+            name="Basil", aisle=Decimal("2.0"), auto_add=False
         )
 
     def test_ingredient_creation(self):
@@ -143,9 +142,7 @@ class IngredientModelTest(TestCase):
         """Test that ingredient names are unique"""
         with self.assertRaises(Exception):
             Ingredient.objects.create(
-                name="Tomato",
-                aisle=Decimal("3.0"),
-                auto_add=True
+                name="Tomato", aisle=Decimal("3.0"), auto_add=True
             )
 
     def test_ingredient_aisle_field_type(self):
@@ -172,11 +169,7 @@ class IngredientModelTest(TestCase):
     def test_ingredient_max_name_length(self):
         """Test that ingredient name cannot exceed max_length"""
         long_name = "A" * 51  # Exceeds max_length of 50
-        ingredient = Ingredient(
-            name=long_name,
-            aisle=Decimal("5.0"),
-            auto_add=True
-        )
+        ingredient = Ingredient(name=long_name, aisle=Decimal("5.0"), auto_add=True)
         with self.assertRaises(Exception):
             ingredient.full_clean()
 
@@ -190,7 +183,7 @@ class IngredientModelTest(TestCase):
         with self.assertRaises(Exception):
             Ingredient.objects.create(
                 name="Garlic",
-                aisle=Decimal("1.0")
+                aisle=Decimal("1.0"),
                 # Missing auto_add
             )
 
@@ -206,17 +199,13 @@ class IngStoreModelTest(TestCase):
             city="Atlanta",
             state="GA",
             zip_code="30301",
-            default=True
+            default=True,
         )
         self.ingredient = Ingredient.objects.create(
-            name="Onion",
-            aisle=Decimal("3.5"),
-            auto_add=True
+            name="Onion", aisle=Decimal("3.5"), auto_add=True
         )
         self.ing_store = Ing_Store.objects.create(
-            ingredient=self.ingredient,
-            store=self.store,
-            aisle=Decimal("3.5")
+            ingredient=self.ingredient, store=self.store, aisle=Decimal("3.5")
         )
 
     def test_ing_store_creation(self):
@@ -244,18 +233,18 @@ class IngStoreModelTest(TestCase):
         """Test that Ing_Store is deleted when ingredient is deleted"""
         # ingredient_id = self.ingredient.pk
         ing_store_id = self.ing_store.pk
-        
+
         self.ingredient.delete()
-        
+
         with self.assertRaises(Ing_Store.DoesNotExist):
             Ing_Store.objects.get(pk=ing_store_id)
 
     def test_ing_store_cascade_delete_store(self):
         """Test that Ing_Store is deleted when store is deleted"""
         ing_store_id = self.ing_store.pk
-        
+
         self.store.delete()
-        
+
         with self.assertRaises(Ing_Store.DoesNotExist):
             Ing_Store.objects.get(pk=ing_store_id)
 
@@ -266,30 +255,24 @@ class IngStoreModelTest(TestCase):
             address="456 Oak Ave",
             city="Miami",
             state="FL",
-            zip_code="33101"
+            zip_code="33101",
         )
         Ing_Store.objects.create(
-            ingredient=self.ingredient,
-            store=store2,
-            aisle=Decimal("2.0")
+            ingredient=self.ingredient, store=store2, aisle=Decimal("2.0")
         )
-        
+
         ing_stores = Ing_Store.objects.filter(ingredient=self.ingredient)
         self.assertEqual(ing_stores.count(), 2)
 
     def test_multiple_ing_stores_same_store(self):
         """Test that one store can have multiple ingredients"""
         ingredient2 = Ingredient.objects.create(
-            name="Pepper",
-            aisle=Decimal("3.0"),
-            auto_add=False
+            name="Pepper", aisle=Decimal("3.0"), auto_add=False
         )
         Ing_Store.objects.create(
-            ingredient=ingredient2,
-            store=self.store,
-            aisle=Decimal("4.0")
+            ingredient=ingredient2, store=self.store, aisle=Decimal("4.0")
         )
-        
+
         ing_stores = Ing_Store.objects.filter(store=self.store)
         self.assertEqual(ing_stores.count(), 2)
 
@@ -300,15 +283,10 @@ class IngStoreModelTest(TestCase):
 
     def test_ing_store_different_aisle_same_ingredient(self):
         """Test that same ingredient can have different aisles in different stores"""
-        store3 = Store.objects.create(
-            name="Whole Foods",
-            default=False
-        )
+        store3 = Store.objects.create(name="Whole Foods", default=False)
         ing_store3 = Ing_Store.objects.create(
-            ingredient=self.ingredient,
-            store=store3,
-            aisle=Decimal("5.5")
+            ingredient=self.ingredient, store=store3, aisle=Decimal("5.5")
         )
-        
+
         self.assertEqual(self.ing_store.aisle, Decimal("3.5"))
         self.assertEqual(ing_store3.aisle, Decimal("5.5"))

@@ -15,4 +15,3 @@ urlpatterns = [
     path("store/<int:pk>/update/", StoreUpdateView.as_view(), name="store-update"),
     path("store/<int:pk>/delete/", StoreDeleteView.as_view(), name="store-delete"),
 ]
-

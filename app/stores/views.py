@@ -46,13 +46,10 @@ class StoreUpdateView(LoginRequiredMixin, UpdateView):
 
         if self.request.POST:
             context["formset"] = StoreAisleOrderFormSet(
-                self.request.POST,
-                instance=self.object
+                self.request.POST, instance=self.object
             )
         else:
-            context["formset"] = StoreAisleOrderFormSet(
-                instance=self.object
-            )
+            context["formset"] = StoreAisleOrderFormSet(instance=self.object)
 
         return context
 
@@ -63,7 +60,9 @@ class StoreUpdateView(LoginRequiredMixin, UpdateView):
         if form.instance.default:
             Store.objects.update(default=False)
         # Only validate/save the formset if management form data was submitted.
-        post_has_management = any(k.endswith("-TOTAL_FORMS") for k in self.request.POST.keys())
+        post_has_management = any(
+            k.endswith("-TOTAL_FORMS") for k in self.request.POST.keys()
+        )
 
         if post_has_management:
             if formset.is_valid():
@@ -77,7 +76,7 @@ class StoreUpdateView(LoginRequiredMixin, UpdateView):
             # No formset submitted; just save the main form.
             self.object = form.save()
             return super().form_valid(form)
-        
+
 
 class StoreDeleteView(LoginRequiredMixin, DeleteView):
     model = Store

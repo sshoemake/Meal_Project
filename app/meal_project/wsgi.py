@@ -16,4 +16,4 @@ from whitenoise import WhiteNoise
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app.meal_project.settings.dev")
 
 application = get_wsgi_application()
-application = WhiteNoise(application, root='/app/static')
+application = WhiteNoise(application, root="/app/static")

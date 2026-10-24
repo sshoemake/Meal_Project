@@ -7,17 +7,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('carts', '0009_auto_20211024_0626'),
-        ('meals', '0007_auto_20200412_0424'),
+        ("carts", "0009_auto_20211024_0626"),
+        ("meals", "0007_auto_20200412_0424"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='meal_details',
-            name='ingredient',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='ingredients.Ingredient'),
+            model_name="meal_details",
+            name="ingredient",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE, to="ingredients.Ingredient"
+            ),
         ),
         migrations.DeleteModel(
-            name='Ingredient',
+            name="Ingredient",
         ),
     ]

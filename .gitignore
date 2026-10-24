@@ -1,5 +1,14 @@
-venv
-.vscode
+
+# Python virtual environments
+venv/
+.venv/
+.venv-*/
+**/venv/
+**/.venv/
+**/.venv-*/
+
+# VS Code
+.vscode/
 
 ### Django ###
 *.log
@@ -22,7 +31,7 @@ staticfiles/
 static/
 media/
 .env
-.env.* 
+.env.*
 
 # Coverage / test outputs
 htmlcov/

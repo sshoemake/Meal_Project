@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('carts', '0011_alter_cart_id'),
+        ("carts", "0011_alter_cart_id"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='cart_details',
-            name='id',
+            model_name="cart_details",
+            name="id",
             field=models.BigAutoField(primary_key=True, serialize=False),
         ),
     ]

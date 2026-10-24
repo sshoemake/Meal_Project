@@ -7,22 +7,29 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Store',
+            name="Store",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=50, unique=True)),
-                ('address', models.CharField(blank=True, max_length=100)),
-                ('city', models.CharField(blank=True, max_length=50)),
-                ('state', models.CharField(blank=True, max_length=2)),
-                ('zip_code', models.CharField(blank=True, max_length=5)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=50, unique=True)),
+                ("address", models.CharField(blank=True, max_length=100)),
+                ("city", models.CharField(blank=True, max_length=50)),
+                ("state", models.CharField(blank=True, max_length=2)),
+                ("zip_code", models.CharField(blank=True, max_length=5)),
             ],
             options={
-                'ordering': ['name'],
+                "ordering": ["name"],
             },
         ),
     ]

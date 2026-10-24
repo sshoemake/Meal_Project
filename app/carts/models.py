@@ -15,7 +15,7 @@ class Cart(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ('yearweek', 'profile')
+        unique_together = ("yearweek", "profile")
 
     def __str__(self):
         year = str(self.yearweek)[:4]
@@ -29,7 +29,18 @@ class Cart(models.Model):
         my_date = datetime.date.today()
         weeks_back = (my_date - firstdayofweek).days / 7
 
-        return "Cart ID: " + str(self.yearweek) + ", Year: " + year + ", Week: " + week + ", Date: " + firstdayofweek.strftime("%b %-d") + ", weeks back: " + str(int(weeks_back))
+        return (
+            "Cart ID: "
+            + str(self.yearweek)
+            + ", Year: "
+            + year
+            + ", Week: "
+            + week
+            + ", Date: "
+            + firstdayofweek.strftime("%b %-d")
+            + ", weeks back: "
+            + str(int(weeks_back))
+        )
 
     @property
     def items_total(self):
@@ -41,11 +52,14 @@ class Cart(models.Model):
 
     # Add item_cnt property
 
-    #create a Meal_Details class
+    # create a Meal_Details class
+
+
 # class Meal_Details(models.Model):
 #     id = models.BigAutoField(primary_key=True)
 #     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
 #     meal = models.ForeignKey(Meal, on_delete=models.CASCADE)
+
 
 class Cart_Details(models.Model):
     id = models.BigAutoField(primary_key=True)

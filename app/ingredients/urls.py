@@ -10,8 +10,7 @@ from .views import (
 
 urlpatterns = [
     path("ingredients/", IngListView.as_view(), name="ingredients-home"),
-    path("ingredients/<int:pk>/", IngDetailView.as_view(),
-         name="ingredients-detail"),
+    path("ingredients/<int:pk>/", IngDetailView.as_view(), name="ingredients-detail"),
     path("ingredients/new/", IngCreateView.as_view(), name="ingredients-create"),
     path(
         "ingredients/<int:pk>/update/",
