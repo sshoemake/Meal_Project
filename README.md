@@ -8,7 +8,7 @@ Django based application for shopping and meal planning.
 - **Language:** Python 3 (development and runtime)
 - **Framework:** Django (server-side web framework)
 - **Database:** PostgreSQL 18 (containerized)
-- **Reverse proxy & TLS:** Traefik v3 (LetsEncrypt/ACME via `acme.json`)
+- **Reverse proxy & TLS:** Standalone Traefik v3, managed in the homelab_infrastructure repository
 - **Containerization:** Docker, Docker Compose
 - **Container registry:** GitHub Container Registry (ghcr.io) (used in compose)
 - **Frontend:** Django templates with static CSS/JS

@@ -1,126 +1,257 @@
-# Deployment & Operations (one-page)
 
-This document summarizes production deployment details for the Meal Project and provides a minimal `.env` sample and commands to build/publish and run the production stack using the repository's `compose/docker-compose.prod.yml`.
+# Deployment & Operations
 
-## Project recap
-- Django-based shopping & meal-planning application.
-- Repo provides local dev instructions in `README.md` and a production compose file at `compose/docker-compose.prod.yml`.
-- Production uses Traefik v3 as reverse proxy and `postgres:18` as the database.
+This document summarizes development, UAT, and production deployment procedures for the Meal Project.
 
-## Files to check before deploy
-- `compose/docker-compose.prod.yml` — production compose configuration (services: `traefik`, `web`, `db`).
-- `traefik/traefik.yml`, `traefik/dynamic` and `traefik/acme.json` — Traefik configuration and Let's Encrypt storage (ensure `acme.json` exists and is writable by the Traefik container).
-- `.env` — environment variables for Django and Postgres (not committed to repo).
+Production uses Docker Compose, a PostgreSQL database, and a separately managed Traefik reverse proxy.
 
-## Minimal `.env` sample
-Replace values before use.
+## Project Overview
 
-DJANGO settings
+- Django-based shopping and meal-planning application.
+- PostgreSQL 18 database.
+- Docker images published to GitHub Container Registry (GHCR).
+- Production reverse proxy and TLS managed independently by Traefik.
 
+## Important Files
+
+| File | Purpose |
+|---|---|
+| `compose/docker-compose.yml` | Base Compose configuration |
+| `compose/docker-compose.dev.yml` | Development configuration |
+| `compose/docker-compose.uat.yml` | UAT configuration |
+| `compose/docker-compose.prod.yml` | Production configuration |
+| `compose/.env.dev` | Development environment variables |
+| `compose/.env.uat` | UAT environment variables |
+| `compose/.env.prod` | Production environment variables |
+| `compose/up.sh` | Environment startup helper |
+| `compose/down.sh` | Environment shutdown helper |
+| `compose/manage.sh` | Django management command helper |
+
+Environment files contain secrets and must not be committed to Git.
+
+## Environment Configuration
+
+Production uses `compose/.env.prod`.
+
+Example variables:
+
+```dotenv
+# Django
 DJANGO_ALLOWED_HOSTS=example.com
 SECRET_KEY=replace_with_django_secret_key
 DEBUG=0
 
-Postgres settings
-
+# PostgreSQL
 POSTGRES_USER=meal_user
-POSTGRES_PASSWORD=supersecret
+POSTGRES_PASSWORD=replace_with_secure_password
 POSTGRES_DB=meal_db
 POSTGRES_HOST=db
 POSTGRES_PORT=5432
-
-Other
-
-# Host used by Traefik router label in compose
-# Example: example.com
-DJANGO_ALLOWED_HOSTS=example.com
-
-Note: `compose/docker-compose.prod.yml` uses `env_file: .env`; ensure this file is present on the host running Docker Compose.
-
-## Build and publish Docker image (example using GHCR)
-Update `ghcr.io/YOUR_USER/YOUR_APP` in `compose/docker-compose.prod.yml` to your image path.
-
-Build locally and test image:
-
-```bash
-# build
-docker build -t meal_project:latest .
-# run for quick smoke test (dev settings)
-docker run --rm -it -p 8000:8000 -e DEBUG=1 meal_project:latest
 ```
 
-Publish to GitHub Container Registry (example):
+Replace example values with actual production settings.
+
+The production Compose configuration uses `env_file: .env.prod` for the application and database containers.
+
+The production hostname must also match the host rule defined in the Traefik labels in `compose/docker-compose.prod.yml`. Updating `DJANGO_ALLOWED_HOSTS` alone does not change Traefik's routing rule.
+
+## Docker Image Build and Publishing
+
+Production images are published to GitHub Container Registry.
+
+Example local build:
 
 ```bash
-# login
-echo $GITHUB_TOKEN | docker login ghcr.io -u YOUR_GH_USER --password-stdin
-# tag
-docker tag meal_project:latest ghcr.io/YOUR_GH_USER/YOUR_REPO:latest
-# push
+docker build -t meal_project:latest .
+```
+
+Quick local smoke test:
+
+```bash
+docker run --rm -it -p 8000:8000 \
+  -e DEBUG=1 \
+  meal_project:latest
+```
+
+Publish an image to GHCR:
+
+```bash
+# Authenticate
+echo "$GITHUB_TOKEN" | docker login ghcr.io \
+  -u YOUR_GH_USER --password-stdin
+
+# Tag
+docker tag meal_project:latest \
+  ghcr.io/YOUR_GH_USER/YOUR_REPO:latest
+
+# Push
 docker push ghcr.io/YOUR_GH_USER/YOUR_REPO:latest
 ```
 
-## Start production stack
-Run from repo root (compose file path used below):
+Update the image reference in the production Compose configuration when deploying a new version.
+
+## Reverse Proxy and TLS
+
+Traefik is managed separately in the
+[homelab_infrastructure](https://github.com/sshoemake/homelab_infrastructure)
+repository.
+
+Meal Project does not manage Traefik, its configuration, TLS certificates, or ACME storage.
+
+Before deploying the production application, verify:
+
+- The standalone Traefik service is running.
+- The external Docker network `traefik_public` exists.
+- The web container is attached to `traefik_public`.
+- The Traefik file provider has loaded the `security-headers` middleware.
+- DNS for the production hostname points to the public IP associated with Traefik.
+
+The production web service uses the `security-headers@file` middleware and is routed through Traefik using Docker labels.
+
+## Development Deployment
+
+Run from the repository root:
 
 ```bash
-# (ensure .env is present and traefik/acme.json exists)
-# start in detached mode
-docker compose -f compose/docker-compose.prod.yml up -d
-# view logs
-docker compose -f compose/docker-compose.prod.yml logs -f
+docker compose \
+  -f compose/docker-compose.yml \
+  -f compose/docker-compose.dev.yml \
+  --env-file compose/.env.dev \
+  --profile dev up
 ```
 
-To stop and remove volumes:
+Alternatively, use the environment helper scripts:
 
 ```bash
-docker compose -f compose/docker-compose.prod.yml down -v
+./compose/up.sh dev
 ```
 
-## Traefik notes
-- Traefik is configured to read Docker labels and uses `traefik/traefik.yml` + dynamic config in `traefik/dynamic`.
-- `acme.json` stores TLS certs; give it `600` perms and ensure it is owner-writable by the user running Docker:
+## UAT Deployment and Testing
+
+Build the application image:
 
 ```bash
-touch traefik/acme.json
-chmod 600 traefik/acme.json
+docker build -t meal_project:latest .
 ```
 
-- `compose/docker-compose.prod.yml` routes the `web` service by host using `${DJANGO_ALLOWED_HOSTS}` — set that to your actual host.
+Start UAT:
 
-## Database and persistence
-- Postgres data is persisted to Docker volume `pg_data` defined in the compose file.
-- Healthcheck uses `pg_isready` with `${POSTGRES_USER}` and `${POSTGRES_DB}` to report readiness.
+```bash
+./compose/up.sh uat
+```
 
-## Quick checklist before go-live
-- [ ] Populate `.env` with production secrets
-- [ ] Replace GHCR image path in `compose/docker-compose.prod.yml`
-- [ ] Ensure `traefik/acme.json` exists and has `chmod 600`
-- [ ] Confirm DNS for your host points to the machine running Traefik
-- [ ] Start stack: `docker compose -f compose/docker-compose.prod.yml up -d`
+Run database migrations:
+
+```bash
+./compose/manage.sh uat migrate
+```
+
+To load a database fixture, copy it into the web container:
+
+```bash
+docker cp ../backup_meal_project_12242025.json \
+  compose-web-1:/tmp/
+```
+
+Open a shell in the web container:
+
+```bash
+docker exec -it compose-web-1 bash
+```
+
+Inside the container:
+
+```bash
+python manage.py loaddata /tmp/backup_meal_project_12242025.json
+python manage.py collectstatic
+```
+
+Test the application locally:
+
+```text
+http://127.0.0.1:8000/
+```
+
+When finished:
+
+```bash
+./compose/down.sh uat
+```
+
+## Production Deployment
+
+Production deployment is performed on the production host.
+
+Before starting:
+
+1. Ensure `compose/.env.prod` exists and contains the production environment variables.
+2. Ensure the standalone Traefik service is running.
+3. Ensure the external Docker network `traefik_public` exists.
+4. Confirm the production image reference in `compose/docker-compose.prod.yml` is correct.
+
+Start the production services from the repository root:
+
+```bash
+docker compose \
+  -f compose/docker-compose.yml \
+  -f compose/docker-compose.prod.yml \
+  --env-file compose/.env.prod \
+  --profile prod \
+  up -d
+```
+
+Check service status:
+
+```bash
+docker compose \
+  -f compose/docker-compose.yml \
+  -f compose/docker-compose.prod.yml \
+  --env-file compose/.env.prod \
+  --profile prod \
+  ps
+```
+
+View application logs:
+
+```bash
+docker compose \
+  -f compose/docker-compose.yml \
+  -f compose/docker-compose.prod.yml \
+  --env-file compose/.env.prod \
+  --profile prod \
+  logs -f web
+```
+
+Database logs:
+
+```bash
+docker logs myapp-db
+```
+
+## Database and Persistence
+
+- PostgreSQL data is persisted in the Docker volume `pg_data`.
+- The database is attached only to the private internal Docker network.
+- The web service connects to the database over that internal network.
+- The web service also connects to the external `traefik_public` network for reverse proxy access.
+- PostgreSQL health is checked using `pg_isready`.
+
+Back up the database regularly. Do not assume that a Docker volume alone is a backup.
+
+**Important:** Avoid `docker compose down -v` in production. The `-v` option removes named volumes, including `pg_data`, and can permanently delete the production database.
+
+## Production Go-Live Checklist
+
+- [ ] Production environment file exists and contains valid secrets.
+- [ ] Production image reference is correct.
+- [ ] Standalone Traefik is running.
+- [ ] External `traefik_public` network exists.
+- [ ] Production hostname matches the Traefik router rule.
+- [ ] DNS points to the production host.
+- [ ] Database backup is current.
+- [ ] Application and database containers start successfully.
+- [ ] Application is accessible over HTTPS.
 
 ---
-Created to supplement `README.md` with a concise ops/deploy guide. Adjust values to your environment.
 
-# Run in DEV:
-docker compose -f compose/docker-compose.yml \
-               -f compose/docker-compose.dev.yml \
-               --env-file compose/.env.dev \
-               --profile dev up
-
-# Build and test Docker image in UAT
-
-  ```bash
-  docker build -t meal_project:latest .
-  [./compose/down.sh dev -v] - if dev testing
-  ./compose/up.sh uat
-  ./compose/manage.sh uat migrate
-  docker cp ../backup_meal_project_12242025.json compose-web-1:/tmp/
-  open command line in web container:
-  docker exec -it compose-web-1 bash
-  python manage.py loaddata /tmp/backup_meal_project_12242025.json
-  python manage.py collectstatic
-  TEST (http://127.0.0.1:8000/)
-  Stop and remove volumes:
-  ./compose/down.sh uat -v 
-  ```
+This document supplements `README.md` with deployment and operational instructions.
